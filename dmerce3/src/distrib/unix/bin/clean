@@ -1,0 +1,23 @@
+#!/bin/sh
+
+usage() {
+	echo "usage: $0 <application_name>"
+}
+
+_clean() {
+	DMERCE_APPNAME=$1
+	export DMERCE_APPNAME
+	if [ $# -lt 1 ]; then
+		$ANT_CALL clean
+	else
+		$ANT_CALL clean-$1
+	fi
+}
+
+if [ $# -lt 1 ]; then
+	usage
+else
+	_clean $*
+fi
+
+exit 0

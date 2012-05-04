@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<workflows xmlns='http://www.1ci.de'
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+  xsi:schemaLocation='http://www.1ci.de ../WORKFLOWS.xsd'
+  version="2.0"
+>
+
+          <workflow id="1cs_advert">
+
+                    <page id="create" template="vwcreateadvertentry.jsp" formid="1cs_adverts">
+
+                          <formmap table="t_adverts" primarykey="id">
+                              <fieldmap formfield="advertcategoryid" dbfield="advertcategoriesid"/>
+                              <fieldmap formfield="realname" dbfield="realname"/>
+                              <fieldmap formfield="email" dbfield="email"/>
+                              <fieldmap formfield="url" dbfield="url"/>
+                              <fieldmap formfield="description" dbfield="description"/>
+                              <fieldmap formfield="text" dbfield="text"/>
+                              <fieldmap formfield="foto" dbfield="foto" file="true"/>
+                          </formmap>
+
+                          <transition name="ok" target="list" validation="true">
+                             <condition type="buttonpressed" value="Anzeige aufgeben"/>
+
+                             <action type="maintain">
+                                     <formfield formid="1cs_advert" name="advertcategoryid"/>
+                                     <formfield formid="1cs_advert" name="realname"/>
+                                     <formfield formid="1cs_advert" name="email"/>
+                                     <formfield formid="1cs_advert" name="url"/>
+                                     <formfield formid="1cs_advert" name="description"/>
+                                     <formfield formid="1cs_advert" name="text"/>
+                                     <formfield formid="1cs_advert" name="foto"/>
+                             </action>
+                          </transition>
+
+                          <transition name="cancel" target="list" validation="false">
+                             <condition type="buttonpressed" value="Zurück"/>
+                          </transition>
+
+                    </page>
+
+                    <page id="list" template="vwlistadvertcats.jsp"/>
+
+          </workflow>
+
+          <workflow id="1cs_appointments">
+
+                    <page id="create" template="vwcreateappointmententry.jsp" formid="1cs_appointments">
+
+			      <formmap table="t_appointments" primarykey="id">
+				          <fieldmap formfield="dateofappointment" dbfield="dateofappointment"/>
+				          <fieldmap formfield="description" dbfield="description"/>
+				          <fieldmap formfield="url" dbfield="url"/>
+				          <fieldmap formfield="email" dbfield="email"/>
+				          <fieldmap formfield="phone" dbfield="phone"/>
+				          <fieldmap formfield="realname" dbfield="realname"/>
+			  </formmap>
+
+                          <transition name="ok" target="list" validation="true">
+                             <condition type="buttonpressed" value="Termin eintragen"/>
+                             <action type="maintain">
+                                     <formfield formid="1cs_appointments" name="dateofappointment" dbfield="dateofappointment"/>
+                                     <formfield formid="1cs_appointments" name="description" dbfield="description"/>
+                                     <formfield formid="1cs_appointments" name="url" dbfield="url"/>
+                                     <formfield formid="1cs_appointments" name="email" dbfield="email"/>
+                                     <formfield formid="1cs_appointments" name="phone" dbfield="phone"/>
+                                     <formfield formid="1cs_appointments" name="realname" dbfield="realname"/>
+                             </action>
+                          </transition>
+
+                          <transition name="cancel" target="list" validation="false">
+                             <condition type="buttonpressed" value="Zurück"/>
+                          </transition>
+
+                    </page>
+
+                    <page id="list" template="vwlistappointments.jsp"/>
+
+          </workflow>
+
+          <workflow id="1cs_guestbook">
+
+		    <page id="create" template="vwcreateguestbookentry.jsp" formid="1cs_guestbook">
+
+			  <formmap table="t_guestbook" primarykey="id">
+                             <fieldmap formfield="realname" dbfield="realname"/>
+                             <fieldmap formfield="email" dbfield="email"/>
+                             <fieldmap formfield="url" dbfield="url"/>
+                             <fieldmap formfield="text" dbfield="text"/>
+                          </formmap>
+
+                          <transition name="ok" target="list" validation="true">
+                             <condition type="buttonpressed" value="Eintragen"/>
+                             <action type="maintain">
+                                     <formfield formid="1cs_guestbook" name="realname" dbfield="realname"/>
+                                     <formfield formid="1cs_guestbook" name="email" dbfield="email"/>
+                                     <formfield formid="1cs_guestbook" name="url" dbfield="url"/>
+                                     <formfield formid="1cs_guestbook" name="text" dbfield="text"/>
+                             </action>
+                          </transition>
+
+                          <transition name="cancel" target="list" validation="false">
+                             <condition type="buttonpressed" value="Zurück"/>
+                          </transition>
+
+                    </page>
+
+                    <page id="list" template="vwlistguestbook.jsp"/>
+
+          </workflow>
+
+          <workflow id="1cs_links">
+
+		    <page id="create" template="vwcreatelinkentry.jsp" formid="1cs_links">
+
+			  <formmap table="t_links" primarykey="id">
+                             <fieldmap formfield="linkcategoryid" dbfield="linkcategoryid"/>
+                             <fieldmap formfield="realname" dbfield="realname"/>
+                             <fieldmap formfield="name" dbfield="name"/>
+                             <fieldmap formfield="email" dbfield="email"/>
+                             <fieldmap formfield="description" dbfield="description"/>
+                             <fieldmap formfield="url" dbfield="url"/>
+                          </formmap>
+
+                          <transition name="ok" target="list" validation="true">
+                             <condition type="buttonpressed" value="Eintragen"/>
+                             <action type="callproc">
+                                     <parameter name="name" value="sp_createlink"/>
+                                     <formfield formid="1cs_links" name="linkcategoryid"/>
+                                     <formfield formid="1cs_links" name="realname"/>
+                                     <formfield formid="1cs_links" name="email"/>
+                                     <formfield formid="1cs_links" name="name"/>
+                                     <formfield formid="1cs_links" name="description"/>
+                                     <formfield formid="1cs_links" name="url"/>
+                             </action>
+                          </transition>
+
+                          <transition name="cancel" target="list" validation="false">
+                             <condition type="buttonpressed" value="Zurück"/>
+                          </transition>
+
+                    </page>
+
+               <page id="list" template="vwlistlinkscats.jsp"/>
+
+          </workflow>
+
+          <workflow id="vwadmin_advertcats">
+
+                    <page id="create" template="vwadmin_create_advertcat.jsp" formid="vwadmin_advertcats" editable="true">
+
+                          <formmap table="t_advertcategories" primarykey="id">
+                             <fieldmap formfield="name" dbfield="name"/>
+                             <fieldmap formfield="description" dbfield="description"/>
+                          </formmap>
+
+                          <transition name="ok" target="list" validation="true">
+                             <condition type="buttonpressed" value="OK"/>
+                             <action type="maintain">
+                                     <formfield formid="vwadmin_advertcats" name="name" dbfield="name"/>
+                                     <formfield formid="vwadmin_advertcats" name="description" dbfield="description"/>
+                             </action>
+                          </transition>
+
+                          <transition name="cancel" target="list" validation="false">
+                             <condition type="buttonpressed" value="Cancel"/>
+                          </transition>
+
+                    </page>
+
+                    <page id="list" editable="false" template="vwadmin_list_advertcats.jsp"/>
+
+          </workflow>
+
+</workflows>

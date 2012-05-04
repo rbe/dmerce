@@ -1,0 +1,29 @@
+DMERCE_LIBFW=1
+export DMERCE_LIBFW
+
+libfw_stat_show_ipf() {
+    title="Firewall: ipf"
+    p "$title" 1
+
+    if [ -x `which ipf` ]; then
+	title="ipf Statistics"
+	p "$title" 1
+	ipf -V | $mypr
+	p "$title" 2
+    else
+	echo "ipf not found" | $mypr
+    fi
+
+    echo
+
+    if [ -x `which ipfstat` ]; then
+	title="ipf Statistics"
+	p "$title" 1
+	ipfstat -io | $mypr
+	p "$title" 2
+    else
+	echo "ipfstat not found" | $mypr
+    fi
+
+    p "$title" 2
+}

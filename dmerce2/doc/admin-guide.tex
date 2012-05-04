@@ -1,0 +1,452 @@
+%%%
+\part{Administrators Guide - HOW-TO Operate dmerce}
+
+%%
+\chapter{Installation und Konfiguration}
+\label{Installation}
+\index{Installation dmerce!Voraussetzungen dmerce!Python, MySQL,
+  Oracle, PostgreSQL}
+
+\newpage
+\section{Voraussetzungen}
+\label{Voraussetzungen}
+
+
+Stand: \date{\today}, dmerce Version \dmercever\\
+
+Da der Einsatz von dmerce ohne Datenbank und Webserver nicht m\"oglich
+ist, m\"ussen folgende Mindestkriterien erf\"ullt werden, um eine
+akzeptable Antwortzeit von dmerce zu erhalten.
+
+Gerade der Einsatz einer Oracle Datenbank erfordert h\"oheren Einsatz
+von Hauptspeicher und h\"oherer Festplattenkapazit\"at.
+
+Setzt man hingegen die nicht so performancelastige Datenbank MySQL
+ein, so sinken die Anforderungen an die Hardware. Somit ist es schon
+m\"oglich, auf kleinerer Hardware kurze Reaktionszeiten zu erreichen.
+
+Die obigen Angaben beziehen sich auf den Fall, dass Datenbank,
+Webserver und die dmerce-Umgebung auf ein und dem selben Server
+agieren.  Somit kann die Austattung der Server variieren, wenn die
+einzelnen Dienste auf mehrere Server verteilt werden. Nicht ratsam ist
+die Einsparung im Bereich der Oracle Datenbank.
+
+Die genauen Voraussetzungen f\"ur Hard- und Software erhalten Sie im
+Kapitel \vref{HardwareVoraussetzungen} und
+\vref{SoftwareVoraussetzungen}
+
+\subsection{Hardware}
+\label{HardwareVoraussetzungen}
+
+Diese Tabellen beschreiben die einzelnen Hardware- und
+Software-Vorraussetzungen der Teile, die von dmerce ben\"otigt werden.
+Generell bleibt zu sagen, dass dmerce auf jedem UNIX-System
+lauff\"ahig ist, dass OpenSource-Tools, Python Version 1.5.2 und eine
+der auffgef\"uhrten Datenbanken unterst\"utzt.
+
+Die hier beschriebenen Hardware- und Software-Plattformen sind im
+Hinblick auf dmerce als stabil lauff\"ahig bekannt.
+
+\medskip
+
+Hardware:
+
+\medskip
+
+\begin{tabular*}{128mm}{p{30mm} p{40mm} p{50mm}}
+\hline
+\wancitableheader{Typ}          & \wancitableheader{Hersteller/Produkt}
+                                & \wancitableheader{URL}\\
+\hline
+CISC-basierte Server            & Intel Pentium, empfohlen III ab 500 MHz  
+                                & http://www.intel.com\\
+                                & AMD empfohlen ab K6 xxx MHz
+                                & http://www.amd.com\\
+\hline
+RISC-basierte Server            & Sun Microsystems, Inc. ab UltraSPARC-II 360 MHz mit Sun Solaris
+                                & http://www.sun.com\\
+                                & IBM Corp. Power-Prozessor mit AIX
+                                & http://www.ibm.com\\
+                                & Hewlett-Packard PA mit HP-UX
+                                & http://www.hp.com\\
+\hline
+Generell                        & Fesplattenplatz ab 50 MByte
+                                & \\
+\hline
+\end{tabular*}
+
+\medskip Die Festplattenkapazit\"at h\"angt von der Anzahl der unter
+dmerce betriebenen Projekte/Webs ab, da bei dem Einsatz des
+Debug-Levels viel in Logfiles geschrieben wird. Deshalb sollte die
+Festplattengr\"osse mit Zunahme an Projekten auch erweitert werden.
+
+\medskip
+
+\subsubsection{Sotware}
+\label{SoftwareVoraussetzungen}
+
+Software:
+
+\medskip
+
+\begin{tabular*}{128mm}{p{20mm} p{25mm} p{20mm} p{55mm}}
+\hline
+\wancitableheader{Typ} & \wancitableheader{Software} & \wancitableheader{Version} & \wancitableheader{URL}\\
+\hline
+Betriebs-system         & Sun Solaris      & 8                    & http://www.sun.com\\
+                        & Linux            &                      & \\
+                        & Debian GNU/Linux & potato/2.2           & http://www.sun.com\\
+                        & FreeBSD          & ab 4.2               & http://www.freebsd.org\\
+\hline
+Interpreter             & Python           & 1.5.2                & http://www.python.org\\
+\hline
+Datenbank               & MySQL            & 3.22.x, 3.23.x       & http://www.mysql.com\\
+                        & PostgreSQL       & 7.0.2                & http://www.postgresql.org\\
+                        & Oracle           & 8i 8.1.7             & http://www.oracle.com\\
+\hline
+Module f\"ur Datenbank  & MySQLdb          & 0.1.1                & http://\\
+                        & PyGreSQL         &                      & http://\\
+                        & DCOracle2        &                      & http://\\
+\hline
+Webserver               & Apache           & 1.3.12               & http://httpd.apache.org\\
+\hline
+Webserver-Plugin        & PyApache         & 4.19                 & http://\\
+\hline
+\end{tabular*}
+
+\medskip
+
+Sie k\"onnen dmerce als Paket von 1Ci bekommen, dass per
+Installationsskript \wancicode{setup.sh} die von Ihnen geforderten
+Komponenten separat unter dem Betriebssystem-Benutzer
+\wancicode{dmerce} vollst\"andig installiert.
+\wancisee{Gettingdmerce}, \wancisee{InstallationKomponenten}
+
+\subsection{Der User \wancicode{dmerce}}
+\label{DerUserdmerce}
+
+Sofern Sie dmerce manuell - also nicht per Installationsskript -
+installiert haben, sollte der User, unter dem dmerce l\"auft, folgende
+Einstellungen im \wancicode{Environment} haben.
+
+\begin{itemize}
+\item \wancicode{export DMERCE\_VER=\dmercever}
+\item \wancicode{export
+    DMERCE\_ROOT=/usr/local/1Ci/dmerce/\$\{DMERCE\_VER\}}
+\end{itemize}
+
+Der Befehl \wancicode{env} liefert folgendes Ergebnis:
+
+\wancicodeblock{dmerce@hosty:\~ \$ env\\
+  DMERCE\_VER=\dmercever\\
+  DMERCE\_ROOT=/usr/local/1Ci/dmerce/\dmercever}
+
+\section{Getting dmerce}
+\label{Gettingdmerce}
+
+Sie k\"onnen dmerce auf verschiendene Arten erhalten. Die
+Voraussetzungen hierf\"ur finden Sie im Kapitel \wancisee{DerUserdmerce}.
+
+\subsubsection{Download}
+
+Gehen Sie zur URL http://dmerce.1ci.de/pDownload
+
+\subsubsection{Concurrent Versions System: CVS}
+
+Developer-Partner von 1Ci k\"onnen per CVS Module und deren Sourcen runterladen
+und diese miteinander austauschen.
+
+Das \wancicode{Environment} muss um Einstellungen f\"ur CVS erweitert werden.
+
+\begin{itemize}
+\item \wancicode{export CVSROOT=:pserver:anoncvs@cvs.1ci.de:/dmerce}
+\end{itemize}
+
+Der Befehl \wancicode{env} liefert folgendes Ergebnis:
+
+\wancicodeblock{dmerce@hosty:\~ \$ env\\
+  CVSROOT=:pserver:anoncvs@cvs.1ci.de:/dmerce\\
+
+  dmerce@hosty: \$ cvs login\\
+  password: anoncvs\\
+  dmerce@hosty: \$ cvs checkout -r \$\{DMERCE\_VER\} dmerce}
+
+\subsubsection{Secure Copy: scp}
+
+Sie k\"onnen sich per SCP die dmerce Binaries auf Ihrem Server laden.
+Geben Sie dazu folgendes Kommando in einer Shell ein:
+
+\wancicodeblock{\$ scp -r scp@dmerce.1ci.de:/dmerce/\$\{DMERCE\_VER\} .}
+
+oder auch\\
+
+\wancicodeblock{\$ scp -r scp@dmerce.1ci.de:/dmerce/stable .}
+
+\begin{itemize}
+\item \wancicode{scp} Aufruf des Programms \wancicode{scp}
+\item \wancicode{-r} Kopiere rekursiv
+\item \wancicode{scp@dmerce.1ci.de:/dmerce/stable} Quelle: User scp auf
+  entferntem Rechner \wancicode{dmerce.1ci.de}, Verzeichnis
+  \wancicode{/dmerce/stable}
+\item \wancicode{.} Ziel: lokales Verzeichnis \wancicode{.} = aktuelles
+  Verzeichnis
+\end{itemize}
+
+\subsection{via CDROM}
+
+Senden Sie eine Postkarte an:
+
+\section{Installation der Komponenten mittels der dmerce-Distribution}
+\label{InstallationKomponenten}
+
+\begin{enumerate}
+\item Legen Sie einen User \wancicode{dmerce} und eine Gruppe \wancicode{dmerce}
+  an, der User \wancicode{dmerce} soll die Standard-Gruppe \wancicode{dmerce}
+  haben
+\item Entpacken Sie die dmerce-Distribution:\\
+  \wancicode{\$ sh dmerce-\dmercever.bin.sh}
+\item Starten Sie das Setup:\\
+  \wancicode{\$ sh setup.sh}
+\end{enumerate}
+
+Wir haben hier die Schritte festgehalten, die zur Installation
+der Server notwendig sind. Detailliertere Beschreibungen von 
+UNIX-Befehlen erhalten Sie im Kapitel \wancisee{UNIX}.
+
+\subsection{SQL-Datenbankserver}
+
+Wir beschreiben hier die Ausf\"uhrung von Skripten, um:
+
+\begin{itemize}
+\item User
+\item Tabellen
+\item Schemata
+\item Rechte
+\end{itemize}
+
+im Datenbankserver anzulegen.
+
+\subsubsection{MySQL}
+
+Gehen Sie in das Verzeichnis \$DMERCE\_ROOT/sql/mysql und laden
+Sie die erforderliche SQL-Datei.\\
+
+\wancicodeblock{mysql@hosty:\~ \$ cd \$DMERCE\_ROOT/sql/mysql\\
+mysql@hosty:\~ \$ cat dmerce\_sys.sql | 
+/path/to/mysql/bin/mysql -u dmerce -p\\
+password: dmerce}
+
+\subsubsection{PostgreSQL}
+\subsubsection{Oracle}
+
+Die Umgebung des Oracle-Users sollte \"ahnliche Werte enthalten:
+
+\wancicodeblock{oracle@hosty:\~ \$ env\\
+ORACLE\_HOME=/opt/oracle/app/oracle/product/8.1.7\\
+ORACLE\_SID=ora0\\
+PATH=/usr/bin:/usr/local/bin:/opt/oracle/app/oracle/product/8.1.7/bin}
+
+Gehen Sie in das Verzeichnis \$DMERCE\_ROOT/sql/oracle und laden
+Sie die erforderliche SQL-Datei.
+
+\wancicodeblock{oracle@hosty:\~ \$ cd \$DMERCE\_ROOT/sql/oracle\\
+oracle@hosty:\~ \$ sqlplus dmerce\_sys/dmerce\\
+SQL$>$ @dmerce\_sys.sql}
+
+\subsection{Die dmerce.cfg}
+
+Die Konfigurationsdatei \wancicode{dmerce.cfg} liegt im
+\$\{DOCUMENT\_ROOT\} des Webservers.\\
+
+Ab dmerce Release 2 wird nur noch die Angabe einer Datenbankverbindung
+zur Systemdatenbank \wancicode{dmerce\_sys} ben\"otigt, da der Rest
+der Informationen in \wancicode{dmerce\_sys} gehalten wird.\\
+
+dmerce Release 2:
+
+\wancicodeblock{{[}q{]}\\
+  Sys = $<$database type$>$:$<$database user$>$@$<$database
+  host$>$:$<$database name$>$}
+
+dmerce Release 1:
+
+\wancicodeblock{{[}q{]}\\
+  s = <SERIAL\_HOST\_NUMBER>\\
+  DOCUMENT\_ROOT = /var/www/domain.tld/www/\\
+  TEMPLATE\_ROOT = /var/www/domain.tld/www/\\
+  \\
+  {[}sam{]}\\
+  failURL = /sub/passwd\_lost.html\\
+  \\
+  {[}login{]}\\
+  failURL = passwd\_error.html\\
+  sendPasswdLoginField = Login\\
+  sendPasswdOKURL = passwd\_send.html\\
+  sendPasswdErrorURL = passwd\_senderr.html\\
+  \\
+  \# General email settings\\
+  {[}email{]}\\
+  from = Muster GmbH $<$info@muster.de$>$\\
+  \\
+  {[}sql{]}\\
+  host = $<$hostname$>$\\
+  database = $<$database name$>$\\
+  user = $<$database user$>$\\
+  passwd = $<$database password$>$\\
+  dbtype = $<$database type$>$}
+
+\section{Integration von dmerce in den Webserver}
+
+Hier wird die Verwendung von dmerce mit den unterschiedlichen
+Webserver beschrieben. Zur Zeit gilt lediglich der Apache als
+zertifizierter Server.
+
+\subsection{Apache}
+
+Generelle Eisntellungen in der \wancicode{httpd.conf}:
+
+\wancicodeblock{\# PyApache\\
+  AddHandler python-cgi-script \.pyc\\
+  AddHandler application/x-python-httpd-cgi \.pyc\\
+  \\
+  \# Alle dmerce Konfigurationsdateien sollen von extern nicht einsehbar sein\\
+  <Files *.cfg>\\
+  deny from all\\
+  </Files>\\
+  \\
+  \# Alle dmerce Templates sollen von extern nicht einsehbar sein\\
+  <Directory templates/>\\
+  deny from all\\
+  </Directory>\\
+}
+
+dmerce Release 1:
+
+\wancicodeblock{\# dmerce 1.2.6\\
+  <Directory /usr/local/1Ci/dmerce/1.2.6>\\
+  Options ExecCGI\\
+  </Directory>\\
+  \\
+  \# server.domain.tld\\
+  Listen 123.123.123.123:80\\
+  NameVirtualHost 123.123.123.123\\
+  <VirtualHost 123.123.123.123>\\
+  ServerName server.domain.tld\\
+  DocumentRoot /var/www/domain.tld/server\\
+  CustomLog /usr/local/apache/logs/server.domain.tld-access\_log combined \\
+  ErrorLog /usr/local/apache/logs/server.domain.tld-error\_log\\
+  SetEnv PYTHONPATH /usr/local/1Ci/dmerce/1.2.6/:\\
+  Alias /bin /usr/local/1Ci/dmerce/1.2.6\\
+  </VirtualHost>\\
+}
+
+dmerce Release 2:
+
+\wancicodeblock{\# dmerce \dmercever\\
+  <Directory /usr/local/1Ci/dmerce/\dmercever>\\
+  Options ExecCGI\\
+  </Directory>\\
+  \\
+  \# server.domain.tld\\
+  Listen 123.123.123.123:80\\
+  NameVirtualHost 123.123.123.123\\
+  <VirtualHost 123.123.123.123>\\
+  ServerName server.domain.tld\\
+  DocumentRoot /var/www/domain.tld/server\\
+  CustomLog /usr/local/apache/logs/server.domain.tld-access\_log combined \\
+  ErrorLog /usr/local/apache/logs/server.domain.tld-error\_log\\
+  SetEnv PYTHONPATH /usr/local/1Ci/dmerce/\dmercever/:\\
+  Alias /1Ci/dmerce /usr/local/1Ci/dmerce/\dmercever/DTL/dmerce.pyc\\
+  Alias /1Ci/ShowError /usr/local/1Ci/dmerce/\dmercever/Core/ShowError.pyc\\
+  </VirtualHost>
+}
+
+\section{Das Filesystem-Layout von dmerce}
+
+Damit dmerce einwandfrei laufen kann, sollten bestimme Parameter bei
+der Auslegung der Filesysteme eingehalten werden.
+
+\subsection{Templates}
+\label{AdminGuideOrganisationTemplates}
+
+\subsubsection{dmerce 1 und 2}
+
+Im \$\{DOCUMENT\_ROOT\} des Webservers muss ein Verzeichnis
+\wancicode{templates} existieren. Alle Templates, die von dmerce
+angesprochen werden sollen, m\"ussen in diesem Verzeichniss liegen.
+Die Templates k\"onnen hierbei in einer beliebigen Verzeichnisstruktur
+organisiert werden.
+
+Bitte achten Sie darauf, dass gen\"ugend Platz f\"ur Ihre Templates in
+dem Filesystem ist, indem die dmerce Templates liegen. Die Verwendung
+von Links, um Templates ggf. auszulagern funktioniert, wird aber nicht
+empfohlen.
+
+\subsection{Logfiles}
+
+dmerce gibt Entwicklern eine Reihe von Informationen \"uber ein
+Logfile. Die Informationen aus den Logfiles helfen, wenn Templates
+nicht korrekt ausgef\"uhrt werden oder Aufrufe nicht korrekt
+formuliert wurden. Dazu z\"ahlen Meldungen wie INFO, WARNING und
+ERROR. \"Uber eine Standard-Fehlerseite gibt dmerce erfahrenen
+Entwicklern meist eine ausreichende Information dar\"uber, was nicht
+geklappt hat. Detailliertere Informationen k\"onnen aus den Logfiles
+gewonnen werden.
+
+Dazu z\"ahlen Informationen aus den Bereichen:
+
+\begin{itemize}
+\item Templates
+\item Datenbankabfragen
+\item Datenbankmanipulation
+\item Trigger
+\item Makros
+\item Funktionsaufrufe
+\item SAM
+\item UXS
+\end{itemize}
+
+\subsubsection{dmerce 1}
+
+dmerce Release 1 logt seine Informationen im Filesystem
+\wancicode{/tmp} Ihres Servers. Alle Informationen aus jeder Website
+zu jedem Zugriff werden hier je nach ihrem Typ in verschiedene Dateien
+aufgeteilt.
+
+Die Dateien:
+
+\begin{itemize}
+\item \wancicode{dmerce-1.2.6a.log} enth\"alt alle Informationen
+  \"uber Templates, Datenbankabfragen, Trigger und Funktionen
+\item \wancicode{dmerce-SAM.log} enth\"alt alle Informationen bezogen
+  auf SAM
+\item \wancicode{dmerce-SMTP.log} enth\"alt alle Informationen bezogen
+  auf das Versenden von Emails
+\end{itemize}
+
+
+Format des Logs:\\
+
+\begin{center}\wancicode{Datum YYYY-MM-DD HH:MM:SS Meldung}\end{center}
+
+\subsubsection{dmerce 2}
+
+Unter dmerce Relase 2 sind die Logfiles im Filesystem
+\wancicode{/var/dmerce/log} organisiert. F\"ur jede Website, das Jahr
+und den Monat werden hier Verzeichnisse angelegt.
+Der Tag im Monat wird als Datei mit der Endung \wancicode{.log} angelegt.\\
+
+
+Beispiel:\\
+
+\begin{center}\wancicode{/var/dmerce/log/www.1ci.de/2001/12/23.log}\end{center}
+
+ist das Logfile f\"ur die dmerce-Website www.1ci.de am 23.12.2001. In
+diesem Logfile werden dann s\"amtliche Informationen aller Sybsysteme
+gehalten.
+
+
+Format des Logs:\\
+
+\begin{center}\wancicode{Timestamp Client/Proxy<-Client (Template Subsystem
+  Log-Level) Meldung}\end{center}

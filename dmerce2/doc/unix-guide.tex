@@ -1,0 +1,67 @@
+\section{UNIX: Eine kleine gucken-nach}
+\label{UNIX}
+\index{UNIX}
+
+Wir beschreiben nun alle Themen und Befehle, die Sie im Laufe einer
+Installation oder dem Betrieb von dmerce grundlegend brauchen.
+Nat\"urlich sei an dieser Stelle ganz klar gesagt, dass dies keine
+vollst\"andige UNIX-Referenz ist und auch nicht jahrelange Erfahrung
+im Umgang mit dem System ersetzen kann.
+
+\subsection{Filesysteme}
+
+\paragraph{Verzeichnisse}
+
+Sie k\"onnen ein Verzeichnis anlegen in dem Sie den Befehl \wancicode{mkdir}
+benutzen:
+
+\wancicodeblock{dmerce@hosty:\~ \$ mkdir test}
+
+\paragraph{Entpacken einer Distribution}
+
+So entpacken Sie eine Distribution:
+
+\wancicodeblock{
+  root@hosty:/ \# cd /usr/local/src\\
+  root@hosty:/usr/local/src \# tar xzf /path/to/your/download/$<$distribution$>$.tar.gz\\
+  root@hosty:/usr/local/src \# cd $<$distribution$>$}
+\subsection{User und Gruppen managen}
+
+\subsubsection{User}
+
+\paragraph{Auf Existenz pr\"ufen}
+
+Sie k\"onnen pr\"ufen, ob ein User existiert:
+
+\wancicodeblock{root@hosty:/ \# id $<$gruppe$>$}
+
+Existiert der User, so bekommen Sie folgende Ausgabe:
+
+\wancicodeblock{uid=1002($<$gruppe$>$) gid=1002($<$gruppe$>$)}
+
+Existiert er nicht, bekommen Sie eine entsprechende Fehlermeldung:
+
+\wancicodeblock{id: invalid user name}
+
+\paragraph{Anlegen} Sie k\"onnen User anlegen ....
+
+\medskip
+
+Sun Solaris: \wancicode{root@hosty:/ \# adduser $<$gruppe$>$}\\
+Linux: \wancicode{root@hosty:/ \# useradd $<$gruppe$>$}\\
+FreeBSD: \wancicode{root@hosty:/ \# pw user add $<$gruppe$>$}
+
+\subsection{Gruppen}
+
+\paragraph{Auf Existenz pr\"ufen} blablabla.....
+
+\wancicodeblock{root@hosty:/ \# grep $<$gruppe$>$ /etc/group\\
+  $<$gruppe$>$::1002:}
+
+\paragraph{Anlegen} blablabla...
+
+\medskip
+
+Sun Solaris: \wancicode{root@hosty:/ \# groupadd $<$gruppe$>$}\\
+Linux: \wancicode{root@hosty:/ \# addgroup $<$gruppe$>$}\\
+FreeBSD: \wancicode{root@hosty:/ \# pw group add $<$gruppe$>$}

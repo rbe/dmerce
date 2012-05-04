@@ -1,0 +1,140 @@
+#!/bin/ksh
+
+#################################################
+#
+# Copyright 2001-2002 1Ci GmbH, http://www.1ci.de
+#
+# $Id: qdsol_inst_openssh,v 1.1 2003/04/19 18:25:38 rb Exp $
+# $Author: rb $
+# $Revision: 1.1 $
+#
+# Install OpenSSH on Sun Solaris 8
+# 
+#################################################
+
+. ${DMERCE_HOME}/lib/libsh
+. ${DMERCE_HOME}/lib/libsolaris
+
+NAME_PRNGD="SMCprngd"
+VER_PRNGD="`sol_getdmercereppkgver prngd`"
+PKG_PRNGD="prngd-${VER_PRNGD}-sol8-sparc-local"
+NAME_OPENSSL="SMCossl"
+VER_OPENSSL="`sol_getdmercereppkgver openssl`"
+PKG_OPENSSL="openssl-${VER_OPENSSL}-sol8-sparc-local"
+NAME_OPENSSH="SMCossh3"
+VER_OPENSSH="`sol_getdmercereppkgver openssh`"
+PKG_OPENSSH="openssh-${VER_OPENSSH}-sol8-sparc-local"
+
+noint() {
+    echo "`date`: CANNOT INTERRUPT THIS PROCESS"
+}
+
+install_prngd() {
+    sol_installpkg ${NAME_PRNGD} ${PKG_PRNGD}
+    if [ x"`sol_checkpkginst ${NAME_PRNGD} ${VER_PRNGD}`" = x"1" ]; then
+	echo "`date`: Postinstall prngd"
+	${CAT} /var/log/syslog /var/adm/messages > /usr/local/etc/prngd/prngd-seed
+	${MKDIR} /var/spool/prngd
+    else
+	echo "`date`: prngd not installed!"
+    fi
+}
+
+install_openssl() {
+    sol_installpkg ${NAME_OPENSSL} ${PKG_OPENSSL}
+    if [ x"`sol_checkpkginst ${NAME_OPENSSL} ${VER_OPENSSL}`" != x"1" ]; then
+	echo "`date`: OpenSSL not installed!"
+    fi
+}
+
+install_openssh() {
+    sol_installpkg ${NAME_OPENSSH} ${PKG_OPENSSH}
+    if [ x"`sol_checkpkginst ${NAME_OPENSSH} ${VER_OPENSSH}`" = x"1" ]; then
+	echo "`date`: Postinstall OpenSSH: generating keys"
+	/usr/local/bin/ssh-keygen -t rsa1 -f /usr/local/etc/ssh_host_key -N ""
+	/usr/local/bin/ssh-keygen -t dsa -f /usr/local/etc/ssh_host_dsa_key -N ""
+	/usr/local/bin/ssh-keygen -t rsa -f /usr/local/etc/ssh_host_rsa_key -N ""
+    else
+	echo "`date`: OpenSSH not installed!"
+    fi
+}
+
+install_etcinitd() {
+    echo "`date`: Creating /etc/init.d startup files"
+    ${CAT} > /etc/init.d/sshd <<EOF
+#!/bin/sh
+
+pid=`/usr/bin/ps -e | /usr/bin/grep sshd | /usr/bin/sed -e 's/^  *//' -e 's/ .*//'`
+case $1 in
+'start')
+        /usr/local/sbin/sshd
+        ;;
+'stop')
+        if [ "${pid}" != "" ]
+        then
+                /usr/bin/kill ${pid}
+        fi
+        ;;
+*)
+        echo "usage: /etc/init.d/sshd {start|stop}"
+        ;;
+esac
+EOF
+    ${CAT} > /etc/init.d/prngd <<EOF
+#!/bin/sh
+
+pid=`/usr/bin/ps -e | /usr/bin/grep prngd | /usr/bin/sed -e 's/^  *//' -e 's/ .*//'`
+case $1 in
+'start')
+        /usr/local/bin/prngd /var/spool/prngd/pool
+        ;;
+'stop')
+        if [ "${pid}" != "" ]
+        then
+                /usr/bin/kill ${pid}
+        fi
+        ;;
+*)
+        echo "usage: /etc/init.d/prngd {start|stop}"
+        ;;
+esac
+EOF
+    echo "`date`: Setting permissions"
+    ${CHOWN} root /etc/init.d/prngd
+    ${CHGRP} sys /etc/init.d/prngd
+    ${CHGRP} 555 /etc/init.d/prngd
+    ${CHOWN} root /etc/init.d/sshd
+    ${CHGRP} sys /etc/init.d/sshd
+    ${CHMOD} 555 /etc/init.d/sshd
+    echo "`date`: Creating links in /etc/rc3.d"
+    ${LN} -s /etc/init.d/prngd /etc/rc3.d/S98prngd 
+    ${LN} -s /etc/init.d/sshd /etc/rc3.d/S98sshd
+}
+
+main() {
+    echo "`date`: ABOUT TO INSTALL THE FOLLOWING PACKAGES:"
+    echo "`date`: ${NAME_PRNGD} ${VER_PRNGD} from ${DMERCE_HOME}/solpkg/${PKG_PRNGD}"
+    echo "`date`: ${NAME_OPENSSL} ${VER_OPENSSL} from ${DMERCE_HOME}/solpkg/${PKG_OPENSSL}"
+    echo "`date`: ${NAME_OPENSSH} ${VER_OPENSSH} from ${DMERCE_HOME}/solpkg/${PKG_OPENSSH}"
+    ok=`/usr/bin/ckyorn`
+    if [ x"${ok}" = "y" -o x"${ok}" = "Y" ]; then
+	install_prngd
+	install_openssl
+	install_openssh
+	install_etcinitd
+    fi
+}
+
+trap 'noint' INT
+copyr
+echo "INSTALL OPENSSH ON SOLARIS 8"
+discover_env
+if [ x"`sol_rev`" = x"580" ]; then
+    main
+else
+    echo "`date`: Solaris 8 OE not installed: `uname -a`"
+    echo
+    exit 255
+fi
+echo
+exit 0

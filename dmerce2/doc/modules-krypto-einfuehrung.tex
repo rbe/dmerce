@@ -1,0 +1,112 @@
+\subsection{Kryptographie? Paranoia?}
+\label{KryptographieParanoia}
+
+\begin{quote}
+  Es gibt eigentlich nur zwei Arten von Kryptographie: die eine h"alt
+  Ihre kleine Schwester davon ab, Ihre Daten zu lesen, w"ahrend die
+  andere selbst einflu"sreichen Regierungen den Zugang zu Ihren Daten
+  verwehrt. [...]
+  
+  Wenn ich von Ihnen verlange, einen Brief zu lesen, den ich in einen
+  Safe gelegt und dann irgendwo in New York versteckt habe,
+  \textit{dann hat das nichts mit Sicherheit zu tun, sondern ist ein
+    einfaches Verstecken.} Wenn ich diesen Brief jedoch in den Safe
+  lege, Ihnen dann die Entwicklungspl"ane des Safes und noch hundert
+  Safes gleicher Bauart mitsamt ihren Kombinationen gebe, so da"s Sie
+  mit Hilfe der weltbesten Safeknacker den Sperrmechanismus ausgiebig
+  studieren k"onnen, aber immer noch nicht in der Lage sind, den Safe
+  zu "offnen und den Brief zu lesen - \textit{dann ist das
+    Sicherheit.} \\
+  \cite{schneier96}, S. xvii
+\end{quote}
+
+Treffender kann man kaum formulieren, worum es bei Kryptographie geht:
+Sicherheit zu gew"ahrleisten, obwohl die beteiligten Mechanismen
+offenliegen und f"ur au"senstehende nachzuvollziehen sind; das einzig
+geheime ist der Schl"ussel und - das ist die Zielsetzung - die
+verschl"usselte Information.
+
+Seit Anfang der neunziger Jahre stellt das Internet seine unbegrenzten
+M\"oglichkeiten zur Verf\"ugung. Dies erm\"oglicht jedermann, in
+bisher unbekanntem Umfang, sich zu informieren, bzw. Information
+auszutauschen. Das zun\"achst explosionsartige Wachstum der sog.
+\textit{New Econonmy} beweist das Potential der weltumspannenden
+Datenkommunikation f\"ur die Gesch\"aftswelt.
+
+Aber die gro"se Hebelwirkung dieser technischen Entwicklung fordert
+auch Mi"sbrauch heraus.  Neben den in den Medien vielbeachteten
+Aktionen von \textit{Hackern} oder \textit{Crackern}, die h\"aufig
+wenig kommerziellen Schaden (au"ser Leistungserschleichungen)
+anrichten und sogar Anla"s bieten, Sicherheitsl\"ucken zu entdecken
+und zu schlie"sen, haben sich Betrug und Wirtschaftsspionage im
+Bereich der elektronischen Kommunikation in beunruhigendem Ma"se
+entwickelt.
+
+Auf dem Gebiet der Wirtschaftsspionage sind nach dem Ende des Kalten
+Krieges auch die Geheimdienste (v.a. des westlichen Auslands) aktiv
+geworden. Diese Beh\"orden stellen durch ihre jahrzehntelange
+Erfahrung mit Geheimhaltungsverfahren eine mehr als ernstzunehmende
+Gr\"o"se im Bereich der gesch\"aftliche Datenkommunikation dar.
+
+Solche Entwicklungen werden dadurch beg\"unstigt, da"s das Internet in
+den ersten Jahrzehnten seines Bestehens kaum sensible Daten zu
+\"ubertragen hatte (die Milit\"ars hatten eigene Kan\"ale !). So kam
+es, da"s bei den damals geschaffenen und z.T. noch heute in Gebrauch
+befindlichen Protokollen wie \texttt{TCP/IP} keine Ma"snahmen in
+Fragen der Sicherheit ergiffen wurden.  Daher wurden im Verlauf der
+Jahre zunehmend Anstrengungen unternommen, Sicherheitsfunktionen zu
+entwickeln. Der Proze"s, diese Funktionen in die vorhandene Familie
+von Protokollen zu integrieren, bzw. bei neuen Protokollen (z.B.
+\texttt{IPv6}) zu ber\"ucksichtigen, dauert noch an.
+
+\subsection{Was k\"onnen Sie tun?}
+
+\begin{quote}
+  \textit{Wenn jemand paranoid ist, bedeutet das nicht, da"s er keine Verfolger hat.} \\
+  \textsc{Amos Oz}
+\end{quote}
+
+\begin{enumerate}
+  
+\item Sowohl das Inter- als auch die verschiedenen Intranets sind
+  alles andere als abh\"orsicher. Gehen Sie im Zweifelsfalle immer
+  davon aus, da"s jemand Ihre Kommunikation verfolgen kann.
+  
+\item Kryptographie hat, wie eingangs schon erw\"ahnt, nichts mit
+  Verstecken zu tun.  Vertrauen Sie Verfahren, die von
+  Kryptographie-Experten eingehend gepr\"uft wurden.  Wenn sich die
+  Schw\"achen des Verfahrens in Grenzen halten, ist es besser, diese
+  Schw\"achen zu kennen, als ein geheimgehaltenes Verfahren zu
+  benutzen.
+  
+\item Gehen Sie davon aus, da"s ein Geheimdienst, der ein Verfahren
+  entwickelt hat und es freiwillig ver\"offentlicht, dieses auch
+  brechen kann.
+  
+\item Seien Sie paranoid. \textit{It's better to be safe than sorry.}
+
+\end{enumerate}
+
+\subsection{Was tut die 1Ci?}
+
+Seit Ende des Jahres 2000 implementiert die 1Ci Verfahren zur
+Verschl\"usselung von Daten zur Erg\"anzung von \texttt{dmerce}.  Zur
+Zeit sind bereits folgende Verschl\"usselungsalgorithmen
+einsatzf\"ahig:
+
+\begin{itemize}
+\item DES
+\item Triple-DES
+\item IDEA
+\item AES
+\item RSA
+\end{itemize}
+
+Im weiteren Verlauf werden weitere Verfahren (z.B. \textit{Signatur})
+implementiert werden.
+
+Das langfristige Ziel ist es, neben den erforderlichen weiteren Algorithmen, eine Entwicklungsumgebung
+f\"ur kryptographische Komplettl\"osungen zur Verf\"ugung zu stellen, so da"s aufwendige Strukturen
+wie \texttt{PKI} (\textit{Public Key Infrastructure}) problemlos und flexibel in Zusammenhang mit 
+Datenbank- und Netztechnologien erstellt werden k\"onnen. Voraussetzung daf\"ur ist nat\"urlich,
+da"s die zust\"andigen Organisationen die entsprechenden Standards verabschieden.

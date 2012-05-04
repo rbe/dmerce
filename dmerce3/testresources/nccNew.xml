@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding="UTF-8"?>
+
+<!DOCTYPE serverconfig [
+  <!ELEMENT serverconfig (servers, service-groups, monitor-groups, redirector-groups)+>
+  
+  <!ELEMENT servers (server)+>
+  <!ELEMENT server (interface, inet-service)+>
+  <!ELEMENT interface EMPTY>
+  <!ELEMENT inet-service (tcp)+>
+  <!ELEMENT tcp EMPTY>
+  
+  <!ELEMENT service-groups (service-group)*>
+  <!ELEMENT service-group (service-group-member)+>
+  <!ELEMENT service-group-member EMPTY>
+  
+  <!ELEMENT monitor-groups (monitor)+>
+  <!ELEMENT monitor (Service-group, Server)+>
+  <!ELEMENT Service-group EMPTY>
+  <!ELEMENT Server EMPTY>
+
+  <!ELEMENT redirector-groups (redirector)+>
+  <!ELEMENT redirector (ip-from, ip-to)+>
+  <!ELEMENT ip-from EMPTY>
+  <!ELEMENT ip-to EMPTY>
+
+  <!ATTLIST server
+       name ID #REQUIRED
+  >
+  <!ATTLIST interface
+       name CDATA #REQUIRED
+       ip-address NMTOKEN #IMPLIED
+  >
+  <!ATTLIST inet-service
+       type CDATA #REQUIRED
+       ip NMTOKEN #IMPLIED
+  >
+  <!ATTLIST tcp
+       name CDATA #REQUIRED
+       value CDATA #IMPLIED
+  >       
+  <!ATTLIST service-group
+       name CDATA #REQUIRED
+  >
+  <!ATTLIST service-group-member
+       name CDATA #REQUIRED
+  >
+  <!ATTLIST Service-group
+       name CDATA #REQUIRED
+  >
+  <!ATTLIST Server
+       name CDATA #REQUIRED
+  >
+  <!ATTLIST redirector
+       name ID #REQUIRED
+  >
+  <!ATTLIST ip-from
+       address NMTOKEN #REQUIRED
+       port NMTOKEN #REQUIRED
+  >
+  <!ATTLIST ip-to
+       address NMTOKEN #REQUIRED
+       port NMTOKEN #REQUIRED
+  >
+]>
+
+
+<serverconfig>
+
+  <servers>
+
+    <server name="www1-1">
+		<interface name="eri0" ip-address="10.48.35.3"/>
+		<inet-service type="http" ip="">
+			<tcp name="ports" value="80"/>
+			<tcp name="send" value="GET /\r\n\r\n"/>
+			<tcp name="expectContent" value="html"/>
+			<tcp name="noExpectContent" value="fehler"/>
+		</inet-service>
+    </server>
+
+    <server name="www1-2">
+		<interface name="eri0" ip-address="10.48.35.3"/>
+		<inet-service type="http" ip="">
+			<tcp name="ports" value="80"/>
+			<tcp name="send" value="GET /\r\n\r\n"/>
+			<tcp name="expectContent" value="html"/>
+			<tcp name="noExpectContent" value="fehler"/>
+		</inet-service>
+    </server>
+
+    <server name="www2">
+		<interface name="eri0" ip-address="10.48.35.3"/>
+		<inet-service type="http" ip="">
+			<tcp name="ports" value="80"/>
+			<tcp name="send" value="GET /\r\n\r\n"/>
+			<tcp name="expectContent" value="html"/>
+			<tcp name="noExpectContent" value="fehler"/>
+		</inet-service>
+    </server>
+    
+  </servers>
+
+  <service-groups>
+    
+    <service-group name="www1">
+		<service-group-member name="www1-1"/>
+		<service-group-member name="www1-2"/>
+    </service-group>
+
+  </service-groups>
+  
+  <monitor-groups>
+
+    <monitor>
+		<Service-group name="www1"/>
+		<Server name="www2"/>
+    </monitor>
+
+  </monitor-groups>
+  
+  <redirector-groups>
+
+    <redirector name="rdr1">
+		<ip-from address="10.48.35.3" port="8085"/>
+		<ip-to address="212.128.150.71" port="80"/>
+    </redirector>
+
+  </redirector-groups>
+
+</serverconfig>

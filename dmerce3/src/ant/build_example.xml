@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<project name="FooProject" default="main" basedir=".">
+
+	<!--
+		  Der folgende Classpath wird für die Ausführung der Ant-Tasks benötigt.
+		  Auf diesen Classpath wird dann in dem nachfolgenden Taskdef verwiesen.
+	-->
+	<path id="runtime-classpath">
+		<pathelement path="../../lib/distrib/dmerce-ant.jar"/>
+		<pathelement path="../../lib/shared/jdom.jar"/>
+	</path>
+  
+	<!--
+		Taskdefs registrieren nur für diese Ant-Sitzung benutzerdefinierte Tasks.
+		Unsere beiden Klassen werden hier also unter den Namen "datasource" und "securityconfig" angemeldet.
+	-->
+	<taskdef name="datasource" classname="com.wanci.dmerce.ant.DatasourceTask"
+		classpathref="runtime-classpath" />
+	<taskdef name="securityconfig" classname="com.wanci.dmerce.ant.SecurityConfigTask"
+		classpathref="runtime-classpath" />
+
+	<target name="main">
+		<!--
+			Aufruf des datasource-Tasks:
+			Im Attribut datasource wird die Zieldatei der Datasource-Einstellung angegeben.
+			Das Attribut properties verweist auf die zu verwendende properties.xml.
+			Die im Attribut appname angegebene Zeichenkette wird verwendet, um darauf basierend Bezeichner in der
+			Datasource-Konfiguration zu erzeugen. Hier sollte daher der Name der Anwendung verwendet werden.
+			
+			Falls die unter dem Attribut datasource angegebene Datei schon vorhanden ist, wird sie überschrieben.
+			Es bietet sich also an, direkt im JBoss-Verzeichnis zu arbeiten.
+		-->
+		<datasource appname="foo" datasource="<Jboss-server-default-deploy>/foo-ds.xml"
+			properties="../../src/distrib/etc/applicationproperties.xml"/>
+			
+			
+		<!--
+			Aufruf des securityconfig-Tasks:
+			Das Attribut web verweist auf die zu verwendende web.xml. Die hier spezifizierte web.xml wird durch
+			diesen Task direkt modifiziert, d.h. geben Sie hier nie eine Datei an, die als Vorlage dient.
+			Das Attribut security verweist auf die security.xml, aus der die Security-Informationen bezogen werden sollen.
+			Im Attribut loginconfig wird die von JBoss verwendete Security-Konfiguration login-config.xml (in server/default/conf)
+			spezifiziert. Diese Datei wird direkt durch diesen Task modifiziert. Es bietet sich an, hier direkt im JBoss-Verzeichnis
+			zu arbeiten.
+			Das Attribut jbossweb legt fest, wo die Datei jboss-web.xml erzeugt werden soll. Hier muss der absolute oder relative Pfad 
+			inkl. Dateinamen angegeben werden.
+			Auch hier wird in appname der Name der Anwendung erwartet, um ihn zur Erzeugung der Bezeichner für Datasources und
+			JAAS-Konfigurationen zu erzeugen.
+	    -->
+		<securityconfig appname="foo" web="<appl/xxx/etc>/web.xml" security="<appl/xxx/etc>/security.xml"
+			loginconfig="<Jboss/server/default/conf/login-config.xml" jbossweb="<appl/xxx/etc>/jboss-web.xml"/>
+			
+		<!--
+			Hinweis: appname in datasource und securityconfig sollten übereinstimmen!
+		-->
+	</target>
+
+</project>

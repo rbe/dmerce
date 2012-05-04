@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding="UTF-8"?>
+
+<!DOCTYPE properties [
+  <!ELEMENT properties (property)+>
+  <!ELEMENT property EMPTY>
+  
+  <!ATTLIST property
+  		name CDATA #REQUIRED
+  		value CDATA #REQUIRED
+  >
+]>
+
+<properties>
+
+	<!-- Database connection for webservice: Oracle -->
+	<property name="defaultDS.jdbc.driver" value="oracle.jdbc.OracleDriver"/>
+	<property name="defaultDS.jdbc.url"
+		value="jdbc:oracle:thin:dmerce/dmerce@localhost:1521:dmerce"/>
+	<property name="defaultDS.jdbc.username" value="dmerce"/>
+	<property name="defaultDS.jdbc.password" value="dmerce"/>
+	
+	<!-- Database connection for webservice: HypersonicSQL
+	<property name="defaultDS.jdbc.driver" value="org.hsqldb.jdbcDriver"/>
+	<property name="defaultDS.jdbc.url" value="jdbc:hsqldb:hsql://localhost:1702"/>
+	<property name="defaultDS.jdbc.username" value="sa"/>
+	<property name="defaultDS.jdbc.password" value=""/>
+	-->
+	
+	<!-- Database connection for webservice: MySQL
+	<property name="defaultDS.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+	<property name="defaultDS.jdbc.url" value="jdbc:mysql://localhost/dmerce"/>
+	<property name="defaultDS.jdbc.username" value="dmerce"/>
+	<property name="defaultDS.jdbc.password" value="dmerce"/>
+	-->
+
+	<!-- Database connection for webservice: PostgreSQL
+	<property name="defaultDS.jdbc.driver" value="org.postgresql.Driver"/>
+	<property name="defaultDS.jdbc.url"
+		value="jdbc://postgresql://localhost:5432/dmerce"/>
+	<property name="defaultDS.jdbc.username" value="dmerce"/>
+	<property name="defaultDS.jdbc.password" value="dmerce"/>
+	-->
+	
+	<property name="debug" value="false"/>
+
+</properties>

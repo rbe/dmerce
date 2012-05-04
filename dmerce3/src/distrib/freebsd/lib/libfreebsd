@@ -1,0 +1,24 @@
+libfreebsd_startscsidev() {
+    /sbin/camcontrol rescan $1
+    /sbin/camcontrol start $2
+    if [ $? != 0 ]; then
+	e "COULD NOT START SCSI DEVICE '$2'"
+	exit 1
+    fi
+}
+
+libfreebsd_stopscsidev() {
+    /sbin/camcontrol stop $1
+    if [ $? != 0 ]; then
+	e "COULD NOT STOP SCSI DEVICE '$1'"
+	exit 1
+    fi
+}
+
+libfreebsd_rescanscsibus() {
+    /sbin/camcontrol rescan $1
+    if [ $? != 0 ]; then
+	e "COULD NOT RESCAN SCSI BUS '$1'"
+	exit 1
+    fi
+}

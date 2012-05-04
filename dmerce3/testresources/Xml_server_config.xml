@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding="UTF-8"?>
+
+<!DOCTYPE serverinfo [
+  <!ELEMENT serverinfo (allServer)>
+
+  <!ELEMENT allServer (server)+>
+  <!ELEMENT server (ip)>
+  <!ELEMENT ip (#PCDATA)>
+  <!ATTLIST server
+       name ID #REQUIRED
+  >
+  <!ATTLIST ip
+       addr CDATA #REQUIRED
+       gateway CDATA #REQUIRED
+  >
+]>
+
+
+
+<serverinfo>
+
+  <allServer>
+
+    <server name="gandalf">
+        <ip addr="10.48.35.3" gateway="10.48.35.1">
+	</ip>
+    </server>
+
+    <server name="starship">
+        <ip addr="10.48.35.4" gateway="10.48.35.1">
+	</ip>
+    </server>
+
+  </allServer>
+
+</serverinfo>

@@ -1,0 +1,71 @@
+#!/bin/sh
+#
+# dmerce(R)
+#
+# ATTENTION:
+# Values will be changed when running reconfigure
+# or setup!
+# Please adjust parameters in etc/system.xml
+#
+START_JBOSS=YES
+START_APACHE=NO
+START_MYSQL=NO
+START_ORACLE=YES
+START_PHPMYADMIN=NO
+START_DMERCEDOC=NO
+START_ECLIPSE=NO
+[ "$DMERCE_BASE" = "" ] && DMERCE_BASE=/opt/dmerce
+ORACLE_SID=dmerce
+ORACLE_BASE=/opt/dmerce/product/oracle
+ORACLE_HOME=$ORACLE_BASE/9.2
+#
+# ATTENTION:
+# These values will not be changed as they should never
+# change!
+#
+DMERCE_PRODUCT=$DMERCE_BASE/product/dmerce
+DMERCE_SYS=$DMERCE_PRODUCT/sys
+DMERCE_SQL=$DMERCE_BASE/sql
+DMERCE_SQL_MYSQL=$DMERCE_SQL/mysql
+DMERCE_SQL_ORACLE=$DMERCE_SQL/oracle
+ORACLE_LIB=$ORACLE_HOME/lib
+ORACLE_ADMIN=$ORACLE_HOME/admin
+ORACLE_DATA=$ORACLE_HOME/oradata
+JAVA_HOME=$DMERCE_BASE/product/j2sdk
+ANT_HOME=$DMERCE_BASE/product/ant
+ANT_CALL="sh $ANT_HOME/bin/ant -f $DMERCE_SYS/ant/build.xml"
+JWSDP_HOME=$DMERCE_BASE/product/jwsdp
+JBOSS_HOME=$DMERCE_BASE/product/jboss
+ECLIPSE_HOME=$DMERCE_BASE/product/eclipse
+ECLIPSE_WORKSPACE=$DMERCE_BASE/eclipse-workspace
+ECLIPSE_CALL="sh $ECLIPSE_HOME/eclipse -data $ECLIPSE_WORKSPACE"
+XAMPP_BASE=$DMERCE_BASE/product/xampp
+PATH=$DMERCE_BASE/bin:$JAVA_HOME/bin:$PATH
+#
+# Export
+#
+export START_JBOSS
+export START_APACHE
+export START_MYSQL
+export START_ORACLE
+export START_PHPMYADMIN
+export START_DMERCEDOC
+export START_ECLIPSE
+export DMERCE_BASE
+export DMERCE_PRODUCT
+export DMERCE_SQL
+export DMERCE_SQL_MYSQL
+export DMERCE_SQL_ORACLE
+export ORACLE_SID
+export ORACLE_BASE
+export ORACLE_HOME
+export ORACLE_LIB
+export JAVA_HOME
+export ANT_HOME
+export ANT_CALL
+export JWSDP_HOME
+export JBOSS_HOME
+export ECLIPSE_HOME
+export ECLIPSE_WORKSPACE
+export XAMPP_BASE
+export PATH

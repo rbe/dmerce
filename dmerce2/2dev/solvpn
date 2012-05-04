@@ -1,0 +1,19 @@
+#!/bin/sh
+
+. ${DMERCE_HOME}/lib/libdmerce
+
+ipsec_ifconfig() {
+    ndd -set /dev/ip ip_forwarding 0
+    ndd -set /dev/ip ip_strict_dst_multihoming 0
+    ipseckey -f /etc/inet/ipseckeys
+    ifconfig ip.tun0 plumb \
+	$system1taddr $system2taddr tsrc $system1addr tdst $system2addr \
+	encr_algs des encr_auth_algs md5 \
+	up
+    ndd -set /dev/ip dmfe0:ip_forwarding 1
+    ndd -set /dev/ip ip.tun0:ip_forwarding 1
+    ifconfig dmfe0 private
+}
+
+copyr
+echo "SUN SOLARIS VPN SETUP"

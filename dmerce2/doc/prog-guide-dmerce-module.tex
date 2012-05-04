@@ -1,0 +1,126 @@
+%%
+\chapter{dmerce Module}
+
+\newpage
+
+\section{Definition und Aufbau}
+
+Ein dmerce Modul ist derzeit ein in der Programmiersprache Python
+geschriebenes Paket, dass Klassen und Methoden enth\"ahlt.
+
+Alle dmerce Module stammen von der Klasse \wancicode{Class} aus dem
+Paket \wancicode{DMS.MBase} ab. \"Uber sogenannte \wancicode{Keywords}
+wird der Modulklasse eine Reihe an Instanzen mitgegeben, die alle
+Informationen \"uber das dmerce System zur Laufzeit eines Templates
+enthalten.  Sie werden in der Tochterklasse (Modulklasse) dann als
+Klassenvariablen zug\"anglich gemacht.
+
+\subsection{Datenstrukturen und Instanzen}
+\label{dmerceModulDatenstrukturenInstanzen}
+
+\begin{itemize}
+\item \wancicode{self.\_debug} Ist Debugging eingeschaltet?
+  (Integer; 0=nein oder 1=ja)
+\item \wancicode{self.\_log} Instanz von Log, loggt in aktuelles Logfile %(\wancisee{Log})
+\item \wancicode{self.\_cgi} Instanz von DMS.HTTP.CGI, gew\"ahrt
+  Zugriff auf private dmerce Variablen \wancicode{(var)} sowie
+  Formular-Variablen \wancicode{(form)}
+\item \wancicode{self.\_sqlSys} Instanz einer Datenbankverbindung zur
+  Systemdatenbank
+\item \wancicode{self.\_sqlData} Instanz einer Datenbankverbindung zur
+  Datenbank, die die Daten h\"alt
+\item \wancicode{self.\_prjCfg} Konfigurationsdaten aus der
+  Systemdatenbank; Dictionary
+\item \wancicode{self.\_sam} Instanz von Secure Area Management
+  \wancisee{SAM}
+\item \wancicode{self.\_uxs} Instanz von Unified Access System
+  \wancisee{UXS}
+\item \wancicode{self.\_uxsi} Unified Access System Identification
+  \wancisee{UXSI}; String (UserRechte.Gruppen)
+\end{itemize}
+
+\paragraph{Allgemein}
+
+Jede Klasse nimmt per Konstruktor die Keywords \wancicode{kw} auf und
+leitet sie an den Konstruktor der Mutterklasse
+\wancicode{DMS.MBase.Class} weiter. Alle Methoden, die als Funktion
+oder als Trigger aufgerufen werden, m\"ussen einen positiven
+Return-Wert liefern. Wird dieser nicht geliefert, so gilt die Funktion
+oder der Trigger als gescheitert. dmerce verh\"alt sich entsprechend
+und gibt eine Fehlermeldung. Die Return-Werte werden bei einer
+Funktion dort angezeigt, wo sich das Makro des Templaters im
+HTML-Quelltext befindet. dmerce wendet auf jeden Return-Wert vor der
+Darstellung/Ausgabe im Template die Funktion \wancicode{str()} an, um
+eine korrekte Darstellung (beim ersetzen der regul\"aren Ausdr\"ucke)
+zu gew\"ahrleisten.
+
+(beschreibung paket, modul, funktion)
+
+\paragraph{Funktionen}
+
+Bei Funktionen k\"onnen der entsprechenden Methode beliebige Parameter
+definiert werden, die dann per \wancicode{(exec)}-Makro \"ubergeben
+werden k\"onnen. Ihr stehen alle dmerce Datenstrukturen
+\wancisee{dmerceModulDatenstrukturenInstanzen} zur Verf\"ugung.Es
+empfiehlt sich f\"ur einen reibungslosen Ablauf, dass alle Parameter
+mit vordefinierten Werten eingestellt sind. Somit vermeidet man zu
+viele Fehlaufrufe, die vielleicht keine sein sollen.  Eine Funktion
+kann besser per Return-Wert die Nachricht zur\"uckgeben, dass nicht
+alle Parameter korrekt waren, als dass eine h\"assliche Fehlermeldung
+angezeigt wird. Desweiteren empfiehlt sich ein Standard-R\"uckgabewert
+f\"ur den Fall, dass Parameter nicht (korrekt) \"ubergeben wurden.
+
+\paragraph{Trigger}
+
+Ein Trigger hat keine direkten Parameter wie eine Funktion. Ihm stehen
+alle dmerce Datenstrukturen
+\wancisee{dmerceModulDatenstrukturenInstanzen} zur Verf\"ugung.
+
+\section{Beispiele}
+
+\subsection{Datei: meinModul.py}
+
+Das Paket \wancicode{meinModul} enth\"alt folgenden Python-Code:
+
+\begin{verbatim}
+import DMS.MBase
+
+class Test(DMS.MBase.Class):
+
+    def __init__(self, kw):
+        DMS.MBase.Class.__init__(self, kw)
+
+    def FunktionEins(self, was):
+        return 'Hier ist etwas:', str(was)
+
+    def FunktionZwei(self, was):
+        return 'Hier ist etwas mal 5 multipliziert:',
+               was * 5
+
+    def TriggerEins(self):
+
+    def TriggerZwei(self):
+
+\end{verbatim}
+
+\paragraph{Aufrufe als \wancicode{(exec)}-Funktion} k\"onnen z. B. dann so
+aus sehen:
+
+\begin{itemize}
+\item \wancicode{(exec meinModul.Test.FunktionEins was='boah, ey')}
+  wird im Template zu Hier ist etwas: boah, ey
+\item \wancicode{(exec meinModul.Test.FunktionEins was="und noch
+    einer\")} wird im Template zu Hier ist etwas: und noch einer
+\item \wancicode{(exec meinModul.Test.FunktionEins was=0190123456)}
+  wird im Template zu Hier ist etwas: 0190123456
+\end{itemize}
+
+\begin{itemize}
+\item \wancicode{(exec meinModul.Test.FunktionEins was='boah, ey')}
+  wird im Template zu Hier ist etwas mal 5 multipliziert: boah,
+  eyboah, eyboah, eyboah, eyboah, ey
+\item \wancicode{(exec meinModul.Test.FunktionEins was=1.5)} wird im
+  Template zu Hier ist etwas mal 5 multipliziert: 7.5
+\item \wancicode{(exec meinModul.Test.FunktionEins was=5)} wird im
+  Template zu Hier ist etwas mal 5 multipliziert: 25
+\end{itemize}

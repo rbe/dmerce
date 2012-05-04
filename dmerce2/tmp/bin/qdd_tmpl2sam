@@ -1,0 +1,27 @@
+#!/bin/sh
+
+. ${DMERCE_HOME}/lib/libsh
+. ${DMERCE_HOME}/lib/libdmerce
+
+usage() {
+    echo "ERROR: wrong arguments!
+
+usage: $0 [arguments]
+
+arguments ::=
+              fqhn      - Fully qualified host name
+              templates - Directory of templates
+
+"
+}
+
+libdmerce_copyr
+eval $*
+if [ $# -lt 2 ]; then
+	usage
+	exit
+fi
+echo "`date`: Creating SQL statements"
+libdmerce_tmpl2sam ${fqhn} ${templates} > tmpl2sam.${fqhn}.sql
+echo "`date`: Output written to tmpl2sam.${fqhn}.sql"
+echo

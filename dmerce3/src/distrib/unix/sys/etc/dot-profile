@@ -1,0 +1,7 @@
+#!/bin/sh
+
+HOST=`uname -n`
+PS1='$LOGNAME@$HOST:$PWD ! $ '
+export PS1
+
+. ./etc/dmercerc

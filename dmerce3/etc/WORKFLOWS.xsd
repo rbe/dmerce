@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+    Version 2.1
+-->
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.1ci.de"
+            xmlns="http://www.1ci.de"
+            elementFormDefault="qualified">
+
+    <xsd:element name="workflows">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="workflow" minOccurs="1" maxOccurs="unbounded" type="WORKFLOW"/>
+            </xsd:sequence>
+            <xsd:attribute name="version" type="xsd:float" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:complexType name="WORKFLOW">
+        <xsd:sequence>
+            <xsd:element name="page" minOccurs="1" maxOccurs="unbounded" type="PAGE"/>
+        </xsd:sequence>
+        <xsd:attribute name="id" type="xsd:string"/>
+    </xsd:complexType>
+    
+    <xsd:complexType name="PAGE">
+        <xsd:sequence>
+            <xsd:element name="formmap" minOccurs="0" maxOccurs="1" type="FORMMAP"/>
+            <xsd:element name="transition" minOccurs="0" maxOccurs="unbounded" type="TRANSITION"/>
+        </xsd:sequence>
+        <xsd:attribute name="id" type="xsd:string" use="required"/>
+        <xsd:attribute name="template" type="xsd:string" use="required"/>
+        <xsd:attribute name="formid" type="xsd:string"/>
+        <xsd:attribute name="editable" type="xsd:boolean"/>
+    </xsd:complexType>
+    
+    <xsd:complexType name="PARAMETERS">
+        <xsd:sequence>
+            <xsd:element name="parameter" minOccurs="1" maxOccurs="unbounded" type="PARAMETER"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="TRANSITION">
+        <xsd:sequence>
+            <xsd:element name="condition" minOccurs="0" maxOccurs="1" type="CONDITION"/>
+            <xsd:element name="action" minOccurs="0" maxOccurs="1" type="ACTION"/>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+        <xsd:attribute name="url" type="xsd:string"/>
+        <xsd:attribute name="target" type="xsd:string"/>
+        <xsd:attribute name="validation" type="xsd:boolean" use="optional" default="true"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="CONDITION">
+        <xsd:sequence>
+            <xsd:element name="parameter" minOccurs="0" maxOccurs="unbounded" type="PARAMETER"/>
+            <xsd:element name="formfield" minOccurs="0" maxOccurs="unbounded" type="FORMFIELD"/>
+        </xsd:sequence>
+        <xsd:attribute name="type" type="xsd:string"/>
+        <xsd:attribute name="javaclass" type="xsd:string"/>
+        <xsd:attribute name="value" type="xsd:string"/>
+    </xsd:complexType>
+        
+    <xsd:complexType name="ACTION">
+        <xsd:sequence>
+            <xsd:element name="parameter" minOccurs="0" maxOccurs="unbounded" type="PARAMETER"/>
+            <xsd:element name="formfield" minOccurs="0" maxOccurs="unbounded" type="FORMFIELD"/>
+        </xsd:sequence>
+        <xsd:attribute name="type" type="xsd:string"/>
+        <xsd:attribute name="javaclass" type="xsd:string"/>
+    </xsd:complexType>
+        
+    <xsd:complexType name="FORMMAP">
+        <xsd:sequence>
+            <xsd:element name="fieldmap" minOccurs="1" maxOccurs="unbounded" type="FIELDMAP"/>
+        </xsd:sequence>
+        <xsd:attribute name="table" type="xsd:string" use="required"/>
+        <xsd:attribute name="primarykey" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="FIELDMAP">
+        <xsd:attribute name="formfield" type="xsd:string" use="required"/>
+        <xsd:attribute name="dbfield" type="xsd:string" use="required"/>
+        <xsd:attribute name="default" type="xsd:string"/>
+        <xsd:attribute name="file" type="xsd:boolean"/>
+    </xsd:complexType>
+        
+    <xsd:complexType name="FORMFIELD">
+        <xsd:attribute name="pageid" type="xsd:string"/>
+        <xsd:attribute name="formid" type="xsd:string" use="required"/>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="PARAMETER">
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+        <xsd:attribute name="value" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+</xsd:schema>

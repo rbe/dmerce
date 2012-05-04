@@ -1,0 +1,98 @@
+td,tr,table {
+	color : #000000;
+	font-size : 12px;
+	font-family : Tahoma,Verdana,Arial;
+}
+
+a {
+	color : #000000;
+	text-decoration : none;
+
+}
+
+a:hover {
+	color : #FF8820;
+	text-decoration : none;
+}
+
+input {
+	color : #000000;
+	font-size : 12px;
+	font-family : Tahoma,Verdana,Arial;
+	font-weight: bold;
+}
+
+.titlew {
+	color : #FFFFFF;
+	margin-top : 0px;
+	padding-bottom : 0px;
+	margin-bottom : 0px;
+	margin-left : 15px;
+	margin-right : 10px;
+	font-size : 12px;
+	font-family : Tahoma,Verdana,Arial;
+	font-weight: bold;
+}
+.titleb {
+	color : #000000;
+	margin-top : 0px;
+	padding-bottom : 0px;
+	margin-bottom : 0px;
+	margin-left : 25px;
+	margin-right : 10px;
+	font-size : 12px;
+	font-family : Tahoma,Verdana,Arial;
+	font-weight: bold;
+}
+
+.right {
+	color : #003C5E;
+	margin-top : 5px;
+	padding-bottom : 10px;
+	margin-bottom : 0px;
+	margin-left : 10px;
+	margin-right : 10px;
+	font-size : 11px;
+	font-family : Tahoma,Verdana,Arial;
+	font-weight: bold;
+}
+.right b {
+	color : #EF6D00;
+}
+.right a {
+	color : #003C5E;
+}
+.right a:hover {
+	color : #000000;
+}
+.left {
+	color : #FFFFFF;
+	margin-top : 0px;
+	padding-bottom : 10px;
+	margin-bottom : 0px;
+	margin-left : 10px;
+	margin-right : 10px;
+	font-size : 11px;
+	font-family : Tahoma,Verdana,Arial;
+	font-weight: bold;
+}
+.left a {
+	color : #FFFFFF;
+}
+.left a:hover {
+	color : #000000;
+}
+
+.menu {
+	color : #9A9A9A;
+	font-size : 12px;
+	font-family : Tahoma,Verdana,Arial;
+	font-weight: bold;
+}
+.menu a {
+	color : #9A9A9A;
+	text-decoration: none;
+}
+.menu a:hover {
+	color : #294A7B;
+}

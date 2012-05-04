@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="help" name="dmerce Application Targets">
+	
+	<property environment="env"/>
+	<import file="${env.DMERCE_BASE}/etc/applications.xml"/>
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+	
+	<target name="help"/>
+
+    <!--
+    
+    	Targets for managing your application
+    	
+		Create a new application
+		Reconfigure webservice of application
+    	Create and deploy web archive (target deploy-war)
+    	Undeploy web archive (move from application server to backup)
+    	
+    -->
+
+	<!-- Create new application -->
+    <target name="create-new-application" depends="check-application-configuration">
+    	<echo message="Creating new application '${app.name}'"/>
+    	<mkdir dir="${app.dir}"/>
+    	<mkdir dir="${app.dir}/etc"/>
+    	<mkdir dir="${app.dir}/lib"/>
+    	<mkdir dir="${app.dir}/sql"/>
+    	<mkdir dir="${app.dir}/src"/>
+    	<mkdir dir="${app.dir}/web"/>
+    	<copy file="${dmerce.sys.templates}/forms.xml"
+    		todir="${app.dir}/etc" overwrite="false"/>
+    	<copy file="${dmerce.sys.templates}/workflows.xml"
+    		todir="${app.dir}/etc" overwrite="false"/>
+    	<copy file="${dmerce.sys.templates}/security.xml"
+    		todir="${app.dir}/etc" overwrite="false"/>
+    	<copy file="${dmerce.sys.templates}/jboss-web.xml"
+    		tofile="${app.dir}/etc/jboss-web.xml.example" overwrite="false"/>
+    	<copy file="${dmerce.sys.templates}/web.xml"
+    		todir="${app.dir}/etc" overwrite="false"/>
+    	<copy file="${dmerce.sys.templates}/init.jsp"
+    		todir="${app.dir}/web" overwrite="false"/>
+    	<copy file="${dmerce.sys.templates}/error.jsp"
+    		todir="${app.dir}/web" overwrite="false"/>
+    	<copy file="${dmerce.sys.templates}/errorstyle.css"
+    		todir="${app.dir}/web" overwrite="false"/>
+    	<mkdir dir="${fileupload.path}"/>
+    	<!-- Create webservice if application is configured -->
+    	<if>
+    		<equals arg1="${isconfigured}" arg2="true"/>
+    		<then>
+		    	<copy file="${dmercews.war}"
+    				tofile="${appws.war}" overwrite="false"/>
+    			<antcall target="reconfigure-webservice"/>
+    		</then>    			
+    	</if>
+    </target>
+    
+	<!-- Check if application is configured -->
+    <target name="check-application-configuration">
+    	<condition property="isconfigured">
+    		<isset property="${app.name}.endpointaddress"/>
+    	</condition>
+    	<!--
+    	<fail message="Application is not properly configured (see applicationproperties.xml)."
+    		unless="isconfigured"/>
+    	-->
+    	<if>
+    		<equals arg1="${isconfigured}" arg2="true"/>
+    		<then>
+    			<echo message="Using application configuration"/>
+		    	<propertycopy name="endpointaddress"
+		    		from="${app.name}.endpointaddress"
+    				silent="true"/>
+		    	<propertycopy name="fileupload.path"
+    				from="${app.name}.fileupload.path"
+		    		silent="true"/>
+		    	<propertycopy
+    				name="fileupload.columnsuffix.originalfile"
+		    		from="${app.name}.fileupload.columnsuffix.originalfile"
+    				silent="true"/>
+		    	<propertycopy
+    				name="fileupload.columnsuffix.serverfile"
+		    		from="${app.name}.fileupload.columnsuffix.serverfile"
+    				silent="true"/>
+		    	<propertycopy name="jdbc.driver"
+		    		from="${app.name}.jdbc.driver"
+    				silent="true"/>
+		    	<propertycopy name="jdbc.url"
+		    		from="${app.name}.jdbc.url"
+    				silent="true"/>
+		    	<propertycopy name="jdbc.username"
+		    		from="${app.name}.jdbc.username"
+    				silent="true"/>
+		    	<propertycopy name="jdbc.password"
+		    		from="${app.name}.jdbc.password"
+    				silent="true"/>
+		    	<propertycopy name="debug"
+		    		from="${app.name}.debug"
+    				silent="true"/>    			
+    		</then>
+    		<else>
+    			<echo message="Using default configuration. See applicationconfiguration.xml."/>
+		    	<propertycopy name="endpointaddress"
+		    		from="dmerce.endpointaddress"
+    				silent="true"/>
+		    	<propertycopy name="fileupload.path"
+    				from="dmerce.fileupload.path"
+		    		silent="true"/>
+		    	<propertycopy
+    				name="fileupload.columnsuffix.originalfile"
+		    		from="dmerce.fileupload.columnsuffix.originalfile"
+    				silent="true"/>
+		    	<propertycopy
+    				name="fileupload.columnsuffix.serverfile"
+		    		from="dmerce.fileupload.columnsuffix.serverfile"
+    				silent="true"/>
+		    	<propertycopy name="jdbc.driver"
+		    		from="dmerce.jdbc.driver"
+    				silent="true"/>
+		    	<propertycopy name="jdbc.url"
+		    		from="dmerce.jdbc.url"
+    				silent="true"/>
+		    	<propertycopy name="jdbc.username"
+		    		from="dmerce.jdbc.username"
+    				silent="true"/>
+		    	<propertycopy name="jdbc.password"
+		    		from="dmerce.jdbc.password"
+    				silent="true"/>
+		    	<propertycopy name="debug"
+		    		from="debug"
+    				silent="true"/>
+    		</else>
+    	</if>
+		<echo message="Webservice endpoint: ${endpointaddress}"/>
+		<echo message="Fileupload path: ${fileupload.path}"/>
+		<echo message="Fileupload suffix original: ${fileupload.columnsuffix.originalfile}"/>
+		<echo message="Fileupload suffix server: ${fileupload.columnsuffix.serverfile}"/>
+		<echo message="JDBC driver: ${jdbc.driver}"/>
+		<echo message="JDBC URL: ${jdbc.url}"/>
+		<echo message="JDBC Username: ${jdbc.username}"/>
+    </target>
+    
+	<!-- Reconfigure existing webservice -->
+    <target name="reconfigure-webservice"
+    	depends="check-application-configuration">
+    	<echo message="Reconfiguring SQL webservice for '${app.name}'"/>
+        <delete dir="${appws.tmpdir}"/>
+        <mkdir dir="${appws.tmpdir}"/>
+        <unzip src="${appws.war}" dest="${appws.tmpdir}"/>
+	    <!-- Generate properties.xml for your webservice with values
+	    	 from applicationproperties.xml  -->
+        <copy file="${dmerce.sys.templates}/ws-properties.xml"
+        	tofile="${appws.resdir.propertiesxml}" overwrite="true"/>
+		<replaceregexp file="${appws.resdir.propertiesxml}"
+			match="JDBC_DRIVER"
+			replace="${jdbc.driver}"
+			byline="true"/>
+		<replaceregexp file="${appws.resdir.propertiesxml}"
+			match="JDBC_URL"
+			replace="${jdbc.url}"
+			byline="true"/>
+		<replaceregexp file="${appws.resdir.propertiesxml}"
+			match="JDBC_USERNAME"
+			replace="${jdbc.username}"
+			byline="true"/>
+		<replaceregexp file="${appws.resdir.propertiesxml}"
+			match="JDBC_PASSWORD"
+			replace="${jdbc.password}"
+			byline="true"/>
+		<replaceregexp file="${appws.resdir.propertiesxml}"
+			match="DEBUG"
+			replace="${debug}"
+			byline="true"/>
+        <move file="${appws.war}" todir="${dmerce.backup.now}"
+        	failonerror="false"/>
+        <echo message="Waiting ${jboss.wait.seconds} second(s) for application server..."/>
+        <sleep seconds="${jboss.wait.seconds}"/>
+        <zip basedir="${appws.tmpdir}" destfile="${appws.war}"
+        	duplicate="add"/>
+        <delete dir="${appws.tmpdir}"/>
+    </target>
+
+
+	<path>
+	<taskdef>
+
+	<!-- Create web archive from application -->
+    <target name="deploy-war" depends="check-application-configuration">
+
+
+	<datasource>
+	<securityconfig>
+
+
+	    <!-- Generate properties.xml for your application with values
+    		 from applicationproperties.xml  -->
+        <copy file="${dmerce.sys.templates}/app-properties.xml"
+        	tofile="${app.resdir.propertiesxml}"/>
+		<replaceregexp file="${app.resdir.propertiesxml}"
+			match="ENDPOINT_ADDRESS"
+			replace="${endpointaddress}"
+			byline="true"/>
+		<replaceregexp file="${app.resdir.propertiesxml}"
+			match="FILEUPLOAD_PATH"
+			replace="${fileupload.path}"
+			byline="true"/>
+		<replaceregexp file="${app.resdir.propertiesxml}"
+			match="FILEUPLOAD_COLUMNSUFFIX_ORIGINALFILE"
+			replace="${fileupload.columnsuffix.originalfile}"
+			byline="true"/>
+		<replaceregexp file="${app.resdir.propertiesxml}"
+			match="FILEUPLOAD_COLUMNSUFFIX_SERVERFILE"
+			replace="${fileupload.columnsuffix.serverfile}"
+			byline="true"/>
+		<replaceregexp file="${app.resdir.propertiesxml}"
+			match="DEBUG"
+			replace="${debug}"
+			byline="true"/>
+		<!-- Ensure that all needed directories are present -->
+    	<mkdir dir="${src.dir}"/>
+    	<mkdir dir="${lib.user.dir}"/>
+        <mkdir dir="${app.builddir}"/>
+    	<!-- Ensure that needed configuration files exist,
+    		 don't overwrite an existing one -->
+    	<copy file="${dmerce.sys.templates}/forms.xml"
+    		todir="${app.dir}/etc" overwrite="false"/>
+    	<copy file="${dmerce.sys.templates}/workflows.xml"
+    		todir="${app.dir}/etc" overwrite="false"/>
+    	<copy file="${dmerce.sys.templates}/security.xml"
+    		todir="${app.dir}/etc" overwrite="false"/>
+    	<copy file="${dmerce.sys.templates}/web.xml"
+    		todir="${app.dir}/etc" overwrite="false"/>
+    	<!-- Copy forms.xml and workflows.xml to com.wanci.dmerce.res -->
+        <copy file="${etc.user.dir}/forms.xml" todir="${app.resdir}"/>
+        <copy file="${etc.user.dir}/workflows.xml" todir="${app.resdir}"/>
+        <copy file="${etc.user.dir}/security.xml" todir="${app.resdir}"/>
+		<!-- Compile application, create web-inf and create war -->
+        <javac destdir="${app.builddir}" srcdir="${src.dir};${dmerce.sys.src}">
+            <classpath refid="build.classpath"/>
+        </javac>
+    	<!-- Create web archive -->
+        <war basedir="${src.web.dir}"
+        	warfile="${dmerce.build}/${app.name}.war"
+        	webxml="${etc.user.dir}/web.xml">
+            <lib dir="${dmerce.sys.lib}/shared"/>
+            <lib dir="${dmerce.sys.lib}/webengine"/>
+            <lib dir="${lib.user.dir}"/>
+            <classes dir="${app.builddir}"/>
+            <webinf dir="${dmerce.sys.etc}"/>
+            <webinf file="${etc.user.dir}/jboss-web.xml"/>
+        </war>
+        <!-- Backup old web archive -->
+        <mkdir dir="${dmerce.backup.now}"/>
+        <copy file="${app.war}" todir="${dmerce.backup.now}" failonerror="false"/>
+		<!-- Deploy web archive -->
+    	<echo message="Waiting ${jboss.wait.seconds} second(s) for application server..."/>
+    	<sleep seconds="${jboss.wait.seconds}"/>
+    	<echo message="Deploying..."/>
+        <move file="${dmerce.build}/${app.name}.war" todir="${dmerce.deploydir}"/>
+    	<sleep seconds="${jboss.wait.seconds}"/>
+    	<echo message="...deployed."/>
+    	<!-- Delete old build directories -->
+        <delete file="${dmerce.build}/${app.war}"/>
+        <delete dir="${app.builddir}"/>
+    </target>
+
+	<!-- Undeploy web archive -->
+    <target name="undeploy-war">
+    	<echo message="Undeploying ${app.war}..."/>
+    	<echo message="Backing up '${app.name}' to directory '${dmerce.backup.now}'"/>
+    	<move file="${app.war}" todir="${dmerce.backup.now}" failonerror="false"/>
+    	<sleep seconds="${jboss.wait.seconds}"/>
+    	<echo message="...undeployed."/>
+    </target>
+    
+    <!--
+    	
+    	Welcome application
+    	
+    -->
+    <target name="drop-welcome-tables">
+    	<sql driver="${default.jdbc.driver}" url="${default.jdbc.url}"
+    		userid="${default.jdbc.username}"
+    		password="${default.jdbc.password}"
+    		onerror="continue">
+    		DROP TABLE t_am_kunde
+    	</sql>
+    </target>
+    
+    <target name="create-welcome-tables" depends="drop-welcome-tables">
+    	<sql driver="${default.jdbc.driver}" url="${default.jdbc.url}"
+    		userid="${default.jdbc.username}"
+    		password="${default.jdbc.password}"
+    		onerror="continue"
+    		rdbms="hypersonic" src="${sql.user.dir}/hypersonic.sql">
+    	</sql>
+    	<sql driver="${default.jdbc.driver}" url="${default.jdbc.url}"
+    		userid="${default.jdbc.username}"
+    		password="${default.jdbc.password}"
+    		onerror="continue"
+    		rdbms="mysql" src="${sql.user.dir}/mysql.sql">
+    	</sql>
+    	<sql driver="${default.jdbc.driver}" url="${default.jdbc.url}"
+    		userid="${default.jdbc.username}"
+    		password="${default.jdbc.password}"
+    		onerror="continue"
+    		rdbms="oracle" src="${sql.user.dir}/oracle.sql">
+    	</sql>
+    </target>
+    
+    <target name="load-welcome-application" depends="create-welcome-tables">
+    	<echo message="Loaded SQL for application ${app.name}"/>
+    	<echo message="Loading application ${app.name}"/>
+    </target>
+        
+</project>

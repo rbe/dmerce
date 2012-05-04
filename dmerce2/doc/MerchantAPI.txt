@@ -1,0 +1,74 @@
+
+API description for module "Merchant"
+=====================================
+
+An article is defined as:
+-------------------------
+
+Table Article:
+
+  ID			NUMBER(20)
+  CreatedDateTime	NUMBER(16,6)
+  CreatedBy		NUMBER(20)
+  ChangedDateTime	NUMBER(16,6)
+  ChangedBy		NUMBER(20)
+  active		NUMBER(1)
+  ArtNo			VARCHAR2(50)
+  PriceNet		NUMBER(10,2)
+  TaxRate		NUMBER(10,2)
+  PriceGross		NUMBER(10,2)
+  SpecialOffer		NUMBER(1)
+  SpecialOfferPercent	NUMBER(10,2)
+  Highlight		NUMBER(1)
+
+The contents of a basket are defined as:
+----------------------------------------
+
+Table BasketContents
+
+  ID			NUMBER(20)
+  CreatedDateTime	NUMBER(16,6)
+  CreatedBy		NUMBER(20)
+  ChangedDateTime	NUMBER(16,6)
+  ChangedBy		NUMBER(20)
+  active		NUMBER(1)
+  SessionId		VARCHAR2(200)
+  ArtNo			VARCHAR2(50)   Foreign key Article.ArtNo
+  Qty			NUMBER(10,2)
+  PriceNet		NUMBER(10,2)
+  TaxRate		NUMBER(10,2)
+  PriceGross		NUMBER(10,2)
+  SpecialOffer		NUMNER(1)
+  SpecialOfferPercent	NUMBER(10,2)
+
+Triggers / Functions via (exec):
+================================
+
+T  = Trigger
+TA = TriggerAfter
+F  = Function (exec)
+
+An Article:
+-----------
+
+Name			Type	Arguments		Description
+-------------------------------------------------------------------------------
+UpdatePrices		TA/F	artNo, Article_priceNet
+                                Article_taxRate,
+                                Article_priceGross	Recalculates the price gross
+isSpecialOffer		F	artNo			Is the article a special offer?
+GetPriceNet		F	artNo			Price net of article
+GetTaxRate		F	artNo			Tax rate of article
+GetPriceGross		F	artNo			Price gross of article
+GetVAT			F	artNo			VAT of article
+
+The Basket:
+-----------
+
+Name			Type	Arguments		Description
+-------------------------------------------------------------------------------
+hasArticle		F	artNo			Has basket article? 
+PutArticle		T/F	artNo, qty		Puts qty * article in basket
+SetQty			T/F	artNo, qty		Sets quantity of an article
+RemoveArticle		T/F	artNo			Removes article from basket
+Remove			T/F	none			Removes entire basket

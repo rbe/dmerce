@@ -1,0 +1,31 @@
+OS=`uname -s`
+USERID=`id | cut -b 5`
+
+case $0 in
+    sh|-sh)
+        [ $USERID -eq 0 ] && PS1="root@"
+        PS1="$PS1`uname -n` "
+        ;;
+    bash|-bash)
+        PS1="\t \u@\h:\w \# "
+        ;;
+    ksh|-ksh)
+        if [ $OS == SunOS ]; then
+	    HOST=`uname -n`
+	    PS1='$LOGNAME@$HOST:$PWD ! ' 
+        fi
+        if [ $OS == FreeBSD ]; then
+	    PS1='$(date +%H:%M:%S) `/usr/ucb/whoami`@`uname -n`:$(pwd) ! '
+        fi
+        ;;
+    csh|-csh)
+	;;
+esac
+case $0 in
+    sh|-sh|bash|-bash|ksh|-ksh)
+	[ $USERID = 0 ] && PS1="$PS1# " || PS1="$PS1$ "
+	;;
+    csh*)
+	;;
+esac
+export PS1

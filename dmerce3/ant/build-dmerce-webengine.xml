@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project basedir="." default="build-engine" name="dmerce Webengine">
+
+	<property file="etc/core/build.properties"/>
+	<property name="appname" value="dmerce"/>
+	<property name="src.web" value="examples/test-alt"/>
+
+	<!-- CLASSPATH used during compilation -->
+	<path id="build.classpath">
+		<fileset dir="${lib.shared}">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="${lib.webengine}">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="${lib.core}">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${lib}">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	<!-- *********************************************************************** -->
+	<!-- *** CLEAN                                                           *** -->
+	<!-- *********************************************************************** -->
+	<target name="clean">
+		<delete dir="${war.build}"/>
+	</target>
+	
+	<!-- *********************************************************************** -->
+	<!-- *** PREPARE                                                         *** -->
+	<!-- *********************************************************************** -->
+	<target name="prepare" depends="clean">
+		<mkdir dir="${build}"/>
+		<mkdir dir="${war.build}"/>
+		<mkdir dir="${dist}"/>
+	</target>
+	
+	<!-- *********************************************************************** -->
+	<!-- *** DEPLOYMENT                                                      *** -->
+	<!-- *********************************************************************** -->
+	<target depends="war" name="deploy-rb">
+		<property name="user" value="rb"/>
+		<echo>deploying warfile as ${appname}-${user}</echo>
+		<copy file="${dist}/${appname}.war" 
+			tofile="${webserver.deploy.dir}/${appname}-${user}.war"/>
+	</target>
+	
+	<!-- *********************************************************************** -->
+	<!-- *** COMPILE                                                         *** -->
+	<!-- *********************************************************************** -->
+	<target name="compile" depends="prepare">
+		<javac deprecation="on" destdir="${war.build}" source="1.4">
+			<classpath refid="build.classpath"/>
+			<src path="${src.webclient}"/>
+			<src path="${src.core}/com/wanci/dmerce/res"/>
+		</javac>
+	</target>
+	
+	<target name="compile-engine" depends="prepare">
+		<javac deprecation="on" destdir="${war.build}" source="1.4" 
+			excludes="com/wanci/dmerce/res/**">
+			<src path="${src.ant}"/>
+			<src path="${src.ncc}/com/wanci/ncc/whois"/>
+			<src path="${src.core}/com/wanci/dmerce/kernel"/>
+			<src path="${src.core}/com/wanci/dmerce/exceptions"/>
+			<src path="${src.core}/com/wanci/java"/>
+			<src path="${src.ire}"/>
+			<src path="${src.webservice}/com/wanci/dmerce/webservice"/>
+			<src path="${src.webclient}"/>
+			<classpath refid="build.classpath"/>
+		</javac>
+	</target>
+	
+	<!-- *********************************************************************** -->
+	<!-- *** WAR                                                             *** -->
+	<!-- *********************************************************************** -->
+	<target depends="setup-web-inf, compile" name="war">
+		<echo>building war...</echo>
+		<delete file="${dist}/${appname}.war"/>
+		<war basedir="${src.web}" warfile="${dist}/${appname}.war" 
+			webxml="${etc.webclient}/web.xml">
+			<lib dir="${lib.webengine}"/>
+			<lib dir="${lib.shared}"/>
+			<classes dir="${war.build}"/>
+			<webinf dir="${etc.webclient}"/>
+		</war>
+	</target>
+	
+	<!-- *********************************************************************** -->
+	<!-- *** SETUP WEB INF                                                   *** -->
+	<!-- *********************************************************************** -->
+	<target depends="prepare" name="setup-web-inf">
+		<!-- res-Zeug -->
+		<copy todir="${war.build}/com/wanci/dmerce/res">
+			<fileset dir="${src.core}/com/wanci/dmerce/res"/>
+		</copy>
+		<!-- xml dateien: forms.xml workflows.xml -->
+		<copy file="etc/webclient/forms.xml" 
+			todir="${war.build}/com/wanci/dmerce/res"/>
+		<copy file="etc/webclient/workflows.xml" 
+			todir="${war.build}/com/wanci/dmerce/res"/>
+		<copy file="etc/core/properties.xml" 
+			todir="${war.build}/com/wanci/dmerce/res"/>
+		<!-- jaxb -->
+		<copy todir="${war.build}">
+			<fileset dir="${src.webclient}">
+				<include name="**/jaxb.properties"/>
+				<include name="**/bgm.ser"/>
+			</fileset>
+		</copy>
+	</target>
+	
+	<!-- *********************************************************************** -->
+	<!-- *** ENGINE JAR                                                      *** -->
+	<!-- *********************************************************************** -->
+	<target depends="compile-engine" name="build-engine">
+		<jar basedir="${war.build}" 
+			destfile="${dist}/${engine.jar}">
+			<fileset dir="${src.core}" includes="com/wanci/dmerce/res" 
+				excludes="**/*.java"/>
+			<fileset dir="${src.webclient}">
+				<include name="**/jaxb.properties"/>
+				<include name="**/bgm.ser"/>
+			</fileset>
+		</jar>
+		<antcall target="clean"/>
+	</target>
+	
+</project>

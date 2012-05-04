@@ -1,0 +1,25 @@
+CREATE OR REPLACE PACKAGE p_string
+    AS
+
+	FUNCTION f_stripaeiou(str IN VARCHAR2)
+	RETURN VARCHAR2;
+END p_string;
+/
+
+CREATE OR REPLACE PACKAGE BODY p_string
+    AS
+	FUNCTION f_stripaeiou (str IN VARCHAR2)
+	RETURN VARCHAR2
+	AS
+	        l       VARCHAR2(2000);
+	BEGIN
+        	l := str;
+	        l := REPLACE(l, 'a', '');
+	        l := REPLACE(l, 'e', '');
+		l := REPLACE(l, 'i', '');
+	        l := REPLACE(l, 'o', '');
+	        l := REPLACE(l, 'u', '');
+	        RETURN l;
+	END;
+END p_string;
+/

@@ -1,0 +1,59 @@
+
+=====================================
+Skripte: Identifizieren eines Servers
+=====================================
+
+Zustaendig: SB
+
+   1 Klasse mit 1 Methode:
+   -----------------------
+   class SNMP_MAC
+   def GetAll()
+
+   Anwendung:
+   ----------
+   m = SNMP_MAC()
+   listeMitMACs = m.GetAll()
+
+1. Hole alle MAC-Adressen per SNMP
+
+2. Hole ServerID ueber Tabelle SrvServerInterfaces:
+
+   SELECT ServerID FROM SrvServerInterfaces WHERE IfPhysAddress = "blablabla"
+   (1 result)
+
+3. Hole die auf dem Server laufenden/aktiven Services aus
+   SrvServerSvcs
+
+   SELECT ServiceID FROM SrvServerSvcs WHERE ServerID = n
+   (mehrere results)
+
+======================================
+Server per MAC neu/aendern/loeschen...
+======================================
+
+Zustaendig: SB
+
+1. Alle MAC-Adressen eines Servers per SNMP auslesen
+   (Rueckgabe einer Liste) siehe Punkt "Skripte: Identifizieren
+   eines Servers"
+
+2. Ist 1 (oder mehrere) MAC-Adressen bereits ueber SrvServerInterfaces
+   einen Server zugeordnet (mit Datenbank abgleichen); der Server ist 
+   also bekannt
+
+2.1 Server/ServerID anhand vorhandener MAC-Adressen identifizieren
+    Entweder wird ein Server gefunden; oder wenn nicht, ist dies
+    ein neuer phys. Server oder eine neue logische Einheit/Netzwerkkarte
+    eines Servers
+
+2.2 Unbekannte MAC-Adressen sind einer ServerID (per INSERT) zuzuordnen,
+    sofern der Server unter Punkt 2.1 identifiziert werden konnte.
+    Beim INSERT soll das Flag new INT(1) auf 1 gesetzt werden, so dass
+    das Frontend einen neuen Server anzeigen kann. Ansonsten gehe zu Punkt 2.3
+
+2.3 Ist/sind die MAC-Adresse/n nicht zu identifizieren (Punkt 2.1),
+    so soll eine neue ServerID per DMS.SQL.DBOID und INSERT in die
+    Datenbank ertzeugt werden. Beim INSERT soll das Flag new INT(1)
+    auf 1 gesetzt werden, so dass das Frontend einen neuen Server
+    anzeigen kann.

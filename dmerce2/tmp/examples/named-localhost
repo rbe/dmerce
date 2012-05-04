@@ -1,0 +1,11 @@
+$TTL    3600
+
+@       IN      SOA     hellfire.muenster1.de.1ci.net. root.hellfire.muenster1.de.1ci.net.  (
+                                20030324        ; Serial
+                                3600    ; Refresh
+                                900     ; Retry
+                                3600000 ; Expire
+                                3600 )  ; Minimum
+        IN      NS      hellfire.muenster1.de.1ci.net.
+1       IN      PTR     localhost.muenster1.de.1ci.net.
+

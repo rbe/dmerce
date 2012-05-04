@@ -1,0 +1,160 @@
+<project name="dmerce" default="war" basedir=".">
+
+	<target name="prepare">
+
+		<tstamp/>
+
+		<property name="appname"		value="dmerce-xpath-test"/>
+		<condition property="webserver.home" value="/export/home/mm/jakarta-tomcat-4.1.27/">
+			<not>
+			<os family="windows"/>
+			</not>
+		</condition>
+		<condition property="webserver.home" value="c:\Tomcat">
+			<os family="windows"/>
+		</condition>
+	
+		<property name="webserver.deploy"	value="${webserver.home}/webapps"/>
+		<property name="servlet.jar"  		value="${webserver.home}/common/lib/servlet.jar"/>
+	
+		<property name="src.dir"     value="src/webclient"/>
+		<property name="core.dir"    value="src/core"/>
+		<property name="lib.src.dir" value="lib"/>
+		<property name="build.dir"   value="build/webclient"/>
+		<property name="dist.dir"    value="bin"/>
+		<property name="web.dir"     value="${build.dir}/WEB-INF"/>
+		<property name="class.dir"   value="${web.dir}/classes"/>
+		<property name="dmerce.dir"  value="${class.dir}/dmerce"/>	
+		<property name="lib.dir"     value="${web.dir}/lib"/>
+	
+		<!-- CLASSPATH used during compilation -->
+		<path id="build.classpath">
+			<pathelement location="${servlet.jar}"/>
+			<pathelement location="${lib.dir}/jdom.jar"/>
+			<pathelement location="${lib.dir}/commons-beanutils.jar"/>
+			<pathelement location="${lib.dir}/commons-collections.jar"/>
+			<pathelement location="${lib.dir}/commons-digester.jar"/>
+			<pathelement location="${lib.dir}/commons-fileupload.jar"/>
+			<pathelement location="${lib.dir}/commons-lang.jar"/>
+			<pathelement location="${lib.dir}/commons-logging.jar"/>
+			<pathelement location="${lib.dir}/commons-validator.jar"/>
+			<pathelement location="${lib.dir}/struts.jar"/>
+	
+			<pathelement location="${lib.dir}/jax-qname.jar"/>
+			<pathelement location="${lib.dir}/jaxb-api.jar"/>
+			<pathelement location="${lib.dir}/jaxb-impl.jar"/>
+			<pathelement location="${lib.dir}/jaxb-libs.jar"/>
+			<pathelement location="${lib.dir}/jaxen-core.jar"/>
+			<pathelement location="${lib.dir}/jaxen-jdom.jar"/>
+			<pathelement location="${lib.dir}/jaxen-core.jar"/>
+			<pathelement location="${lib.dir}/saxpath.jar"/>
+			<pathelement location="${lib.dir}/jaxp-api.jar"/>
+			<pathelement location="${lib.dir}/jaxrpc-api.jar"/>
+			<pathelement location="${lib.dir}/jaxrpc-impl.jar"/>
+			<pathelement location="${lib.dir}/namespace.jar"/>
+			<pathelement location="${lib.dir}/relaxngDatatype.jar"/>
+			<pathelement location="${lib.dir}/saxpath.jar"/>
+			<pathelement location="${lib.dir}/sax.jar"/>
+			<pathelement location="${lib.dir}/dom.jar"/>
+			<pathelement location="${lib.dir}/xerces.jar"/>
+			<pathelement location="${lib.dir}/xercesimpl.jar"/>
+			<pathelement location="${lib.dir}/xml-apis.jar"/>
+			<pathelement location="${lib.dir}/xsltc.jar"/>
+			<pathelement location="${lib.dir}/webserviceclient.jar"/>
+			<pathelement path="${class.dir}" />
+		</path>
+
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${web.dir}" />
+		<mkdir dir="${lib.dir}" />
+		<mkdir dir="${class.dir}" />
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${dmerce.dir}" />
+
+		<!-- taglib-Klassen - servlet-Klassen -->
+		<copy todir="${class.dir}">
+	    	<fileset dir="${src.dir}"/>
+  		</copy>
+  		
+  		<!-- tld, xml -->
+		<copy todir="${web.dir}" >
+	    	<fileset dir="etc/webclient">
+	    		<exclude name="etc/webclient/web.xml" />
+	    		<include name="web.xml" />
+	    	</fileset>
+  		</copy>
+  			
+		<!-- jsp -->
+		<copy todir="${build.dir}">
+	    	<fileset dir="web"/>
+  		</copy>
+		
+		<!-- xml dateien: forms.xml workflows.xml dmerce-form.dtd -->
+		<copy file="etc/webclient/forms.xml" todir="${class.dir}/dmerce/"/>
+		<copy file="etc/webclient/workflows.xml" todir="${class.dir}/dmerce/"/>
+		<copy file="etc/webclient/dmerce-forms.dtd" todir="${class.dir}/dmerce/"/>
+		<copy file="etc/webclient/dmerce-workflows.dtd" todir="${class.dir}/dmerce/"/>
+
+		<!-- WEB-INF/lib -->  		
+		<copy file="${lib.src.dir}/webclient/commons-beanutils.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/webclient/commons-collections.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/webclient/commons-digester.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/webclient/commons-fileupload.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/webclient/commons-lang.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/webclient/commons-logging.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/webclient/commons-validator.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/webclient/struts.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/webclient/xerces.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/webclient/xml-apis.jar" todir="${lib.dir}"/>
+
+		<copy file="${lib.src.dir}/shared/jdom.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/shared/jax-qname.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/shared/jaxb-api.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/shared/jaxb-impl.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/shared/jaxb-libs.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/shared/jaxen-core.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/shared/jaxen-jdom.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/shared/jaxen-core.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/shared/saxpath.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/shared/sax.jar" todir="${lib.dir}"/>
+
+		<copy file="${lib.src.dir}/webclient/webserviceclient.jar" todir="${lib.dir}"/>
+		
+		<copy file="${lib.src.dir}/core/mysql-connector-java-3.0.8-stable-bin.jar" todir="${lib.dir}"/>
+
+		<copy file="${lib.src.dir}/shared/dom.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/shared/jaxp-api.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/shared/jaxrpc-api.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/shared/jaxrpc-impl.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/shared/namespace.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/shared/relaxngDatatype.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/shared/xsdlib.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/shared/saaj-api.jar" todir="${lib.dir}"/>
+		<copy file="${lib.src.dir}/shared/saaj-impl.jar" todir="${lib.dir}"/>
+	</target>
+
+
+	<target name="war" depends="prepare">
+		<echo>building war...</echo>
+        <delete file="${dist.dir}/${appname}.war"/>
+        <war warfile="${dist.dir}/${appname}.war" basedir="${build.dir}" webxml="web.xml"/>
+	</target>
+
+
+	<target name="deploy" depends="war">
+		<echo>copying war file to deployment dir...</echo>
+		<copy file="${dist.dir}/${appname}.war" todir="${webserver.deploy}"/>
+	</target>
+
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+
+
+	<target name="distclean">
+		<antcall target="clean"/>
+		<delete file="${dist.dir}/${appname}.war" />
+	</target>
+
+</project>

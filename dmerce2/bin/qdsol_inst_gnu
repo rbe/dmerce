@@ -1,0 +1,49 @@
+#!/bin/sh
+
+STDPKG="
+aide-0.7-sol8-sparc-local
+autoconf-2.13-sol8-sparc-local
+autoconf-2.52-sol8-sparc-local
+automake-1.4-sol8-sparc-local
+automake-1.5-sol8-sparc-local
+bash-2.05-sol8-sparc-local
+bison-1.28-sol8-sparc-local
+bzip2-0.9.0c-sol8-sparc-local
+cvs-1.11-sol8-sparc-local
+db-3.2.9-sol8-sparc-local
+flex-2.5.4a-sol8-sparc-local
+gawk-3.0.4-sol8-sparc-local
+gcc-2.95.3-sol8-sparc-local
+gdbm-1.8.0-sol8-sparc-local
+giflib-4.1.0-sol8-sparc-local
+gzip-1.2.4a-sol8-sparc-local
+jpeg-6b-sol8-sparc-local
+libgcc-3.0.3-sol8-sparc-local
+libpng-1.2.0-sol8-sparc-local
+lynx-2.8.3-sol8-sparc-local
+m4-1.4-sol8-sparc-local
+make-3.79.1-sol8-sparc-local
+perl-5.6.1-sol8-sparc-local
+pine-4.10-sol8-sparc-local
+recode-3.6-sol8-sparc-local
+sed-3.02-sol8-sparc-local
+snort-1.8.1-sol8-sparc-local
+tar-1.13-sol8-sparc-local
+tcl-8.3.1-sol8-sparc-local
+tiff-3.5.6-sol8-sparc-local
+wget-1.5.3-sol8-sparc-local
+xaw3d-1.5-sol8-sparc-local
+xpm-3.4k-sol8-sparc-local
+zlib-1.1.3-sol8-sparc-local
+emacs-21.1-sol8-sparc-local
+"
+
+for pkg in $STDPKG
+do
+	echo "Installing ${pkg}"
+	pkgadd -n -d ${pkg}
+done
+
+echo "Ready."
+
+exit 0

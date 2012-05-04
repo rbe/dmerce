@@ -1,0 +1,30 @@
+<%@ include file="/init.jsp" %>
+<html>
+<head>
+<style type="text/css">
+<!--
+body, td {
+ font-family: Tahoma;
+ font-size: 12px;
+ text-align: left;
+}
+-->
+</style>
+<title>Beispiel-Layout</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#FF0000" alink="#FF0000" vlink="#FF0000">
+<table>
+	<tr>
+		<td colspan="2" style="border: 1px solid black; font-size: 24px; padding: 20 40 20 10; background-color: #FFF0EE; width: 250px;"><q:usebrick name="ueberschrift"/></td>
+	</tr>
+	<tr>
+    	<td style="height: 300px; font-size: 24px; border: 1px solid black; padding: 20 40 20 10; background-color: #EEF0FF; width: 250px;">
+	        <q:usebrick name="menu"/>
+        </td>
+        <td style="border: 1px solid black; font-size: 24px; background-color: #BBFFBB; padding:10px; width:400px;">
+        	<q:usebrick name="inhalt"/>
+        </td>
+     </tr>
+</table>
+</body>
+</html>

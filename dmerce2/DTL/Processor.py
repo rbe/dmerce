@@ -1,0 +1,650 @@
+#!/usr/bin/env python
+##
+#
+# $Author: rb $
+revision =  '$Revision: 2.70 $'
+#
+# Revision 1.1  2000-05-11 15:04:06+02  rb
+# Initial revision
+#
+##
+
+__doc__ = """ this is the main dmerce template language processor """
+
+import sys
+import vars
+vars.vars()
+import os
+import string
+import types
+#import re
+import Core.Log
+#import Core.OS
+import DMS.SuperSearch
+import DMS.Cache
+#import DMS.Counter
+#import DMS.HTTP
+import DMS.Time
+import DTL.Operator
+import DTL.TemplateRegExp
+import DTL.TemplateMacro
+import DMS.Object
+
+class Errors:
+
+    """
+    class that collects errors occured in template
+    errors consits of type, number and optional message
+    """
+
+    def __init__(self):
+        self.__errors = DMS.Cache.Cache()
+
+    def Add(self, type, number, lit = -1, msg = None):
+        """ save line in template, error type, error number
+        and optional error message """
+        self.__errors[number] = (lit, type, msg)
+
+    def Get(self):
+        return self.__errors
+
+    def isError(self, errno):
+        """ do we have a specific error? """
+        return self.__errors[errno]
+
+class DBOID:
+
+    """ manages retrival of (new) db oids from dmerce system database """
+
+    def __init__(self, sqlSys, sql):
+        """
+        takes an instance of DMS.SQL.DBAPI to dmerce system database
+        and the database we should work on as argument
+        """
+        self.__sqlSys = sqlSys
+        self.__sql = sql
+        self.__dboid = {}
+        self.__log = Core.Log.File(debug = 1, module = '1[dmerce].Processor.DBOID')
+
+    def __getitem__(self, table):
+        """
+        try to look up DBOID for table in dictionary
+        if we found one return it otherwise get new one using
+        DMS.SQL.DBOID
+        """
+        #self.__log.Write(msg = 'GETTING DBOID FOR %s' % table)
+        db = self.__sql.GetName()
+        dbOid = DMS.SQL.DBOID(self.__sqlSys, self.__sql)
+        if not self.__dboid.has_key(table):
+            newId = self.__dboid[table] = dbOid[table]
+            #self.__log.Write(msg = 'NEW DBOID FOR DATABASE=%s TABLE=%s IS %s'
+            #                 % (db, table, newId))
+            return newId
+        else:
+            #self.__log.Write(msg = 'EXISTING DBOID FOR DATABASE=%s TABLE=%s IS %s'
+            #                 % (db, table, self.__dboid[table]))
+            return self.__dboid[table]
+
+class EvalTemplate(DTL.TemplateMacro.Lib):
+
+    """ evaluates a parsed template and puts out the results """
+
+    def __init__(self, parserResult, **kw):
+        DTL.TemplateMacro.Lib.__init__(self)
+        self.__kw = kw
+        self.__debug = kw['debug']
+        self.__sam = kw['sam']
+        self.__cgi = kw['cgi']
+        self.__sqlSys = kw['sqlSys']
+        self.__prjcfg = kw['prjcfg']
+        self.__sql = kw['sql']
+        self.__c = parserResult[1]
+        self.__parsedBuffer = parserResult[2]
+        self.__countRepeat = parserResult[3]
+        self.__repeats = parserResult[4]
+        self.__countIf = parserResult[5]
+        self.__ifs = parserResult[6]
+        self.__doRepeat = -1
+        self.__linePointer = 0
+        self.__dboid = DBOID(self.__sqlSys, self.__sql)
+        self.__skin = DTL.TemplateMacro.MacroSkin(kw = kw)
+        self.__httpEnv = kw['httpEnv']
+        self.__fdout = self.__httpEnv['req']
+        self.__log = Core.Log.File(debug = self.__debug,
+                                   module = '1[dmerce].Processor.EvalTemplate',
+                                   httpEnv = self.__httpEnv)
+        self.__oc = DMS.Object.Convert()
+        self.SetOutputMethod(0)
+        #self.__fdout = sys.stdout
+        #self.__osBase = Core.OS.Base()
+
+    def __Subst(self, m, s, l):
+        """
+        substitute macro m with string s in line l using the
+        method regexp.Subst
+        - care for types of variables: None, long
+        """
+        if s is None:
+            s = ''
+        #if type(s) is types.LongType:
+            #1.5.2: s = str(s)[:-1]
+        return self.regexp.Subst(l, DTL.TemplateRegExp.macros[m], str(s))
+
+    def InitMyVar(self, documentRoot, sId):
+        """
+        initialize myvar
+        - set standard private variables
+        - care for myvar login
+        - care for templates (referer)
+        """
+        self.__myvar = DTL.TemplateMacro.MacroMyVar(documentRoot, sId)
+        self.__myvar.OpenFile()
+        self.__myvar.Set('VERSION', vars.VERSION)
+        self.__myvar.Set('COPYRIGHT_HTML_COMMENT', vars.COPYRIGHT_HTML)
+        self.__myvar.Set('COPYRIGHT_HTML', vars.COPYRIGHT_HTML)
+        if not self.__myvar.ayt('login'):
+            self.__myvar.Set('login', '0')
+        self.__myvar.Set('REFERER', self.__httpEnv['HTTP_REFERER'])
+        self.__myvar.Set('REFERER_TEMPLATE', self.__httpEnv.GetRefererTemplate())
+        if self.__myvar.ayt('ACTUAL_TEMPLATE'):
+            self.__myvar.Set('LAST_TEMPLATE', self.__myvar.Get('ACTUAL_TEMPLATE'))
+        else:
+            self.__myvar.Set('LAST_TEMPLATE', '')
+        self.__myvar.Set('ACTUAL_TEMPLATE', self.__cgi.GetqVar('qTemplate'))
+        self.__myvar.Set('qs', sId)
+
+    def DeinitMyVar(self):
+        self.__myvar.Write()
+
+    def __ProcessMacroGetMyVar(self, line):
+        """ (get-myvar): find and process """
+        var = self.ScanGetMyVar(line)
+        if not var:
+            return line
+        for element in range(len(var)):
+            v = self.__myvar.Get(var[element])
+            #self.__log.Write(msgType = 'DEBUG', msg = 'GETTING MYVAR %s VALUE=%s' % (var[element], str(v)))
+            line = self.__Subst('get-myvar', str(v), line)
+        return line
+
+    def __ProcessMacroSetMyVar(self, line):
+        """
+        (set-myvar): find and process
+        """
+        var = self.ScanSetMyVar(line)
+        if not var:
+            return line
+        for element in range(len(var)):
+            #self.__log.Write(msgType = 'DEBUG', msg = 'SETTING MYVAR %s=%s'
+            #                 % (var[element][0], var[element][1]))
+            self.__myvar.Set(var[element][0], var[element][1])
+        return ''
+
+    def __ProcessMacroAppendMyVar(self, line):
+        """
+        (append-myvar): find and process
+        """
+        var = self.ScanAppendMyVar(line)
+        if not var:
+            return line
+        for element in range(len(var)):
+            self.__myvar.Append(var[element][0], var[element][1])
+            self.__log.Write(msgType = 'DEBUG', msg = 'APPEND MYVAR %s WITH %s=%s'
+                             % (var[element][0], var[element][1], self.__myvar.Get(var[element][0])))
+        return ''
+
+    def __ProcessMacroExec(self, line):
+        """
+        (exec): find and process
+        * process every found macro in line
+        * call function
+        * count function call
+        * return subsituted line
+        """
+        var = self.ScanExec(line)
+        if not var:
+            return line
+        for element in range(len(var)):
+            p = var[element][0]
+            c = var[element][1]
+            m = var[element][2]
+            a = var[element][3][1:]
+            self.__log.Write(msg = 'EXECUTING FUNCTION: P=%s C=%s M=%s A=%s'
+                             % (p, c, m, a))
+            e = DTL.TemplateMacro.MacroExec(kw = self.__kw, package = p, clazz = c, method = m, args = a)
+            e.CheckArguments()
+            e.Get()
+            e.CheckReturnValue()
+            # self.__c.Count('M_FC_%s.%s.%s()' % (p, c, m))
+            # self.__c.Count('M_FCALLS_SUM')
+            line = self.__Subst('exec', str(e), line)
+        return line
+
+    def __ProcessMacroWho(self, line):
+        """ (who): find and process """
+        var = self.ScanWho(line)
+        if not var:
+            return line
+        for element in range(len(var)):
+            # self.__c.Count('M_who')
+            w = DTL.TemplateMacro.MacroWho(sam = self.__sam, what = var[element])
+            line = self.__Subst('who', str(w), line)
+        return line
+
+    def __ProcessMacroDBOID(self, line):
+        """
+        (sql dboid x): find and process
+        count sql queries
+        write dboid to debug log
+        """
+        var = self.ScanSQLDBOID(line)
+        if not var:
+            return line
+        for table in var:
+            # self.__c.Count('SQL', 2)
+            # self.__c.Count('M_sql-dboid', 1)
+            dboid = self.__dboid[table]
+            line = self.__Subst('sql-dboid', dboid, line)
+        return line
+
+    def __OracleDate(self, s, schema, table, field):
+        th = self.__sql.GetTableHandler(table = schema + table)
+        th.Describe()
+        dmerceLang = self.__httpEnv['DMERCE_LANG']
+        if th.GetRealFieldType(field) == 'DATE' and dmerceLang.upper() == 'GERMAN':
+            t = DMS.Time.Conversion({})
+            s = t.Reformat(s, 'german')
+        return s
+
+    def __ProcessMacroTableField(self, isRepeat, line):
+        """ (sql t.f ...) find and process macro """
+        var = self.ScanTableField(line)
+        if not var:
+            return line
+        fv = DMS.Object.Values()
+        isRepeat = isRepeat - 1
+        if string.find(line, '(repeat') >= 0 and isRepeat > 0:
+            isRepeat = self.__repeats[isRepeat].GetParent()
+            #self.__log.Write(msg = 'setting isrepeat to parent=%i' % isRepeat)
+        for element in range(len(var)):
+            # self.__c.Count('M_sql-table.field')
+            ve = var[element]
+            schema = ve[0]
+            table = ve[1]
+            field = ve[2]
+            pos_from = ve[3]
+            pos_to = ve[4]
+            s = None
+            while isRepeat > -1 and isRepeat is not None:
+                try:
+                    #msg = 'TRY TO FETCH %s.%s IN REPEAT %i' % (table, field, isRepeat)
+                    r = self.__repeats[isRepeat]
+                    s = r.GetSQL(table, field)
+                    if self.__sql.GetType() == 'ORACLE':
+                        s = self.__OracleDate(s, schema, table, field)
+                    #self.__log.Write(msg = 'r.GetSQL()=%s TYPE=%s' % (s, type(s)))
+                    #self.__log.Write(msg = '%s => %s' % (msg, s))
+                    break
+                except:
+                    #self.__log.Write(msg = 'try to get parent of repeat %s // %s'
+                    #                 % (str(isRepeat), str(self.__repeats)))
+                    p = self.__repeats[isRepeat].GetParent()
+                    if p >= 0:
+                        isRepeat = p
+                    else:
+                        break
+            line = self.__Subst('sql-get', fv.Format(s, [pos_from, pos_to]), line)
+        return line
+
+    def __ProcessMacroTableFieldFormatted(self, isRepeat, line):
+        """ (sqlf t.f ...) find and process macro """
+        var = self.ScanTableFieldFormatted(line)
+        if not var:
+            return line
+        fv = DMS.Object.Values()
+        isRepeat = isRepeat - 1
+        if string.find(line, '(repeat') >= 0 and isRepeat > 0:
+            isRepeat = self.__repeats[isRepeat].GetParent()
+        for element in range(len(var)):
+            # self.__c.Count('M_sql-table.field')
+            ve = var[element]
+            schema = ve[0]
+            table = ve[1]
+            field = ve[2]
+            pos_from = ve[3]
+            pos_to = ve[4]
+            s = None
+            while isRepeat > -1 and isRepeat is not None:
+                try:
+                    r = self.__repeats[isRepeat]
+                    s = r.GetSQL(table, field)
+                    break
+                except:
+                    p = self.__repeats[isRepeat].GetParent()
+                    if p >= 0:
+                        isRepeat = p
+                    else:
+                        break
+            f = fv.Format(s, [pos_from, pos_to], 1)
+            line = self.__Subst('sql-getf', f, line)
+        return line
+
+    def __ProcessMacroTableFieldXref(self, isRepeat, line):
+        """ (sql t.f xref ...) find and process macro """
+        var = self.ScanTableFieldXref(line)
+        if not var:
+            return line
+        #self.__log.Write(msgType = 'INFO', msg = 'var=%s' % var)
+        fv = DMS.Object.Values()
+        for element in range(len(var)):
+            # self.__c.Count('M_sql-table.field.xref')
+            ve = var[element]
+            schema = ve[0]
+            table = ve[1]
+            field = ve[2]
+            xref = ve[3]
+            pos_from = ve[4]
+            pos_to = ve[5]
+            #self.__log.Write(msg = 'SQL-XREF: TABLE=%s FIELD=%s XREF=%s' % (table, field, xref))
+            x = DTL.TemplateMacro.MacroSQLXref(self.__debug, self.__sql, schema, table, field, xref)
+            try:
+                s = x.Get()
+                if self.__sql.GetType() == 'ORACLE':
+                    s = self.__OracleDate(s, schema, table, field)
+                # self.__c.Count('SQL')
+            except ImportError:
+                s = '[sql-xref not ok]'
+            line = self.__Subst('sql-get-xref', fv.Format(s, [pos_from, pos_to]), line)
+        return line
+
+    def __ProcessMacroTableFieldXrefFormatted(self, isRepeat, line):
+        """ (sqlf t.f xref ...) find and process macro """
+        var = self.ScanTableFieldXrefFormatted(line)
+        if not var:
+            return line
+        fv = DMS.Object.Values()
+        for element in range(len(var)):
+            # self.__c.Count('M_sql-table.field.xref')
+            ve = var[element]
+            schema = ve[0]
+            table = ve[1]
+            field = ve[2]
+            xref = ve[3]
+            pos_from = ve[4]
+            pos_to = ve[5]
+            x = DTL.TemplateMacro.MacroSQLXref(self.__debug, self.__sql, schema, table, field, xref)
+            try:
+                s = x.Get()
+                # self.__c.Count('SQL')
+            except:
+                s = ''
+            line = self.__Subst('sql-getf-xref', fv.Format(s, [pos_from, pos_to], 1), line)
+        return line
+
+    def __ProcessMacroSQLCount(self, line):
+        """ (sql count ...): find and process """
+        var = self.ScanSQLCount(line)
+        if not var:
+            return line
+        for element in range(len(var)):
+            # self.__c.Count('M_sql-count')
+            count_table = var[element][0]
+            count_qss = var[element][1]
+            sc = DTL.TemplateMacro.MacroSQLCount(self.__debug, self.__sql, count_table, count_qss)
+            try:
+                s = sc.Get()
+            except:
+                s = 0
+            line = self.__Subst('sql-count', s, line)
+        return line
+
+    def __ProcessMacroSQLRowCount(self, line):
+        """ (sql rowcount ...): find and process """
+        var = self.ScanSQLRowCount(line)
+        if not var:
+            return line
+        for element in range(len(var)):
+            # self.__c.Count('M_sql-rowcount')
+            if var[element]:
+                rowcount_no = int(var[element])
+            else:
+                rowcount_no = self.__doRepeat
+            s = self.__repeats[rowcount_no].GetResultCount()
+            #if type(s) is types.LongType:
+                #1.5.2: s = str(s)[:-1]
+            if type(s) is types.IntType:
+                s = str(s)
+            line = self.__Subst('sql-rowcount', s, line)
+            #self.__log.Write(msg = 'ROW COUNT OF REPEAT %i=%s, RESULTING LINE=%s'
+            #                 % (rowcount_no, s, string.strip(line)))
+        return line
+
+    def __ProcessMacroSQLIndex(self, line):
+        """ (sql index): find and process """
+        var = self.ScanSQLIndex(line)
+        if not var:
+            return line
+        for element in range(len(var)):
+            e = var[element][1]
+            # self.__c.Count('M_sql-index')
+            s = self.__repeats[self.__doRepeat].GetActualResultRow()
+            if e:
+                s = long(s) + long(e)
+        return self.__Subst('sql-index', s, line)
+
+    def __ProcessMacroSQLIndex1(self, line):
+        """ (sql index1): find and process """
+        var = self.ScanSQLIndex1(line)
+        if not var:
+            return line
+        for element in range(len(var)):
+            # self.__c.Count('M_sql-index')
+            s = self.__repeats[self.__doRepeat].GetActualResultRow() + 1
+        return self.__Subst('sql-index1', s, line)
+
+    def __ProcessMacroSQLSelect(self, line):
+        """ (sql select): find and process """
+        var = self.ScanSQLSelect(line)
+        if not var:
+            return line
+        for element in range(len(var)):
+            # self.__log.Write(msg = 'SQLSelect: ELEMENT=%s' % var[element])
+            # self.__c.Count('M_sql-select')
+            s = DTL.TemplateMacro.MacroSQLSelect(debug = self.__debug, sql = self.__sql, stmt = var[element])
+            line = self.__Subst('sql-select', s.Get(), line)
+        return line
+
+    def __ProcessMacroSetSkin(self, line):
+        var = self.ScanSetSkin(line)
+        if not var:
+            return line
+        for element in var:
+            self.__skin.Set(element)
+            line = self.__Subst('set-skin', '', line)
+        return line
+
+    def __ProcessMacroSkinImg(self, line):
+        var = self.ScanSkinImg(line)
+        if not var:
+            return line
+        for element in var:
+            line = self.__Subst('skin-img', self.__skin.GetImage(element), line)
+        return line
+
+    def __ProcessMacroSkinImgTag(self, line):
+        var = self.ScanSkinImgTag(line)
+        if not var:
+            return line
+        for element in var:
+            line = self.__Subst('skin-imgtag', self.__skin.GetImageTag(element), line)
+        return line
+
+    def __ProcessMacroSkinStylesheet(self, line):
+        var = self.ScanSkinStylesheet(line)
+        if not var:
+            return line
+        for element in var:
+            line = self.__Subst('skin-stylesheet', self.__skin.GetStylesheet(), line)
+        return line
+
+    def __EvaluateRepeat(self, doRepeat, line):
+        """
+        evaluate lines of repeat
+        1. scan for repeat macro and process it
+        2. work on repeat doRepeat
+        """
+        doRepeat = doRepeat - 1
+        r = self.__repeats[doRepeat]
+        r.SetLinePointer(self.__linePointer)
+        s = self.ScanRepeat(line)
+        #self.__log.Write(debug = 1, msg = 'SCAN REPEAT=%s' % str(s))
+        if s:
+            #self.__log.Write(msg = 'begin repeat %i/%s in line %i'
+            #                 % (doRepeat, str(r.GetParent()), self.__linePointer))
+            #self.__log.Write(msg = 'LOOKING FOR WHERE: %s == WHERE?' % s[0][:5])
+            if s[0][:5] != 'WHERE':
+                qss = DMS.SuperSearch.SuperSearch(s[0])
+                cond = qss.ConvertToSQLWhere()
+            else:
+                cond = s[0].replace('WHERE', '')
+            r.SetSQLCondition(cond)
+            if r.ExecSQLQuery():
+                # self.__c.Count('SQL')
+                self.__doRepeat = doRepeat
+            rir = r.isResult()
+            if rir >= 0:
+                l1, l2 = r.GetNextLine(), ''
+            else:
+                l1, l2 = r.GetLineTo(), ''
+        else:
+            rir = r.isResult()
+            #self.__log.Write(msg = 'repeat %i - resultrow: %i' % (doRepeat, rir))
+            if rir >= 0:
+                l1, l2 = r.GetNextLine(), line
+            else:
+                l1, l2 = r.GetLineTo(), ''
+        #self.__log.Write(msg = 'REPEAT L1=%s L2=%s' % (str(l1), str(l2)))
+        return l1, l2
+
+    def __EvaluateIf(self, countIf, line):
+        """
+        scan line for if-expr
+        set expr to evaluate
+        return line
+        """
+        countIf = countIf - 1
+        i = self.__ifs[countIf]
+        i.SetLinePointer(self.__linePointer)
+        #s = self.ScanIfCond(self.__oc.GermanUmlautReplace(line))
+        s = self.ScanIfCond(line)
+        if s:
+            i.Set(s[0])
+            try:
+                i.Eval()
+                line = ''
+            except:
+                raise Core.Error.IfHasNoEndif(0, 'IF-EXPRESSION %i HAS HAD AN ERROR:' \
+                                              ' EITHER NO CORRESPONDING (endif) OR SYNTAX ERROR'
+                                              % countIf)
+        l1, l2 = i.GetNextLine(), line
+        return l1, l2
+
+    def __SubstituteSessionId(self, l):
+        #search = re.compile('.*/1Ci/dmerce\?(qs=[\w+\d+]+,[\w+\d+]+).*')
+        #subst = re.compile('/1Ci/dmerce\?(qs=[\w+\d+]+,[\w+\d+]+)')
+        #m = search.match(l)
+        #if m:
+        #    l = subst.sub('/1Ci/dmerce?qs=' + str(self.__myvar.Get('qs')), l)
+        a = string.split(l, '/1Ci/dmerce?qs=', string.count(l, '/1Ci/dmerce?qs='))
+        if len(a) > 1:
+            #self.__log.Write(msg = 'a=%s' % str(a))
+            z = ''
+            for i in range(1, len(a)):
+                item = a[i]
+                p2 = string.find(item, '&')
+                if p2 >= 0:
+                    try: # no attribute __myvar
+                        a[i] = '/1Ci/dmerce?qs=' + str(self.__myvar.Get('qs')) + item[p2:]
+                    except:
+                        a[i] = '/1Ci/dmerce?qs=' + item[p2:]
+            l = string.join(a, '')
+            #self.__log.Write(msg = 'l=%s' % str(l))
+        return l
+
+    def __EvaluateMacros(self, isRepeat, l):
+        """ evaluate macros: who, dboid, table.field, sql count, exec """
+        l = self.__ProcessMacroWho(l)
+        l = self.__ProcessMacroDBOID(l)
+        l = self.__ProcessMacroTableField(isRepeat, l)
+        l = self.__ProcessMacroTableFieldFormatted(isRepeat, l)
+        l = self.__ProcessMacroTableFieldXref(isRepeat, l)
+        l = self.__ProcessMacroTableFieldXrefFormatted(isRepeat, l)
+        l = self.__ProcessMacroSQLRowCount(l)
+        l = self.__ProcessMacroSQLIndex(l)
+        l = self.__ProcessMacroSQLIndex1(l)
+        l = self.__ProcessMacroSQLSelect(l)
+        l = self.__ProcessMacroGetMyVar(l)
+        l = self.__ProcessMacroSQLCount(l)
+        l = self.__ProcessMacroExec(l)
+        l = self.__ProcessMacroSetSkin(l)
+        l = self.__ProcessMacroSkinStylesheet(l)
+        l = self.__ProcessMacroSkinImg(l)
+        l = self.__ProcessMacroSkinImgTag(l)
+        l = self.__ProcessMacroSetMyVar(l)
+        return l
+
+    def SetOutputMethod(self, l):
+        """ set output method """
+        if not l:
+            self.__outputStdout = 1
+            self.__outputList = 0
+        else:
+            self.__outputStdout = 0
+            self.__outputList = 1
+            self.__l = []
+
+    def isOutputMethodStdout(self):
+        if self.__outputStdout:
+            return 1
+        else:
+            return 0
+
+    def isOutputMethodList(self):
+        if self.__outputList:
+            return 1
+        else:
+            return 0
+
+    def Go(self):
+        """ process template """
+        while 1:
+            try:
+                line = self.__parsedBuffer.GetLine(self.__linePointer)
+            except:
+                if self.isOutputMethodStdout():
+                    raise Core.Error.TemplateEvalComplete(0, self.__c)
+                elif self.isOutputMethodList():
+                    return self.__l
+            isMacros = line.GetMacros()
+            isIf = line.isIf()
+            isRepeat = line.isRepeat()
+            linet = line.Get()
+            #self.__log.Write(msg = 'LINE: %s %s %s %s' % (isMacros, isIf, isRepeat, string.strip(linet)))
+            if isMacros:
+                linet = self.__EvaluateMacros(isRepeat, linet)
+            if isIf > -1:
+                self.__linePointer, linet = self.__EvaluateIf(isIf, linet)
+                self.__parsedBuffer.SetLinePointer(self.__linePointer)
+                #self.__log.Write(msg = 'if: %i, %s' % (self.__linePointer, string.strip(linet)))
+            if isRepeat > -1 and isRepeat is not None:
+                self.__linePointer, linet = self.__EvaluateRepeat(isRepeat, linet)
+                self.__parsedBuffer.SetLinePointer(self.__linePointer)
+                #self.__log.Write(msg = 'repeat: %i, %s' % (self.__linePointer, string.strip(linet)))
+            self.__linePointer = self.__parsedBuffer.NextLine()
+            linet = self.__SubstituteSessionId(linet)
+            if self.isOutputMethodStdout():
+                self.__fdout.write(linet)
+            elif self.isOutputMethodList():
+                self.__l.append(linet)
+            # self.__c.Count('Rotations')
+            # self.__c.Count('AllLines')

@@ -1,0 +1,152 @@
+#!/bin/ksh
+
+#################################################
+#
+# Copyright 2000-2002 1Ci GmbH, http://www.1ci.de
+#
+# $Id: qdsol_stat,v 1.2 2003/06/02 10:37:53 rb Exp $
+# $Author: rb $
+# $Revision: 1.2 $
+#
+# Sun Solaris(TM) System Report
+# 
+#################################################
+
+. ${DMERCE_HOME}/lib/libsh
+[ $? -gt 0 ] && exit 2
+. ${DMERCE_HOME}/lib/libdmerce
+[ $? -gt 0 ] && exit 2
+. ${DMERCE_HOME}/lib/libsolaris
+[ $? -gt 0 ] && exit 2
+. ${DMERCE_HOME}/lib/liboracle
+[ $? -gt 0 ] && exit 2
+. ${DMERCE_HOME}/lib/libfw
+[ $? -gt 0 ] && exit 2
+
+sep() {
+    echo
+    echo "================================================================================"
+    echo "*"
+    echo "* -> $1"
+    echo "*"
+    echo "================================================================================"
+    echo
+}
+
+main() {
+
+    echo "/------------------------------------------------------------------------\\"
+    echo "| System status at:  `date`"
+    echo "| Taken by user:     `/usr/bin/id`"
+    echo "\\________________________________________________________________________/"
+    echo
+
+    solstat_sysinfo
+    solstat_meminfo
+
+    solstat_eeprom_info
+    if [ `amiroot` -eq 1 ]; then
+	solstat_rsc_info
+    fi
+
+    sep "Solaris Operating Environment"
+
+    solstat_etcsystem
+
+    if [ x"$DMERCE_SOLSTAT_REPTYPE" = x"full" -a `amiroot` ]; then
+	solstat_modinfo
+	solstat_patches
+	solstat_pkginfo
+    fi
+
+    sep "Disk/Storage"
+
+    solstat_swapstatus
+    solstat_disk_usageinfo
+    solstat_disk_status
+    if [ x"$DMERCE_SOLSTAT_REPTYPE" = x"full" -a `amiroot` ]; then
+	solstat_disk_coreinfo
+    fi
+    solstat_metastat
+    solstat_etcvfstab
+    solstat_dfs
+
+    solstat_etchostnames
+
+    sep "Network"
+
+    solstat_if_status
+    solstat_net_stat
+    if [ x"$DMERCE_SOLSTAT_REPTYPE" = x"full" -a `amiroot` ]; then
+	solstat_show_ndd_rw /dev/ip
+	solstat_show_ndd_rw /dev/tcp
+	solstat_show_ndd_rw /dev/udp
+    fi
+    [ $DMERCE_LIBFW -eq 1 ] && libfw_stat_show_ipf
+    solstat_show_ssadm
+
+    solstat_check_inetd
+    if [ x"$DMERCE_SOLSTAT_REPTYPE" = x"full" -a `amiroot` ]; then
+	solstat_check_aset
+    fi
+
+    sep "User/Groups/Accounts"
+
+    solstat_user_group
+    solstat_user_status
+
+    sep "Processes"
+
+    solstat_procview "Internet Super Server" inetd
+    solstat_procview Sendmail sendmail
+    solstat_procview SSH ssh
+    solstat_procview ORACLE ora_ tnslsnr
+    solstat_check_ora_insts
+    solstat_procview MySQL mysql
+    solstat_procview PostgreSQL postmaster
+    solstat_procview Apache apache
+    solstat_procview Samba smbd nmbd
+    solstat_procview ProFTP proftpd
+
+    sep "Logs"
+
+    solstat_errorlogs
+
+    sep "System Activity"
+
+    solstat_sar_u
+    #solstat_iostat
+    solstat_sar_d
+    if [ x"$DMERCE_SOLSTAT_REPTYPE" = x"full" ]; then
+	solstat_sar_b
+	solstat_sar_p
+	solstat_sar_a
+	solstat_sar_c
+	solstat_sar_g
+	solstat_sar_k
+	solstat_sar_m
+	solstat_sar_q
+	solstat_sar_r
+	solstat_sar_v
+	solstat_sar_w
+	solstat_sar_y
+    fi
+}
+
+trap '' KILL INT EXIT
+libdmerce_copyr
+echo "SUN SOLARIS SYSTEM REPORT"
+libsh_discover_env
+eval $*
+if [ x"$reptype" = x"" -o x"$reptype" = x"short" ]; then
+    DMERCE_SOLSTAT_REPTYPE="short"
+    export DMERCE_SOLSTAT_REPTYPE
+elif [ x"$reptype" = x"full" ]; then
+    DMERCE_SOLSTAT_REPTYPE="full"
+    export DMERCE_SOLSTAT_REPTYPE
+fi
+echo "* Report type '$DMERCE_SOLSTAT_REPTYPE'"
+echo "* Host ID '`/usr/bin/hostid`'"
+echo
+libsh_amiroot > /dev/null
+main

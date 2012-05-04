@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.1ci.de"
+            xmlns="http://www.1ci.de"
+            elementFormDefault="qualified">
+
+    <xsd:element name="forms">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="form" minOccurs="1" maxOccurs="unbounded" type="FORM"/>
+            </xsd:sequence>
+            <xsd:attribute name="version" type="xsd:string"/>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:complexType name="FORM">
+        <xsd:sequence>
+            <xsd:element name="name" minOccurs="1" maxOccurs="1" type="xsd:string"/>
+            <xsd:element name="description" minOccurs="1" maxOccurs="1" type="xsd:string"/>
+            <xsd:element name="formversion" minOccurs="0" maxOccurs="1" type="xsd:string"/>
+            <xsd:element name="field" minOccurs="0" maxOccurs="unbounded" type="FIELD"/>
+        </xsd:sequence>
+        <xsd:attribute name="id" type="xsd:string"/>
+    </xsd:complexType>
+    
+    <xsd:complexType name="FIELD">
+        <xsd:sequence>
+            <xsd:element name="description" minOccurs="1" maxOccurs="1" type="xsd:string"/>
+            <xsd:element name="type" minOccurs="1" maxOccurs="1" type="xsd:string"/>
+            <xsd:element name="displaytype" minOccurs="0" maxOccurs="1" type="xsd:string"/>
+            <xsd:element name="options" minOccurs="0" maxOccurs="1" type="OPTIONS"/>
+            <xsd:element name="constraints" minOccurs="0" maxOccurs="1" type="CONSTRAINTS"/>
+            <xsd:element name="messages" minOccurs="0" maxOccurs="1" type="MESSAGES"/>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+        <xsd:attribute name="required" type="xsd:boolean"/>
+    </xsd:complexType>
+    
+    <xsd:complexType name="CONSTRAINTS">
+    	<xsd:sequence>
+	    	<xsd:element name="constraint" minOccurs="0" maxOccurs="unbounded" type="CONSTRAINT"/>
+	    </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="CONSTRAINT">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="type">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:NMTOKEN">
+                            <xsd:enumeration value="minlength"/>
+                            <xsd:enumeration value="maxlength"/>
+                            <xsd:enumeration value="mininclusive"/>
+                            <xsd:enumeration value="maxinclusive"/>
+                            <xsd:enumeration value="precision"/>
+                            <xsd:enumeration value="scale"/>
+                            <xsd:enumeration value="startdate"/>
+                            <xsd:enumeration value="enddate"/>
+                            <xsd:enumeration value="format"/>                            
+                            <xsd:enumeration value="minselected"/>
+                            <xsd:enumeration value="maxselected"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:attribute>
+                <xsd:attribute name="description" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="MESSAGES">
+        <xsd:choice minOccurs="1" maxOccurs="unbounded">
+            <xsd:element name="error" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+            <xsd:element name="warning" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+        </xsd:choice>
+    </xsd:complexType>
+
+    <xsd:complexType name="OPTIONS">
+        <xsd:sequence>
+            <xsd:element name="option" minOccurs="0" maxOccurs="unbounded" type="OPTION"/>
+        </xsd:sequence>
+        <xsd:attribute name="sql" type="xsd:string"/>
+        <xsd:attribute name="sqlkey" type="xsd:string"/>
+        <xsd:attribute name="sqlvalue" type="xsd:string"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="OPTION">
+     <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="key" type="xsd:string" />
+      </xsd:extension>
+     </xsd:simpleContent>
+    </xsd:complexType>
+
+
+    <xsd:complexType name="PERIOD">
+        <xsd:sequence>
+            <xsd:element name="startdate" minOccurs="0" maxOccurs="1" type="xsd:date"/>
+            <xsd:element name="enddate" minOccurs="0" maxOccurs="1" type="xsd:date"/>
+        </xsd:sequence>
+    </xsd:complexType>
+        
+</xsd:schema>
+

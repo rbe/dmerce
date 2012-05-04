@@ -1,0 +1,30 @@
+Voraussetzungen
+===============
+
+Software:
+
+- Jakarta ANT
+- GNU readline
+
+Umgebung:
+
+JAVA_HOME=/usr/j2sdk1.4.1_01
+PYTHON_HOME=$DMERCE_HOME/product/python/2.2.2
+PATH=$JAVA_HOME/bin:$PYTHON_HOME/bin:<jakarta-ant-installation>/bin:$PATH
+
+Konfiguration
+-------------
+
+$ ./configure --prefix=/opt/postgresql/7.3.1 --with-python \
+               --with-java --with-maxbackends=128 \
+               --with-libraries=/opt/sfw/lib --with-includes=/opt/sfw/include
+
+Installation
+------------
+
+$ make
+$ make install
+$ make install-all-headers  (WICHTIG: fuer installation von python-treibern!)
+
+- Anpassen von /opt/postgresql/VERSION/share/postgresql.conf
+  (Kopie von postgresql.conf.sample machen!)

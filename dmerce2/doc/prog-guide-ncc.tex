@@ -1,0 +1,376 @@
+\chapter{1{[}NCC{]} - The API}
+
+\newpage
+
+\wanciprgpackage{user-account.py}{ Das Skript dient zu Erstellung der
+  passwd und der group Datei von Unix/Linux Systemen.  Dabei werden
+  die Systemeinstellungen nicht ber\"uhrt und beibehalten, d.h. alle
+  User und Gruppen mit der UID/GID unter 1000 werden so gelassen, wie
+  sie bei der installation des Systems angelegt wurden. Werden per NCC
+  User und/oder Gruppen angelegt, so werde ID's nur oberhalb von 1000
+  angelegt um keinen Konflikt hervozurufen. Wie bei den meisten
+  Skripten des NCC's wird als erstes die MAC Adresse und die ServerID
+  ermittelt. Dann wird \"uberpr\"uft, f\"ur welche Dienste der
+  aktuelle Server zust\"andug ist.  Sind dann die Dienste ermittelt,
+  so werden alle User und Gruppen angelegt, die f\"ur diesen Dienst
+  eingetragen sind.  Sinn und Zweck dieser Pr\"ufung ist es, nur die
+  User anzulegen, die die Berechtigung haben, diesen Dienst zu
+  managen.  Je nach System werden die entsprechenden Dateien
+  angelegt.}{}
+
+\wancicliinv{create-default.py}{keine}{Legt eine Tabelle fuer eine
+  dmerce-Datenbank an mit Standard Feldern (ID, CreatedDateTime,
+  CreatedBy, ChangedDateTime, ChangedBy, active)}
+
+\wanciprgpackage{http.py}{Generiert aus der Datenbank dmerc\_ncc eine komplette vhost.conf.}{}
+
+\wanciprgclass{DBData}{keine}{d = DBData()}{}
+
+\wanciprgmethodbegin{GetVhost}{Liefert eine Liste mit den allen
+  konfigurierten VirtualHost aus den Tabellen DnsZones, DnsRecords,
+  DnsRrtypes, SrvWebsrvVhosts, SrvWebsrvAlt.}
+\wanciprgmethodend
+
+\wanciprgmethodbegin{GetSrvAlias}{Holt die Alias Liste zu den
+  entsprechenden VirtualHost.  -$>$ Uebergabe ist die ID}
+\wanciprgmethodend
+
+\wanciprgmethodbegin{GetIP}{Sucht per Rekursion die passende IP
+  Adresse zum hostname und setzt setzt die innerhalb der Klasse.  -$>$
+  Uebergabe zone, name}
+\wanciprgmethodend
+
+\wanciprgmethodbegin{ReturnIP}{Gibt den Wert der IP Adresse zurueck,
+  die durch die Methode GetIP gesetzt wurde.}
+\wanciprgmethodend
+
+\wanciprgclass{Vhost}{keine}{v = Vhost()}{}
+
+\wanciprgmethodbegin{SetNameVirtHost}{Der NameVirtualHost wird
+  gesetzt.  -$>$ Uebergabe der IP}
+\wanciprgmethodend
+
+\wanciprgmethodbegin{SetListen}{Die Listen Direktive wird gesetzt.
+  -$>$ Uebergabe IP}
+\wanciprgmethodend
+
+\wanciprgmethodbegin{SetVhost}{Der VirtualHost wird gesetzt.  -$>$
+  Uebergabe ip}
+\wanciprgmethodend
+
+\wanciprgmethodbegin{SetDocRoot}{Das Document Root Verzeichnis wird
+  gesetzt.  -$>$ Uebergabe des Webserververzeichnisses,
+  Projektverzeichnis}
+\wanciprgmethodend
+
+\wanciprgmethodbegin{SetAliases}{Die ServerAliases werden gesetzt.
+  -$>$ Uebergabe einer List der Aliases}
+\wanciprgmethodend
+
+\wanciprgmethodbegin{SetSrvName}{Der ServerName wird gesetzt.  -$>$
+  Uebergabe vom ServerName (string)}
+\wanciprgmethodend
+
+\wanciprgmethodbegin{SetServerAdmin}{Der ServerAdmin wird gesetzt.
+  -$>$ Uebergabe der ServerAdmin (string)}
+\wanciprgmethodend
+
+\wanciprgmethodbegin{SetAccLog}{Der AccessLog Dateiname wird gesetzt.
+  -$>$ Uebergabe Dateiname (string)}
+\wanciprgmethodend
+
+\wanciprgmethodbegin{SetAccLogType}{Der AccessLog Typ wird gesetzt
+  -$>$ Uebergabe des Typs (string)}
+\wanciprgmethodend
+
+\wanciprgmethodbegin{SetErrLog}{Der ErrorLog Dateiname wird gesetzt.
+  -$>$ Uebergabe Dateinname}
+\wanciprgmethodend
+
+\wanciprgmethodbegin{SetFoot}{Die Fusszeile wird gesetzt.}
+\wanciprgmethodend
+
+\wanciprgmethodbegin{SetAddCfg}{Die zustzliche Konfiguration wird
+  gesetzt.  -$>$ Uebergabe (string)}
+\wanciprgmethodend
+
+\wanciprgclass{File}{keine}{f = File()}{}
+
+\wanciprgmethodbegin{AddLine}{Fuegt der Datei eine Zeile hinzu.  -$>$
+  Uebergabe der Zeile in Form eines Strings}
+\wanciprgmethodend
+
+\wanciprgmethodbegin{Write}{Schreibt den Inhalt in eine Datei Pfad und
+  Dateiname sind z.Zt. noch fest eingestellt.}
+\wanciprgmethodend
+
+\wanciprgclass{Function}{keine}{f = Function()}{}
+
+\wanciprgmethodbegin{ChangeElement}{Ersetzt ein Element einer List an
+  der angegebenen Stelle durch einen anderen Wert.  -$>$ Uebergabe der
+  Liste, des neuen Wertes, der Stelle}
+\wanciprgmethodend
+
+\wanciprgmethodbegin{CreateList}{Erzeugt aus einer Liste mit Tupeln
+  einen durch den angegebenen Seperator getrennten String, bestehend
+  aus dem Element an der angegebenen Stelle -$>$ Uebergabe list,
+  Seperator, Element Nummer}
+\wanciprgmethodend
+
+\subsection{Ablauf}
+
+Im ersten Schritt wird die dmerce.cfg ausgelesen und die Verbindung
+zur dmerce\_sys Datenbank hergestellt. Ist dann die Verbindung zur
+Projektdatenbank erfolgreich, wird die Verbindung zur Projektdatenbank
+hergestellt. Anhander der durch SnmpMac.GetServer ermittelten ServerID
+und nach der \"Uberpr\"ufung, ob der Server den Dienst als Webserver
+besitzt, wird das Hauptprogramm angestossen.
+
+Im Hauptprogramm werden als erstes die n\"otigen Instanziierungen
+vorgenommen.  Danach werde alle f\"ur den Server eingetragenen vhost
+Konfigurationen aus der Datenbank ausgelesen. Sollte es sich bei dem
+Vhosteintrag nicht um eine IP Adresse handeln, so wird durch eine
+Funktion diese anhand der DNS Eintr\"age ermittelt.
+
+Die Daten werden dann in der Klasse Vhost zu einem g\"ultigen
+Datensatz zusammengesetzt.
+
+\begin{itemize}
+\item \wancicode{Vhost.SetNameVirtHost(ip)} Setzt die NameVirtualHost
+  Einstellung
+\item \wancicode{Vhost.SetListen(ip)} Setzt die Listen Einstellung
+\item \wancicode{Vhost.SetVhost(ip)} Setzt die $<$VirtualHost
+  $<$ip$>$$>$ Einstellung
+\item \wancicode{Vhost.SetDocRoot(result{[}i{]}{[}'DocumentRoot'{]})}
+  Setzt die DocumentRoot Einstellung
+\item \wancicode{Vhost.SetAliases(aliases)} F\"ugt, wenn welche
+  vorhanden, ServerAlias hinzu
+\item \wancicode{Vhost.SetSrvName(result{[}i{]}{[}'RecordName'{]} +
+    '.' + result{[}i{]}{[}'ZoneName'{]})} Erzeugt den ServerNamen
+\item
+  \wancicode{Vhost.SetServerAdmin(result{[}i{]}{[}'ServerAdmin'{]})}
+  Tr\"agt den ServerAdmin ein
+\item \wancicode{Vhost.SetAccLog('access\_log')} definiert den
+  access\_log Namen
+\item \wancicode{Vhost.SetAccLogType(result{[}i{]}{[}'AccLogType'{]})}
+  Legt den access\_log Typen fest
+\item \wancicode{Vhost.SetErrLog('error\_log')} Definiert den
+  error\_log Name
+\item \wancicode{Vhost.SetFoot()} Schliesst die Konfigurationsdatei
+\item
+  \wancicode{Vhost.SetAddCfg(result{[}i{]}{[}'AdditionalConfigs'{]})}
+  F\"ugt manuelle Konfigurationselemente hinzu
+\end{itemize}
+
+Sind alle Daten generiert und der Klasse File(), die als Container
+f\"ur die gesamte Konfigurationsdatei dient, hinzugef\"ugt, so wird
+die Konfigurationsdatei im der dem Hauptprogramm \"ubergebenen Pfad
+mit dem Dateinamen vhost.conf geschrieben.
+
+\section{mail\_alias.py}
+
+Modul zu Erstellung der sendmail alias datei.
+
+DBData
+        GetAliases
+        ----------
+        Liefert alle Aliases in Form einer Liste.
+        Die Aliase-List wird mit Alias, Zone, AccUser gespeichert.
+
+        GetServerInfo
+        -------------
+        Liest das Feld "SQL" zu einem FQHN aus und gibt den Wert zurueck.
+        -$>$ Uebergabe FQHN
+
+
+GenerateAliasLine
+
+        SetAlias
+        --------
+        Der Aliasname wird gesetzt
+        -$>$ Uebergabe AliasName
+        
+        SetZone
+        -------
+        Die Zone wird festgelegt
+        -$>$ Uebergabe ZoneName
+
+        SetLogin
+        --------
+        Der AccountName wird festgelegt
+        -$>$ Uebergabe Login
+
+GenerateAliasFile
+
+        AddLine
+        -------
+        Fuegt dem Zeilen Container eine Zeile hinzu.
+        -$>$ Uebergabe ist ein String
+
+        Write
+        -----
+        Erzeugt die Datei virtusertable.txt in /etc/mail
+
+        GenVirtDB
+        ---------
+        Generiert aus der erzeugten virtusertable.txt eine
+        hash-Datenbank per Systemkommando
+
+\section{mail\_conf.py}
+
+Modul zu Erstellung der sendmail.cf Konfigurationsdatei
+
+Shell Aufruf:
+
+mail\_conf.py --serverID=$<$ID des Servers$>$
+             --mcFile=$<$Konfigurations-Text-Datei$>$
+             --cfFile=$<$sendmail cf Datei$>$
+
+System
+
+        GetOS
+        -----
+        Gibt den OperationSystem Namen des Systems wieder.
+
+        SetcfDir
+        --------
+        Mit der Methode GetOS wird das System ermittelt und anhand
+        dessen das Verzeichnis fuer die Sendmailkonfigurationsdatei
+        gesetzt.
+        
+DBData
+
+        GetMacros
+        ---------
+        Liefert eine Liste mit den fuer die ServerID eingetragenen
+        Macros fuer sendmail
+        -$>$ Uebergabe Macroname, ServerID
+
+BuildConfFile
+
+        SetMacro
+        --------
+        Macroname wird gesetzt.
+        -$>$ Uebergabe Macroname
+
+        SetValue
+        --------
+        Der Inhalt des Macros wird gesetzt.
+        -$>$ Uebergabe Macroinhalt
+
+        \_\_str\_\_
+        -------
+        Rueckgabe des kompletten Strings
+
+SetConfFile
+
+        AddLine
+        -------
+        Zeile wird dem File-Container hinzugefuegt.
+        -$>$ Uebergabe Zeile(string)
+
+        Write
+        -----
+        Schreibt die erstellte Konfigurstionsdatei.
+        -$>$Uebergabe des Dateinamens   
+
+        ConvertConfFile
+        ---------------
+        Auf dem System wird der m4 Befehl abgesetzt, um die
+        erstellte Konfigurationsdatei zu konvertieren.
+        -$>$ Uebergabe directory, mcFile, cfFile (Verzeichnis, erstellte Datei,
+           konvertierte Datei)
+
+\section{dns.py}
+
+Erzeugt die Konfiguration f\"ur den Nameserver. Die
+Verzeichnisstruktur ist in eine Struktur gegliedert. So wird f\"ur
+jeden Agent ein Verzeichnis angelegt und darunter die Verzeichnisse
+seiner Nameserver. In den Nameserververzeichnissen sind dann die
+Zone-Files und named.conf vorhanden.
+
+Ben\"otigte Module:
+
+\begin{itemize}
+\item\wancicode{DMS.SQL} Datenbankverbindungen
+\item\wancicode{DMS.SysTbl} Analyse des Sys-Strings in der dmerce.cfg
+\item\wancicode{Guardian.Config} ConfigParser
+\item\wancicode{DNSArpa} Revers Mapping Modul, h\"alt die Eintr\"age f\"ur das ReverseMapping
+\item\wancicode{DNSNS} Datenkontainer f\"ur Nameserver Informationen
+\item\wancicode{DNSZone.ZoneData} ZoneInformationen Werden in diesem Modul gehalten
+\item\wancicode{DMS.SnmpMac} Die MAC-Adresse und die ServerID f\"ur den Server werden ausgelesen
+\end{itemize}
+
+DBData
+        
+        GetNSList
+        ---------
+        Liefert alle Nameserver, die in einer zone angegeben sind.
+        -$>$ \"Ubergabe der zone (string)
+
+        GetZones
+        --------
+        Liefert Daten \"uber Zones, die zu einem speziellen Agent geh\"oren.
+        Dies sind u.a. SOA\_Expire TTL Zone-C etc.
+        -$>$ \"Ubergabe AgentID, ServerID
+
+        GetAgents
+        ---------
+        Liefert eine Liste der gesamten Agents
+
+        GetForwarders
+        -------------
+        Liefert alle Forwarder IP f\"ur den angegebenen Nameserver
+        -$>$ \"Ubergabe Nameserver ID
+
+        GetReverse
+        ----------
+        Holt alle ReverseMappings aus der Datenbank zum entsprechenden
+        Nameserver
+        -$>$ \"Ubergabe Nameserver ID
+
+\subsection{Ablauf}
+
+Die dmerce.cfg wird ausgelesen und analysiert. Dadurch wird die
+Verbindung zur dmerce\_sys Datenbank hergestellt und die Eintr\"age
+f\"ur das Projekt (z. B. hellfire.ms0.1ci.net) ausgelesen. Mit dem
+f\"ur das Projekt g\"ultigen SQL-String wird die dmerce\_ncc Datenbank
+konnektiert. Anhand der ServerID wird festgestellt, ob der aktuelle
+Server f\"ur den DNS Dienst konfiguriert ist. Wenn dem so ist wird die
+NameserverID f\"ur den Server ermittelt. Mit der NameserverID wird das
+Hauptprogramm angestossen, das anhand der NS\_ID und einem
+\"ubergebenen Pfad die f\"ur den Server spezifischen Daten aus der
+Datenbank holt und in Konfigurationsdateien schreibt.
+
+\subsection{Hauptprogramm}
+
+Als erstes werden Instanzen allgemein ben\"otigter Klassen und Module
+erzeugt.
+
+\begin{itemize}
+\item \wancicode{db = DBData()} beinhaltet Methoden mit DB-Abfragen
+\item \wancicode{func = Function()} Klasse mit allgemein ben\"otigten Funktionen
+\item \wancicode{DNSArpa.ReverseMap()} Modul das das Handling mit
+  ReverseMapping erm\"oglicht
+\end{itemize}
+
+Anhand der NameserverID werden folgende Dinge aus der Datenbank im
+ersten Schritt ausgelesen.  DBData.GetNsData($<$db-instance$>$,
+$<$ns-server-id$>$) liefert folgende Daten:
+
+\begin{itemize}
+\item DnsNs.ID AS NS\_ID
+\item DnsNs.Name AS NS\_Name
+\item DnsNs.IP AS NS\_IP
+\item Agent.ID AS AgentID
+\item Agent.Name AS AgentName
+\item Agent.Vorname AS AgentVorname
+\end{itemize}
+
+Zus\"atzlich werden Daten bez\"uglich der SlaveReverseMapping ermittelt.
+Man erh\"alt durch DBData.GetSlaveReverse($<$db-instance$>$, $<$ns-server-id$>$).
+
+\begin{itemize}
+\item DnsReverse.arpa
+\item DnsNs.IP AS MasterIP
+\end{itemize}

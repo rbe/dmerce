@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="http://java.sun.com/xml/ns/jax-rpc/ri/config">
+
+  <wsdl
+        location="http://10.48.35.3:8081/dmercews/sqlservice?WSDL"
+        packageName="com.wanci.dmerce.webservice.db"/>
+        
+</configuration>

@@ -1,0 +1,139 @@
+#!/bin/ksh
+
+#################################################
+#
+# Copyright 2001-2002 1Ci GmbH, http://www.1ci.de
+#
+# $Id: qdd_dmp,v 1.5 2003/07/17 11:17:24 ka Exp $
+# $Author: ka $
+# $Revision: 1.5 $
+#
+# (Un)Dump a dmerce project
+# 
+# - SQL database
+# - Website
+#
+#################################################
+
+. ${DMERCE_HOME}/lib/libsh
+[ $? -gt 0 ] && exit 2
+. ${DMERCE_HOME}/lib/libdmerce
+[ $? -gt 0 ] && exit 2
+
+usage() {
+    echo "ERROR: you must supply project
+
+$0 [arguments]
+arguments ::=
+              projectfqhn*           fully qualified host name
+	      projectdestdir*        directory relative to \$DMERCE_WEBSITES
+              file                   filename for dump. standard is
+                                     projectfqhn.dump.cpio
+              data                   export data? 1=yes, 0=no (standard)
+              host                   location of database standard = localhost
+
+"
+}
+
+exp_database_mysql() {
+    ${MYSQL_HOME}/bin/mysqldump -u ${projectdbuser} --password=${projectdbpwd} \
+	-c -h ${host} -t dmerce_sys | ${GREP} Templates | ${GREP} ${projectfqhn} | ${SED} "s/'$projectfqhn'/fqhn/g" \
+	> ${DMERCE_TMP}/sql/mysql/dmerce_sys/Templates.sql
+    ${MYSQL_HOME}/bin/mysqldump -u ${projectdbuser} -h ${host} --password=${projectdbpwd} \
+	-c ${projectdbname} | ${GREP} "^[^INSERT].*" > ${DMERCE_TMP}/sql/mysql/1_${projectdbname}_tables.sql
+    if [ x"${data}" = x"1" ]; then
+	${MYSQL_HOME}/bin/mysqldump -u ${projectdbuser} -h ${host} --password=${projectdbpwd} \
+	    -c ${projectdbname} | ${GREP} "^INSERT.*" > ${DMERCE_TMP}/sql/mysql/2_${projectdbname}_data.sql
+    fi
+}
+
+exp_database_postgresql() {
+    e "${PGSQL_HOME}/bin/pg_dump ${projectdbname} > ${DMERCE_TMP}/sql/postgresql/${projectdbname}.sql"
+    ${PGSQL_HOME}/bin/pg_dump -U ${projectdbuser} ${projectdbname} \
+	> ${DMERCE_TMP}/sql/postgresql/${projectdbname}.sql
+}
+
+exp_database_oracle() {
+    ${ORACLE_HOME}/bin/exp ${projectdbuser}/${projectdbpwd} file=${DMERCE_TMP}/sql/oracle/${projectdbuser}.exp
+}
+
+exp_database() {
+    sys=`grep Sys ${projectwww}/dmerce.cfg`
+    projectdbtype=`libdmerce_cfg_get_dbtype "${sys}"`
+    projectdbname=`libdmerce_cfg_get_dbname "${sys}"`
+    projectdbuser=`libdmerce_cfg_get_dbuser "${sys}"`
+    projectdbpwd=`libdmerce_cfg_get_dbpwd "${sys}"`
+    export projectdbname projectdbuser projectdbpwd
+    e "Dumping ${projectdbtype} database '${projectdbname}' user '${projectdbuser}'"
+    if [ x"${projectdbtype}" = x"MySQL" ]; then
+	mkdir -p ${DMERCE_TMP}/sql/mysql
+	mkdir -p ${DMERCE_TMP}/sql/mysql/dmerce_sys
+	exp_database_mysql
+    elif [ x"${projectdbtype}" = x"PostgreSQL" ]; then
+	mkdir -p ${DMERCE_TMP}/sql/postgresql
+	exp_database_postgresql
+    elif [ x"${projectdbtype}" = x"Oracle" ]; then
+	mkdir -p ${DMERCE_TMP}/sql/oracle
+	exp_database_oracle
+    fi
+}
+
+exp_website() {
+    e "Dumping website from '${projectwww}'"
+    ${CPR} ${projectwww}/* ${DMERCE_TMP}/website
+    ${RM} -rf ${DMERCE_TMP}/website/SAM/*
+    ${RM} -rf ${DMERCE_TMP}/website/error/*
+}
+
+exp_shar() {
+    e "Creating dmerce scratch archive '${file}'"
+    cd ${DMERCE_TMP}
+    #${FIND} . -type f -print | ${CPIO} -o -c -O ../${file}
+    ${TAR} -c -f ../${file} .
+    cd ..
+    compress -f ${file}
+}
+
+make_tmp() {
+    e "Creating temporary directory '${DMERCE_TMP}'"
+    mkdir -p ${DMERCE_TMP}
+    mkdir -p ${DMERCE_TMP}/sql
+    mkdir -p ${DMERCE_TMP}/website
+}
+
+clean() {
+    e "Cleaning '${DMERCE_TMP}': ${RM} -rf ${DMERCE_TMP}"
+    ${RM} -rf ${DMERCE_TMP}
+    unset DMERCE_TMP projectdbname projectdbuser projectdbpwd
+    exit 255
+}
+
+exp() {
+    make_tmp
+    exp_database
+    exp_website
+    exp_shar
+    clean
+}
+
+libdmerce_copyr
+libsh_discover_env
+libsh_system_init
+echo "DUMP DMERCE PROJECT"
+echo
+trap 'e "ERROR!"; clean' INT
+eval $*
+DMERCE_TMP=".tmp.$$"
+if [ -z "${projectdestdir}" ]; then
+    usage
+    exit 0
+fi
+
+if [ x"${host}" = x"" ]; then
+    host='localhost'
+fi
+projectwww=${projectwww:-${DMERCE_WEBSITES}/${projectdestdir}}
+file=${file:-${projectfqhn}.dump.tar}
+exp
+e "Done"
+exit 0

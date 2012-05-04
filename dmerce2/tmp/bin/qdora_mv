@@ -1,0 +1,75 @@
+#!/bin/sh
+
+. ${DMERCE_HOME}/lib/libsh
+. ${DMERCE_HOME}/lib/liboracle
+DMERCE_TMP="`pwd`/.tmp.$$"
+
+check() {
+    dmerce_old=$1
+    dmerce_new=$2
+    if [ x"${dmerce_old}" = x"" -o x"${dmerce_new}" = x"" ]; then
+	echo "`date`: ERROR: arguments not correct!"
+	echo "usage: $0 <old directory> <new directory>"
+	echo
+	exit 1
+    fi
+    export dmerce_new dmerce_old
+}
+
+create() {
+    echo "`date`: ORACLE VERSION=${oracle_ver}"
+    echo "`date`: ORACLE HOME='${ORACLE_HOME}'"
+    echo "`date`: ORACLE SID='${ORACLE_SID}'"
+    echo "`date`: Moving from old '${dmerce_old}' to new '${dmerce_new}'"
+    if [ ${oracle_ver} = "8" -o ${oracle_ver} = "8i" ]; then
+	echo "connect internal;" > ${DMERCE_TMP}
+    fi
+    echo "shutdown;" >> ${DMERCE_TMP}
+    if [ ${oracle_ver} = "9i" ]; then
+	echo "create spfile from pfile='${newpfile}';" >> ${DMERCE_TMP}
+	for file in `ls *.tmp`
+	do
+	  echo "alter tablespace temp rename datafile '${dmerce_old}/${file}' to '${dmerce_new}/${file}'"
+	done
+    fi
+    echo "startup mount;" >> ${DMERCE_TMP}
+    o=`pwd`
+    cd ${dmerce_old}
+    for file in `ls *.dbf *.log`
+    do
+      echo "alter database rename file '${dmerce_old}/${file}' to '${dmerce_new}/${file}';" >> ${DMERCE_TMP}
+    done
+    cd ${o}
+    echo "alter database open;
+shutdown;
+exit;" >> ${DMERCE_TMP}
+    echo "`date`: We will execute the following commands:"
+    echo
+    cat ${DMERCE_TMP}
+    echo
+    echo "`date`: Are you sure? (y/n)"
+    read key
+    if [ x"${key}" = x"y" -o x"${key}" = x"Y" ]; then
+	$ORACLE_HOME/bin/sqlplus "sys/${DMERCE_ORACLE_SYSDBAPWD} as sysdba" @${DMERCE_TMP}
+    else
+	echo "`date`: User canceled."
+	exit 1
+    fi
+}
+
+clean() {
+    echo "`date`: Cleaning"
+    ${RM} -f ${DMERCE_TMP}
+    unset dmerce_old dmerce_new DMERCE_TMP
+}
+
+copyr
+trap 'clean; exit 1' INT KILL
+echo "MOVE ORACLE DATABASE (DATAFILES) TO A NEW LOCATION"
+echo
+discover_env
+check $1 $2
+oracle_ver=`get_oracle_version`
+ask_oracle_env
+create
+clean

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
+	"http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
+<taglib>
+
+	<tlib-version>1.3</tlib-version>
+	<jsp-version>1.2</jsp-version>
+	<short-name>q</short-name>
+	<uri>http://www.1ci.de/dmerce-core</uri>
+	<description>dmerce core taglib</description>
+	
+	<!-- contextvar -->
+	<tag>
+		<name>contextvar</name>
+		<tag-class>com.wanci.dmerce.taglib.ContextVarTag</tag-class>
+		<body-content>empty</body-content>
+		<description>ContextVar Tag</description>
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+		</attribute>
+		<attribute>
+			<name>pageid</name>
+			<required>false</required>
+		</attribute>
+		<attribute>
+			<name>formid</name>
+			<required>false</required>
+		</attribute>
+		<attribute>
+			<name>index</name>
+			<required>false</required>
+			<type>Integer</type>
+			<description>Index des anzuzeigenden Elements bei mehreren Werten im Formfield.</description>
+		</attribute>
+	</tag>
+	
+	<!-- datetime -->
+	<tag>
+		<name>datetime</name>
+		<tag-class>com.wanci.dmerce.taglib.DateTimeTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>format</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	<!-- file -->
+	<tag>
+		<name>file</name>
+		<tag-class>com.wanci.dmerce.taglib.FileTag</tag-class>
+		<body-content>empty</body-content>
+		<description>File Tag</description>
+		<attribute>
+			<name>creationdate</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>modificationdate</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>path</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>size</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>unit</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>precision</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>int</type>
+		</attribute>
+		<attribute>
+			<name>minprecision</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>int</type>
+		</attribute>
+		<attribute>
+			<name>maxprecision</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>int</type>
+		</attribute>
+	</tag>
+	
+	<!-- include -->
+	<tag>
+		<name>include</name>
+		<tag-class>com.wanci.dmerce.taglib.IncludeTag</tag-class>
+		<body-content>empty</body-content>
+		<description>Include Tag</description>
+		<attribute>
+			<name>url</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+
+	<!-- message -->
+	<tag>
+		<name>message</name>
+		<tag-class>com.wanci.dmerce.taglib.MessageTag</tag-class>
+		<body-content>JSP</body-content>
+		<description>Message Tag</description>
+	</tag>
+	
+	<!-- res -->
+	<tag>
+		<name>res</name>
+		<tag-class>com.wanci.dmerce.taglib.ResTag</tag-class>
+		<body-content>empty</body-content>
+		<description>Resource Tag</description>
+		<attribute>
+			<name>path</name>
+			<required>true</required>
+		</attribute>
+	</tag>
+
+	<!-- setbrick -->
+	<tag>
+		<name>setbrick</name>
+		<tag-class>com.wanci.dmerce.taglib.template.SetBrickTag</tag-class>
+		<body-content>JSP</body-content>
+		<description>SetBrick Tag</description>
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+			<type>String</type>
+		</attribute>
+		<attribute>
+			<name>path</name>
+			<required>false</required>
+			<type>String</type>
+		</attribute>
+	</tag>
+
+	<!-- uploadres -->	
+	<tag>
+		<name>uploadres</name>
+		<tag-class>com.wanci.dmerce.taglib.UploadResTag</tag-class>
+		<body-content>empty</body-content>
+		<description>renders link to an uploaded file</description>
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>String</type>
+		</attribute>
+		<attribute>
+			<name>emptypath</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>String</type>
+		</attribute>
+	</tag>
+
+	<!-- usebrick -->
+	<tag>
+		<name>usebrick</name>
+		<tag-class>com.wanci.dmerce.taglib.template.UseBrickTag</tag-class>
+		<body-content>JSP</body-content>
+		<description>UseBrick Tag</description>
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+			<type>String</type>
+		</attribute>
+	</tag>
+
+	<!-- usetemplate -->
+	<tag>
+		<name>usetemplate</name>
+		<tag-class>com.wanci.dmerce.taglib.template.UseTemplateTag</tag-class>
+		<body-content>JSP</body-content>
+		<description>UseTemplate Tag</description>
+		<attribute>
+			<name>path</name>
+			<required>true</required>
+			<type>String</type>
+		</attribute>
+	</tag>
+
+	<!-- var -->
+	<tag>
+		<name>var</name>
+		<tag-class>com.wanci.dmerce.taglib.VarTag</tag-class>
+		<body-content>empty</body-content>
+		<description>Renders the value of a request scope variable or a session scope variable.</description>
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+		</attribute>
+		<attribute>
+			<name>scope</name>
+			<required>false</required>
+		</attribute>
+	</tag>
+	
+	<!-- workflowlink -->
+	<tag>
+		<name>workflowlink</name>
+		<tag-class>com.wanci.dmerce.taglib.WorkflowLinkTag</tag-class>
+		<body-content>JSP</body-content>
+		<description>Renders a link to access a workflow</description>
+		<attribute>
+			<name>id</name>
+			<required>true</required>
+			<type>String</type>
+		</attribute>
+		<attribute>
+			<name>restart</name>
+			<required>false</required>
+			<type>boolean</type>
+		</attribute>
+	</tag>
+
+</taglib>

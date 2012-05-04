@@ -1,0 +1,10 @@
+#!/bin/sh
+
+#set -x
+DIR=""
+for i in $DIR/*
+do
+	CLASSPATH="$CLASSPATH:$i"
+done
+
+export CLASSPATH

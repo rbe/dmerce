@@ -1,0 +1,19 @@
+#!/bin/sh
+
+usage() {
+	echo "usage: $0 <application_name>"
+}
+
+_create() {
+	DMERCE_APPNAME=$1
+	export DMERCE_APPNAME
+	$ANT_CALL create-new-application
+}
+
+if [ $# -lt 1 ]; then
+	usage
+else
+	_create $*
+fi
+
+exit 0

@@ -1,0 +1,106 @@
+#!/usr/bin/ksh
+
+. /opt/dmerce/dmercerc
+. $DMERCE_LIB/libdmerce
+[ $? -gt 0 ] && exit 2
+. $DMERCE_LIB/libsh
+[ $? -gt 0 ] && exit 2
+
+export LD_LIBRARY_PATH
+export PYTHONPATH
+export DMERCE_HOME
+
+STOP_FILE="$DMERCE_HOME/.qdncc_distrib_dns.stop"
+SSHAGENT_PID="$DMERCE_HOME/.qdncc_distrib_dns.sshagent.pid"
+export SSHAGENT_PID
+SEC=3600
+NCCDATA=/opt/dmerce/NCC
+NS5DATA=$NCCDATA/ns5.1xsp.com/dns
+NS5IP=213.203.245.6
+NS6DATA=$NCCDATA/ns6.1xsp.com/dns
+NS6IP=213.203.194.6
+NAMED=/usr/local/etc/rc.d/named-ncc.sh
+
+generate_files() {
+        e "Generating configuration and zone files"
+        python $DMERCE_HOME/product/dmerce/2.5.0/Prod/NCC/dns.pyc
+}
+
+delete_old_data() { # $1 = IP of a dns server
+	NS=$1
+        e "Deleting data on $NS"
+        ssh $NS "rm -rf /opt/dmerce/isc-bind/agent-*"
+}
+
+copy_new_data() { # $1 = IP of a dns server, $2 = Data directory on dns server
+	NS=$1
+	shift
+	NSDATA=$1
+        e "Copying data to $NS5IP"
+        scp -r $NSDATA/* $NS:/opt/dmerce/isc-bind
+}
+
+restart_dns() { # $1 = IP of a dns server
+	NS=$1
+        e "Restarting nameserver on $NS"
+	ssh root@$NS "$NAMED restart"
+}
+
+stop_dns() { # $1 = IP of a dns server
+	NS=$1
+        e "Stopping nameserver on $NS"
+	ssh root@$NS "$NAMED stop"
+}
+
+start_dns() { # $1 = IP of a dns server
+        NS=$1
+        e "Starting nameserver on $NS"
+        ssh root@$NS "$NAMED start"
+}
+
+distribute_data_to_ns5() {
+	stop_dns $NS5IP
+	delete_old_data $NS5IP
+	copy_new_data $NS5IP $NS5DATA
+	start_dns $NS5IP
+}
+
+distribute_data_to_ns6() {
+	stop_dns $NS6IP
+	delete_old_data $NS6IP
+	copy_new_data $NS6IP $NS6DATA
+	start_dns $NS6IP
+}
+
+run_as_daemon() {
+        e "Starting data distribution every $SEC seconds"
+        while [ ! -f $STOP_FILE ]; do
+		generate_files
+        	e "Distributing data to $NS5IP"
+		distribute_data_to_ns5 #>> $DMERCE_LOG/qdncc_distrib_dns.log
+		sleep 20
+        	e "Distributing data to $NS6IP"
+		distribute_data_to_ns6 #>> $DMERCE_LOG/qdncc_distrib_dns.log
+                sleep $SEC
+        done
+        e "Done"
+}
+
+create_stop_file() {
+        e "Creating stop file"
+        touch $STOP_FILE
+}
+
+cleanup() {
+        kill -9 `cat $SSHAGENT_PID | awk '{print $3}'`
+        rm -f $SSHAGENT_PID
+        rm -f $STOP_FILE
+}
+
+trap 'create_stop_file' 1 2 3 15
+libdmerce_copyr
+echo "DISTRIBUTING NEW DNS DATA"
+echo
+libdmerce_check_sshagent
+run_as_daemon
+cleanup

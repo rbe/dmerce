@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+    An example how to use this DTD from your XML document:
+
+    <?xml version="1.0"?>
+
+    <!DOCTYPE document SYSTEM "doc.dtd">
+
+    <document>
+    ...
+    </document>
+-->
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT content (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT title (#PCDATA)>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT section (section|content|title)*>
+
+<!--- Put your DTDDoc comment here. -->
+<!ELEMENT document (section)*>

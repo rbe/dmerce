@@ -1,0 +1,14 @@
+#!/bin/sh
+
+_reconfigure() {
+	if [ $# -eq 1 ]; then
+		DMERCE_APPNAME=$1
+		export DMERCE_APPNAME
+		$ANT_CALL reconfigure-webservice
+	else
+		$ANT_CALL reconfigure-settings-unix
+	fi
+}
+
+_reconfigure $*
+exit 0

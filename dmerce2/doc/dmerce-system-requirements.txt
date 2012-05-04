@@ -1,0 +1,87 @@
+Systemvoraussetzung für dmerce
+------------------------------
+
+Dmerce ist auf folgenden Plattformen getestet worden
+und findet dort seinen Einsatz:
+
+
+Hardwareanforderungen
+---------------------
+
+Da der Einsatz von dmerce ohne Datenbank und Webserver nicht
+möglich ist, müssen folgende Mindestkriterien erfüllt werden,
+um eine akzeptable Antwortzeit von dmerce zu erhalten.
+
+Bei i386 Plattformen:
+
+    300 MHz CPU
+    128 MB RAM
+      4 GB HD Space
+
+Die Festplattenkapazität hängt von der Anzahl der unter dmerce 
+betriebenen Projekte / Webs ab, da viel an log-Daten geschrieben 
+wird. Deshalb sollte die Festplattengröße mit Zunahme an Projekten
+auch erweitert werden.
+
+Sun Server Anforderungen
+------------------------
+Bei SunSPARC Plattformen hängt die Wahl der Serverausstattung bzw. des
+Servers von der Wahl der Datenbank und der Anzahl der Daten ab.
+Entscheidet man sich für den Einsatz einer Oracle Datenbank, so ist der
+Einsatz von mindestens einer Sun Enterprise 220R oder einer Sun Netra X1
+ratsam, um eine gewisse Perfomance bieten zu könnnen.
+
+Gerade der Einsatz einer Oracle Datenbank erfordert höheren Einsatz von Hauptspeicher
+und höherer Festplattenkapazität.
+
+Setzt man hingegen die nicht so performancelastige Datenbank MySQL ein, so sinken
+die Anforderungen an die Hardware. Somit ist es schon möglich, kurze Reaktionszeiten
+bei einer Sun Ultra 60 zu erreichen, also Hardware aus dem Workstation Bereich.
+    
+
+
+Die obigen Angaben beziehen sich auf den Fall, daß Datenbank, Webserver und die 
+dmerce - Umgebung auf ein und dem selben Server agieren.
+Somit kann die Austattung der Server variieren, wenn die einzelnen Dienste auf
+mehrere Server verteilt werden. Nicht ratsam ist die Einsparung im Bereich der Oracle
+Datenbank.
+
+
+Betriebssysteme
+---------------
+    FreeBSD
+    Debian Linux
+    Sun Solaris 8
+
+Datenbanken
+-----------
+    Oracle 8i
+    Oracle 9
+    MySQL ab Version 3.22
+
+Webserver
+---------
+    Apache 1.3.12
+      - mit PyApache Modul 4.19
+
+
+Systemumgebung
+--------------
+Um die Lauffähigkeit von dmerce zu ermöglichen, muß folgende Systemumgebung
+aufgebaut werden.
+
+Zur Darstellung der auf dmerce basierenden dynamischen Webs muß der Apache in
+der Version 1.3.12 mit dem Apache Modul PyApache Version 4.19 auf dem System
+installiert werden.
+
+Des weiteren sind die aktuellen Versionen von dmerce in Python 1.5.2 geschrieben,
+was zur Folge hat, daß die Python 1.5.2 Umgebung installiert sein muß, damit 
+dmerce einwandfrei läuft.
+
+Ab der dmerce Version 2.2.0 muß ein im /var - Verzeichnis ein Verzeichnis mit 
+Namen 'dmerce' angelegt werden, in dem bei der Benutzung von dmerce die Log-Daten
+geschrieben werden.
+
+Um Fehlerseiten zu generieren, ist es zwingend notwendig, daß in jedem Webverzeichnis
+ein 'error' Verzeichnis vorhanden ist, 
+

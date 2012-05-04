@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<workflows xmlns='http://www.1ci.de'
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+  xsi:schemaLocation='http://www.1ci.de ../WORKFLOWS.xsd'
+  version="2.0"
+>
+    <workflow id="login">
+        <page id="login" template="login.jsp" formid="login" editable="false">
+            <transition name="loginsuccess" target="home" validation="false">
+            	<condition javaclass="com.wanci.dmerceexample.condition.LoginCondition"/>
+            	<action type="set">
+            		<parameter name="fehler" value=""/>
+            	</action>
+            </transition>
+            <transition name="loginfail" target="login" validation="false">
+            	<action type="set">
+            		<parameter name="fehler" value="Das Passwort muss der umgedrehte Benutzername sein.&#60;br&#62;Bitte versuchen Sie es noch einmal.&#60;br&#62;"/>
+            	</action>
+            </transition>
+        </page>
+        <page id="home" template="seite3.jsp"/>
+    </workflow>
+	
+    <workflow id="register">
+    
+        <page id="registerpage" template="seite1.jsp" formid="form1" editable="true">
+            <formmap table="vkunde" primarykey="kundennr">
+                <fieldmap formfield="name" dbfield="name"/>
+                <fieldmap formfield="vorname" dbfield="vorname"/>
+                <fieldmap formfield="email" dbfield="email"/>
+                <fieldmap formfield="plz" dbfield="plz"/>
+                <fieldmap formfield="strasse" dbfield="strasse"/>
+                <fieldmap formfield="ort" dbfield="ort"/>
+                <fieldmap formfield="telefon" dbfield="telefon"/>
+                <fieldmap formfield="picture" dbfield="ort"/>
+            </formmap>
+            <transition name="save_to_db" target="list">
+            	<condition type="buttonpressed" value="Ok"/>
+            	<action type="maintain">
+                    <formfield formid="form1" name="name"/>
+                    <formfield formid="form1" name="vorname"/>
+                    <formfield formid="form1" name="email"/>
+                    <formfield formid="form1" name="plz"/>
+                    <formfield formid="form1" name="strasse"/>
+                    <formfield formid="form1" name="ort"/>
+                    <formfield formid="form1" name="telefon"/>
+                    <formfield formid="form1" name="picture"/>
+				</action>
+            </transition>
+            <transition name="abort" target="list" validation="false">
+            	<condition type="buttonpressed" value="Cancel"/>
+            </transition>
+        </page>
+        
+        <page id="list" template="seite3.jsp"/>
+        
+    </workflow>
+
+    <workflow id="register-auto">
+    
+        <page id="registerpage" template="seite1_new.jsp" formid="form1" editable="true">
+            <formmap table="vkunde" primarykey="kundennr">
+                <fieldmap formfield="name" dbfield="name"/>
+                <fieldmap formfield="vorname" dbfield="vorname"/>
+                <fieldmap formfield="email" dbfield="email"/>
+                <fieldmap formfield="plz" dbfield="plz"/>
+                <fieldmap formfield="strasse" dbfield="strasse"/>
+                <fieldmap formfield="ort" dbfield="ort"/>
+            </formmap>
+            <transition name="abort" target="list" validation="false">
+            	<condition type="buttonpressed" value="Cancel"/>
+            </transition>
+            <transition name="save_to_db" target="list">
+            	<condition type="buttonpressed" value="Ok"/>
+            	<action type="maintain">
+                    <formfield formid="form1" name="name"/>
+                    <formfield formid="form1" name="vorname"/>
+                    <formfield formid="form1" name="email"/>
+                    <formfield formid="form1" name="plz"/>
+                    <formfield formid="form1" name="strasse"/>
+                    <formfield formid="form1" name="ort"/>
+                    <formfield formid="form1" name="telefon"/>
+				</action>
+            </transition>
+        </page>
+        
+        <page id="list" template="seite3.jsp"/>
+        
+    </workflow>
+
+
+    <workflow id="register2">
+    
+        <page id="register2_page1" template="mehrseitig1.jsp" formid="form1" editable="true">
+            <formmap table="vkunde" primarykey="kundennr">
+                <fieldmap formfield="name" dbfield="name"/>
+                <fieldmap formfield="vorname" dbfield="vorname"/>
+                <fieldmap formfield="email" dbfield="email"/>
+            </formmap>
+            <transition name="save_to_db" target="register2_page2">
+            	<condition type="buttonpressed" value="Ok"/>
+            </transition>
+            <transition name="abort" target="list" validation="false">
+            	<condition type="buttonpressed" value="Cancel"/>
+            </transition>
+        </page>
+        
+        <page id="register2_page2" template="mehrseitig2.jsp" formid="form1" editable="true">
+            <formmap table="vkunde" primarykey="kundennr">
+                <fieldmap formfield="strasse" dbfield="strasse"/>
+                <fieldmap formfield="plz" dbfield="plz"/>
+                <fieldmap formfield="ort" dbfield="ort"/>
+                <fieldmap formfield="telefon" dbfield="telefon"/>
+            </formmap>
+            <transition name="abort" target="list" validation="false">
+            	<condition type="buttonpressed" value="Cancel"/>
+            </transition>
+            <transition name="save_to_db" target="list">
+            	<condition type="buttonpressed" value="Ok"/>
+            	<action type="maintain">
+                    <formfield pageid="register2_page1" formid="form1" name="name"/>
+                    <formfield pageid="register2_page1" formid="form1" name="vorname"/>
+                    <formfield pageid="register2_page1" formid="form1" name="email"/>
+                    <formfield formid="form1" name="plz"/>
+                    <formfield formid="form1" name="strasse"/>
+                    <formfield formid="form1" name="ort"/>
+                    <formfield formid="form1" name="telefon"/>
+				</action>
+            </transition>
+        </page>
+        <page id="list" template="seite3.jsp"/>
+        
+    </workflow>
+
+    <workflow id="verzweigung">
+    
+        <page id="registerpage" template="seite1.jsp" formid="form1">
+            <formmap table="vkunde" primarykey="kundennr">
+                <fieldmap formfield="kundennr" dbfield="kundennr"/>
+                <fieldmap formfield="name" dbfield="name"/>
+                <fieldmap formfield="vorname" dbfield="vorname"/>
+                <fieldmap formfield="email" dbfield="email"/>
+                <fieldmap formfield="plz" dbfield="plz"/>
+                <fieldmap formfield="strasse" dbfield="strasse"/>
+                <fieldmap formfield="ort" dbfield="ort"/>
+                <fieldmap formfield="telefon" dbfield="telefon"/>
+            </formmap>
+            <transition name="verzweigung1" target="seite2">
+            	<condition type="equals">
+					<parameter name="expected" value="48149"/>
+            		<formfield pageid="registerpage" formid="form1" name="plz"/>
+            	</condition>
+            </transition>
+            <transition name="loginsuccess" target="list">
+            	<condition javaclass="com.wanci.dmerce.workflow.AlwaysTrueCondition"/>
+            </transition>
+        </page>
+        
+        <page id="seite2" template="seite2.jsp"/>
+        
+        <page id="list" template="seite3.jsp"/>
+        
+    </workflow>
+
+    <workflow id="einladung">
+    
+        <page id="personinfo" template="seite1.jsp" editable="false" formid="einladung">
+            <formmap table="partyinfo" primarykey="ID">
+                <fieldmap formfield="name" dbfield="Name"/>
+                <fieldmap formfield="telefon" dbfield="Telefon"/>
+                <fieldmap formfield="teilnahme" dbfield="Teilnahme"/>
+            </formmap>
+            <transition name="abort" target="ende" validation="false">
+            	<condition type="buttonpressed" value="Cancel"/>
+            </transition>
+            <transition name="kann_nicht" target="ende">
+            	<condition type="equals">
+					<parameter name="expected" value="kann nicht"/>
+            		<formfield pageid="personinfo" formid="einladung" name="teilnahme"/>
+            	</condition>
+              	<action type="maintain">
+                    <formfield formid="einladung" name="name"/>
+                    <formfield formid="einladung" name="telefon"/>
+                    <formfield formid="einladung" name="teilnahme"/>
+				</action>
+			</transition>
+            <transition name="komme" target="getraenkeinfo"/>
+        </page>
+        
+        <page id="getraenkeinfo" editable="false" template="seite2.jsp" formid="einladung">
+            <formmap table="partyinfo" primarykey="ID">
+                <fieldmap formfield="trinken" dbfield="Trinken"/>
+                <fieldmap formfield="teilnahme" dbfield="Teilnahme"/>
+                <fieldmap formfield="bier" dbfield="Bier"/>
+                <fieldmap formfield="wein" dbfield="Wein"/>
+                <fieldmap formfield="hartes" dbfield="Hartes"/>
+                <fieldmap formfield="soft" dbfield="Soft"/>
+            </formmap>
+            <transition name="abort" target="ende" validation="false">
+            	<condition type="buttonpressed" value="Cancel"/>
+            </transition>
+            <transition name="logik_check" target="getraenkeinfo" validation="false">
+            	<condition javaclass="com.wanci.dmerceexample.party.LogikCheckFailedCondition"/>
+            </transition>
+            <transition name="weiter_zur_begleitung" target="begleitunginfo">
+            	<condition type="equals">
+					<parameter name="expected" value="komme mit begleitung"/>
+            		<formfield pageid="personinfo" formid="einladung" name="teilnahme"/>
+            	</condition>
+            	<action type="maintain">
+                    <formfield pageid="personinfo" formid="einladung" name="name"/>
+                    <formfield pageid="personinfo" formid="einladung" name="telefon"/>
+                    <formfield pageid="personinfo" formid="einladung" name="teilnahme"/>
+                    <formfield formid="einladung" name="trinken"/>
+                    <formfield formid="einladung" name="bier"/>
+                    <formfield formid="einladung" name="wein"/>
+                    <formfield formid="einladung" name="hartes"/>
+                    <formfield formid="einladung" name="soft"/>
+				</action>
+            </transition>
+            <transition name="fertigstellen" target="ende">
+            	<condition type="buttonpressed" value="Ok"/>
+            	<action type="maintain">
+                    <formfield pageid="personinfo" formid="einladung" name="name"/>
+                    <formfield pageid="personinfo" formid="einladung" name="telefon"/>
+                    <formfield pageid="personinfo" formid="einladung" name="teilnahme"/>
+                    <formfield formid="einladung" name="trinken"/>
+                    <formfield formid="einladung" name="bier"/>
+                    <formfield formid="einladung" name="wein"/>
+                    <formfield formid="einladung" name="hartes"/>
+                    <formfield formid="einladung" name="soft"/>
+				</action>
+            </transition>
+        </page>
+        
+        <page id="begleitunginfo" editable="false" template="seite3.jsp" formid="einladung">
+            <formmap table="partyinfo" primarykey="ID">
+                <fieldmap formfield="name" dbfield="Name"/>
+                <fieldmap formfield="trinken2" dbfield="Trinken"/>
+                <fieldmap formfield="bier" dbfield="Bier"/>
+                <fieldmap formfield="wein" dbfield="Wein"/>
+                <fieldmap formfield="hartes" dbfield="Hartes"/>
+                <fieldmap formfield="soft" dbfield="Soft"/>
+            </formmap>
+            <transition name="abort" target="ende" validation="false">
+            	<condition type="buttonpressed" value="Cancel"/>
+            </transition>
+            <transition name="logik_check" target="begleitunginfo" validation="false">
+            	<condition javaclass="com.wanci.dmerceexample.party.LogikCheckFailedCondition2"/>
+            </transition>
+            <transition name="begleitung_fertigstellen" target="ende">
+            	<condition type="buttonpressed" value="Ok"/>
+            	<action javaclass="com.wanci.dmerceexample.party.InsertBegleitungAction" />
+            </transition>
+        </page>
+        
+        <page id="ende" editable="false" template="ende.jsp"/>
+        
+    </workflow>
+
+</workflows>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<workflows xmlns='http://www.1ci.de'
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+  xsi:schemaLocation='http://www.1ci.de ../WORKFLOWS.xsd'
+  version="2.0"
+>
+
+    <workflow id="zwoh">
+
+        <page id="register" template="zwoh.jsp" formid="blpreg">
+
+            <formmap table="t_blpreg" primarykey="id">
+                <fieldmap formfield="partnerid" dbfield="partnerid"/>
+                <fieldmap formfield="product" dbfield="product"/>
+                <fieldmap formfield="company" dbfield="company"/>
+                <fieldmap formfield="lastname" dbfield="lastname"/>
+                <fieldmap formfield="firstname" dbfield="firstname"/>
+                <fieldmap formfield="email" dbfield="email"/>
+                <fieldmap formfield="zipcode" dbfield="zipcode"/>
+                <fieldmap formfield="street" dbfield="street"/>
+                <fieldmap formfield="city" dbfield="city"/>
+                <fieldmap formfield="country" dbfield="country"/>
+                <fieldmap formfield="phone" dbfield="phone"/>
+                <fieldmap formfield="fax" dbfield="fax"/>
+                <fieldmap formfield="remarks" dbfield="remarks"/>
+                <fieldmap formfield="tacread" dbfield="tacread"/>
+            </formmap>
+
+            <transition name="entry" target="ok" validation="true">
+               <condition type="buttonpressed" value="Anmelden"/>
+	       <action type="callproc">
+                <parameter name="name" value="sp_createrequest_bl"/>
+                <formfield formid="blpreg" name="partnerid"/>
+                <formfield formid="blpreg" name="product"/>
+                <formfield formid="blpreg" name="company"/>
+                <formfield formid="blpreg" name="lastname"/>
+                <formfield formid="blpreg" name="firstname"/>
+                <formfield formid="blpreg" name="street"/>
+                <formfield formid="blpreg" name="zipcode"/>
+                <formfield formid="blpreg" name="city"/>
+                <formfield formid="blpreg" name="country"/>
+                <formfield formid="blpreg" name="phone"/>
+                <formfield formid="blpreg" name="fax"/>
+                <formfield formid="blpreg" name="email"/>
+                <formfield formid="blpreg" name="remarks"/>
+                <formfield formid="blpreg" name="tacread"/>
+               </action>
+            </transition>
+
+        </page>
+
+        <page id="ok" template="zwoh_ok.jsp"/>
+
+    </workflow>
+
+    <workflow id="dmerce">
+
+        <page id="register" template="dmerce.jsp" formid="dmercereg">
+
+            <formmap table="t_dmercereg" primarykey="id">
+                <fieldmap formfield="partnerid" dbfield="partnerid"/>
+                <!--
+                <fieldmap formfield="product" dbfield="product"/>
+                -->
+                <fieldmap formfield="company" dbfield="company"/>
+                <fieldmap formfield="companytype" dbfield="companytype"/>
+                <fieldmap formfield="lastname" dbfield="lastname"/>
+                <fieldmap formfield="firstname" dbfield="firstname"/>
+                <fieldmap formfield="email" dbfield="email"/>
+                <fieldmap formfield="zipcode" dbfield="zipcode"/>
+                <fieldmap formfield="street" dbfield="street"/>
+                <fieldmap formfield="city" dbfield="city"/>
+                <fieldmap formfield="country" dbfield="country"/>
+                <fieldmap formfield="phone" dbfield="phone"/>
+                <fieldmap formfield="fax" dbfield="fax"/>
+                <fieldmap formfield="remarks" dbfield="remarks"/>
+                <fieldmap formfield="licread" dbfield="licread"/>
+            </formmap>
+
+            <transition name="entry" target="ok" validation="true">
+               <condition type="buttonpressed" value="Anmelden"/>
+               <action type="callproc">
+		<parameter name="name" value="sp_createrequest_dmerce"/>
+                <formfield formid="dmercereg" name="partnerid"/>
+                <!--
+                <formfield formid="dmercereg" name="product"/>
+                -->
+                <formfield formid="dmercereg" name="company"/>
+                <formfield formid="dmercereg" name="companytype"/>
+                <formfield formid="dmercereg" name="lastname"/>
+                <formfield formid="dmercereg" name="firstname"/>
+                <formfield formid="dmercereg" name="street"/>
+                <formfield formid="dmercereg" name="zipcode"/>
+                <formfield formid="dmercereg" name="city"/>
+                <formfield formid="dmercereg" name="country"/>
+                <formfield formid="dmercereg" name="phone"/>
+                <formfield formid="dmercereg" name="fax"/>
+                <formfield formid="dmercereg" name="email"/>
+                <formfield formid="dmercereg" name="remarks"/>
+                <formfield formid="dmercereg" name="licread"/>
+               </action>
+            </transition>
+
+        </page>
+
+        <page id="ok" template="dmerce_ok.jsp"/>
+
+    </workflow>
+
+</workflows>

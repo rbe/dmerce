@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.1ci.de"
+            xmlns="http://www.1ci.de"
+            elementFormDefault="qualified">
+
+	<xsd:element name="security">
+		<xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="login" type="login-type"/>
+                <xsd:choice>
+                	<xsd:element name="database-sec" type="database-sec-type"/>
+                	<!-- hier können später weitere Security-Typen eingebunden werden. -->
+                </xsd:choice>
+                <xsd:element name="security-constraint" minOccurs="0" maxOccurs="unbounded" type="security-constraint-type"/>
+            </xsd:sequence>
+        </xsd:complexType>
+	</xsd:element>
+	
+	<xsd:complexType name="login-type">
+		<xsd:sequence>
+			<xsd:element name="login-page" type="xsd:string"/>
+			<xsd:element name="error-page" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="database-sec-type">
+		<xsd:sequence>
+			<xsd:element name="authentication" type="authentication-type"/>
+			<xsd:element name="authorization" type="authorization-type"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="authentication-type">
+		<xsd:sequence>
+			<xsd:element name="table" type="xsd:string"/>
+			<xsd:element name="user-column" type="xsd:string"/>
+			<xsd:element name="password-column" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="authorization-type">
+		<xsd:sequence>
+			<xsd:element name="table" type="xsd:string"/>
+			<xsd:element name="user-column" type="xsd:string"/>
+			<xsd:element name="role-column" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="security-constraint-type">
+		<xsd:sequence>
+			<xsd:choise>
+				<xsd:element name="web-resource-collection" minOccurs="1" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="web-resource-name" type="xsd:string"/>
+							<xsd:element name="url-pattern" type="xsd:string"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="workflow" minOccurs="1" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:attribute name="id" type="xsd:string"/>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:choise>
+			<xsd:element name="auth-constraint">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="role-name" minOccurs="1" maxOccurs="unbounded" type="xsd:string"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+</xsd:schema>

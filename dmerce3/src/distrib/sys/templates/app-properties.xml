@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding="UTF-8"?>
+
+<!DOCTYPE properties [
+  <!ELEMENT properties (property)+>
+  <!ELEMENT property EMPTY>
+  
+  <!ATTLIST property
+  		name CDATA #REQUIRED
+  		value CDATA #REQUIRED
+  >
+]>
+
+<properties>
+	
+	<!-- Webservice endpoint -->
+	<property name="endpointaddress"
+		value="ENDPOINT_ADDRESS"/>
+	
+	<!-- Directory for file uploads -->
+	<property name="fileupload.path" value="FILEUPLOAD_PATH"/>
+	<property name="fileupload.columnsuffix.originalfile"
+		value="FILEUPLOAD_COLUMNSUFFIX_ORIGINALFILE"/>
+	<property name="fileupload.columnsuffix.serverfile"
+		value="FILEUPLOAD_COLUMNSUFFIX_SERVERFILE"/>
+		
+	<!-- Authentication/Authorization -->
+	<property name="auth.table" value="AUTH_TABLE"/>
+	<property name="auth.usernamefield" value="AUTH_USERNAMEFIELD"/>
+	<property name="auth.passwordfield" value="AUTH_PASSWORDFIELD"/>
+	<property name="auth.realmfield" value="AUTH_REALMFIELD"/>
+	<property name="auth.datafields" value="AUTH_DATAFIELDS"/>
+	<property name="auth.lastloginfield" value="AUTH_LASTLOGINFIELD"/>
+	<property name="auth.loggedinflagfield" value="AUTH_LOGGEDINFLAGFIELD"/>
+	<property name="auth.login.successfullpage" value="AUTH_LOGIN_SUC"/>
+	<property name="auth.login.unsuccessfullpage" value="AUTH_LOGIN_UNSUC"/>
+	<property name="auth.logout.page" value="AUTH_LOGOUT_PAGE"/>
+
+	<!-- Debugging -->
+	<property name="debug" value="DEBUG"/>
+
+</properties>

@@ -1,0 +1,64 @@
+#!/bin/ksh
+
+#
+# needs to run as user dmerce
+#
+
+. ./dmercerc
+. $DMERCE_LIB/libdmerce
+[ $? -gt 0 ] && exit 2
+. $DMERCE_LIB/libsh
+[ $? -gt 0 ] && exit 2
+
+STOP_FILE="$DMERCE_HOME/.qdncc_updmailuser.stop"
+SSHAGENT_PID="$DMERCE_HOME/.qdncc_updmailuser.sshagent.pid"
+SEC=60
+MAILDIRMAKE="/opt/dmerce/product/courier/2.0.0/bin/maildirmake"
+
+update_database() {
+	mysql -u dmerce_ncc --password=dmerce_ncc1234 -e "UPDATE AccUser SET Home = CONCAT('/export/home/', Login) WHERE Home IS NULL OR Home = ''" dmerce_ncc
+	mysql -u dmerce_ncc --password=dmerce_ncc1234 -e "UPDATE AccUser SET Maildir = CONCAT('/export/home/', Login, '/Maildir') WHERE Maildir IS NULL OR Maildir = ''" dmerce_ncc
+}
+
+create_maildirs() {
+	MAILDIRS="`mysql -E -u dmerce_ncc --password=dmerce_ncc1234 -e \"SELECT Maildir FROM AccUser\" dmerce_ncc | awk '
+		/Maildir/ {
+				print $2
+		}
+	'`"
+	for maildir in $MAILDIRS
+	do
+		home=${maildir%%/Maildir}
+		echo "Checking $home"
+		ssh dagobert "[ ! -d $home ] && mkdir -p $home; [ ! -d $maildir ] && $MAILDIRMAKE $maildir; chgrp -R mail $home; chmod g=u,o= $maildir"
+	done
+}
+
+run_as_daemon() {
+	e "Starting checks every $SEC seconds"
+	while [ ! -f $STOP_FILE ]; do
+		update_database >> $DMERCE_LOG/qdncc_updmailuser.mysql.log 2>&1
+		create_maildirs >> $DMERCE_LOG/qdncc_updmailuser.maildirs.log 2>&1
+		sleep $SEC
+	done
+	e "Done"
+}
+
+create_stop_file() {
+	e "Creating stop file"
+	touch $STOP_FILE
+}
+
+cleanup() {
+	kill -9 `cat $SSHAGENT_PID | awk '{print $3}'`
+	rm -f $SSHAGENT_PID
+	rm -f $STOP_FILE
+}
+
+libdmerce_copyr
+echo "NCC: USER/MAILDIR GUARD"
+echo
+trap 'create_stop_file' 1 2 3 15
+libdmerce_check_sshagent
+run_as_daemon
+cleanup

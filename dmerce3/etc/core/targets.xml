@@ -1,0 +1,240 @@
+<!-- targets.xml: Referenced by the build.xml files, this file
+     contains targets common to all of the jaxrpc examples.  -->
+
+  <path id="core.classpath">  
+  	<fileset dir="${lib.core}">
+  		<include name="**/*.jar"/>
+  	</fileset>
+  	<fileset dir="${lib.shared}">
+  		<include name="**/*.jar"/>
+  	</fileset>
+  	<pathelement location="${lib}/servlet.jar"/>
+  	<pathelement location="${lib}/activation.jar"/>
+  </path>
+
+  <path id="webserviceclient.classpath">  
+  	<fileset dir="${lib.shared}">
+  		<include name="**/*.jar"/>
+  	</fileset>
+  </path>
+
+  <path id="run.classpath">
+     <pathelement location="${dist}/${client.jar}"/>
+     <path refid="core.classpath"/>
+     <pathelement location="${base.dir}/src/core"/>
+  </path>
+  
+  <path id="webservices.src">
+	 <pathelement location="${src.core}"/>
+  </path>
+
+  <path id="webserviceclient.src">
+     <pathelement location="${src.core}/com/wanci/dmerce/webservice"/>
+     <pathelement location="${src.core}/com/wanci/dmerce/exceptions"/>
+     <pathelement location="${src.core}/com/wanci/java"/>
+  </path>
+
+  <target name="prepare" 
+     description="Creates the build directory" >
+     <echo message="Creating the required directories...." />
+     <mkdir dir="${build}" />
+     <mkdir dir="${war.build}" />
+  </target>
+
+  <target name="prepare-dist" 
+     description="Creates the dist directory" >
+     <echo message="Creating the required directories...." />
+     <mkdir dir="${dist}" />
+  </target>
+
+  <target name="set-wscompile" >
+     <condition property="wscompile" value="${wscompile.dir}/wscompile.bat">
+        <os family="windows"/>
+     </condition>
+     <condition property="wscompile" value="${wscompile.dir}/wscompile.sh">
+        <not>
+           <os family="windows"/>
+        </not>
+     </condition>
+  </target>
+
+  <target name="set-wsdeploy" >
+     <condition property="wsdeploy" value="${wsdeploy.dir}/wsdeploy.bat">
+        <os family="windows"/>
+     </condition>
+     <condition property="wsdeploy" value="${wsdeploy.dir}/wsdeploy.sh">
+        <not>
+           <os family="windows"/>
+        </not>
+     </condition>
+  </target>
+  
+  <target name="compile-service" depends="prepare"
+      description="Compiles the server-side source code">
+      <echo message="Compiling the server-side source code...."/>
+      <javac destdir="${build}">
+         <src refid="webservices.src"/>
+         <exclude name="com/wanci/customer/**"/>
+         <exclude name="com/wanci/dmerce/comm/**"/>
+         <classpath refid="core.classpath"/>
+      </javac>
+  </target>
+  
+  <target name="setup-web-inf"
+       description="Copies files to build/WEB-INF">
+       <echo message="Setting up ${build}/WEB-INF...."/>
+       <delete dir="${war.build}/WEB-INF" />
+       <copy todir="${war.build}/WEB-INF/classes">
+           <fileset dir="${build}" />
+       </copy>
+       <copy file="${build}/${model.file}" todir="${war.build}/WEB-INF" />
+       <copy file="${etc.core}/web.xml" todir="${war.build}/WEB-INF" />
+       <copy file="${etc.core}/jaxrpc-ri.xml" todir="${war.build}/WEB-INF" />
+       <copy file="${etc.core}/properties.xml" todir="${war.build}/WEB-INF/classes/com/wanci/dmerce/res" />
+       
+       <mkdir dir="${war.build}/WEB-INF/lib" />
+       <copy todir="${war.build}/WEB-INF/lib">
+		  	<fileset dir="${lib.core}">
+		  		<include name="**/*.jar"/>
+		  	</fileset>
+		  	<fileset dir="${lib.shared}">
+		  		<include name="**/*.jar"/>
+		  	</fileset>
+       </copy>
+       
+       <copy file="${src.core}/com/wanci/dmerce/webservice/db/xmlbridge/jaxb.properties" todir="${war.build}/WEB-INF/classes/com/wanci/dmerce/webservice/db/xmlbridge" />
+       <copy file="${src.core}/com/wanci/dmerce/webservice/db/xmlbridge/bgm.ser" todir="${war.build}/WEB-INF/classes/com/wanci/dmerce/webservice/db/xmlbridge" />
+    </target>
+  
+  <target name="package-service" depends="prepare-dist"
+		description="Packages the WAR file">
+		<echo message="Packaging the WAR...."/>
+		<delete file="${dist}/${portable.war}" />
+		<jar jarfile="${dist}/${portable.war}" >
+		    <fileset dir="${war.build}" includes="WEB-INF/**" />
+		</jar>
+  </target>
+  
+  <target name="process-war" depends="set-wsdeploy"
+        description="Runs wsdeploy to generate the ties and 
+                     create a deployable WAR file">
+     <delete file="dist/${deployable.war}" />
+     <antcall target="run-wsdeploy">
+       <param name="param1" value="-o dist/${deployable.war} dist/${portable.war}"/>
+     </antcall>  
+  </target>
+   
+
+  <target name="run-wscompile"  depends="prepare,set-wscompile"
+       description="Runs wscompile">
+    <echo message="Running wscompile:"/>
+    <echo message="  ${wscompile} ${param1}"/>
+    <exec executable="${wscompile}">
+       <arg line="${param1}"/>
+    </exec>
+  </target>
+
+  <target name="run-wsdeploy"  depends="prepare,set-wsdeploy"
+       description="Runs wsdeploy">
+    <echo message="Running wsdeploy:"/>
+    <echo message="  ${wsdeploy} ${param1}"/>
+    <exec executable="${wsdeploy}">
+       <arg line="${param1}"/>
+    </exec>
+  </target>
+  
+  <target name="generate-sei-service"
+      description="Runs wscompile to generate the model file">
+    <antcall target="run-wscompile">
+      <param name="param1" value="-define -d ${build} -nd ${build} 
+      -classpath ${build} ${config.interface.file} 
+      -model ${build}/${model.file}"/>
+    </antcall>
+  </target>
+
+  <target name="generate-interface"
+      description="Runs wscompile to generate the service endpoint  
+                   interface">
+    <antcall target="run-wscompile">
+      <param name="param1" value="-import -d ${build} -nd ${build} 
+      -f:norpcstructures -classpath ${build} ${config.wsdl.file}"/>
+    </antcall>
+  </target>
+
+  <target name="generate-stubs"
+      description="Runs wscompile to generate the client stub classes">
+      <antcall target="run-wscompile">
+          <param name="param1" value="-gen:client -d ${build} -classpath ${build} ${config.wsdl.file}"/>
+      </antcall>
+  </target>
+
+  <target name="compile-client" depends="prepare" 
+      description="Compiles the client-side source code"  >
+      <echo message="Compiling the client source code...."/>
+      <javac destdir="${build}">
+          <classpath refid="core.classpath"/>
+          <classpath path="${build}" />
+          <src refid="webserviceclient.src"/>
+       </javac>
+       <copy file="${src.core}/com/wanci/dmerce/webservice/db/xmlbridge/jaxb.properties" todir="${build}/com/wanci/dmerce/webservice/db/xmlbridge" />
+       <copy file="${src.core}/com/wanci/dmerce/webservice/db/xmlbridge/bgm.ser" todir="${build}/com/wanci/dmerce/webservice/db/xmlbridge" />
+  </target>
+
+  <target name="package-client" depends="prepare-dist"
+      description="Builds the JAR file that contains the client">
+      <echo message="Building the client JAR  file...."/>
+      <delete file="${dist}/${client.jar}" />
+      <jar jarfile="${dist}/${client.jar}" >
+        <fileset dir="${build}" />
+      </jar>
+      <copy file="${dist}/${client.jar}" toDir="${lib.webclient}"/>
+  </target>
+
+  <target name="package-dynamic"  depends="prepare-dist"
+      description="Builds the JAR file that contains the dynamic proxy client">
+      <echo message="Building the client JAR  file...."/>
+      <delete file="${dist}/${client.jar}" />
+      <jar jarfile="${dist}/${client.jar}" >
+        <fileset dir="${build}"/>
+      </jar>
+  </target>
+
+  <target name="build-service" depends="clean,compile-service,generate-sei-service,
+      setup-web-inf,package-service,process-war"
+     description="Executes the targets needed to build the service.">
+  </target>
+  
+  <!-- generate-interface, -->
+  <target name="build-client" depends="clean,
+     compile-client,package-client"
+     description="Executes the targets needed to build a client.">
+  </target>
+
+  <target name="build-static" depends="clean,generate-stubs,
+     compile-client,package-client"
+     description="Executes the targets needed to build a static stub client.">
+  </target>
+
+  <target name="build-dii" depends="clean,prepare,compile-client,package-client"
+     description="Executes the targets needed to build a DII client.">
+  </target>
+
+  <target name="build-dynamic" depends="clean,prepare,generate-interface,
+      compile-client,package-dynamic"
+     description="Executes the targets needed to build a dynamic proxy client.">
+  </target>
+
+
+  <target name="run-client" 
+     description="Runs a stand-alone (non-J2EE) client">
+    <java classname="com.wanci.dmerce.test.WebserviceTest" fork="yes" >
+        <arg line="${endpoint.address}" />
+        <classpath refid="run.classpath" />
+    </java>
+  </target>
+
+  <target name="clean" 
+     description="Removes the build directory">
+    <delete dir="${build}" />
+    <delete dir="${war.build}" />
+  </target>

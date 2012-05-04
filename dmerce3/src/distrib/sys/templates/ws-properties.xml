@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding="UTF-8"?>
+
+<!DOCTYPE properties [
+  <!ELEMENT properties (property)+>
+  <!ELEMENT property EMPTY>
+  
+  <!ATTLIST property
+  		name CDATA #REQUIRED
+  		value CDATA #REQUIRED
+  >
+]>
+
+<properties>
+	
+	<!-- Database connection for webservice -->
+	<property name="defaultDS.jdbc.driver" value="JDBC_DRIVER"/>
+	<property name="defaultDS.jdbc.url"
+		value="JDBC_URL"/>
+	<property name="defaultDS.jdbc.username" value="JDBC_USERNAME"/>
+	<property name="defaultDS.jdbc.password" value="JDBC_PASSWORD"/>
+	
+	<!-- Debugging -->
+	<property name="debug" value="DEBUG"/>
+	
+</properties>

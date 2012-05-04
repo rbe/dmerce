@@ -1,0 +1,735 @@
+#!/usr/bin/ksh
+
+#################################################
+#
+# Copyright 2000-2003 1Ci GmbH, http://www.1ci.de
+#
+# $Id: qdd_setup,v 1.9 2003/09/22 11:12:30 rb Exp $
+# $Author: rb $
+# $Revision: 1.9 $
+#
+# Installation of components:
+#
+# - Java = 1.4
+# - Python = 2.2.2
+# - Apache = 1.3.x w/ mod_python = 2.7.8
+# - MySQL = 3.23.x
+# - PostgreSQL = 7.3.x
+# - dmerce = 2.5
+#
+#################################################
+
+#set -x
+
+print
+print "1Ci(R) GmbH, http://www.1ci.com, info@1ci.com"
+print "Copyright (C) 2000-2003"
+print
+print "dmerce(R) Installation"
+print
+
+INSTALL_MODE=1; export INSTALL_MODE
+[ -r ./dmercerc ] && . ./dmercerc || ( print "Missing dmercerc. Sorry."; print; exit 2 )
+[ $? -gt 0 ] && exit 2
+qd_set25_env
+
+UNAME_MACHINE=`uname -m`
+UNAME_PROC=`uname -p`
+UNAME_OS=`uname -s`
+UNAME_RELEASE=`uname -r`
+UNAME_VERSION=`uname -v`
+
+MSG_APACHE13="[Apache $APACHE13_VERSION]"
+MSG_MODPYTHON="[Python module for Apache]"
+MSG_DMERCE="[dmerce $DMERCE_VERSION]"
+MSG_MYSQL="[MySQL $MYSQL_VERSION]"
+MSG_PGSQL="[PostgreSQL $PGSQL_VERSION]"
+MSG_PYTHON1="[Python $PYTHON1_VERSION]"
+MSG_PYTHON2="[Python $PYTHON2_VERSION]"
+MSG_PYTHON2_NT="[Python $PYTHON2_VERSION without threads]"
+MSG_PYTHON_MYSQL="[MySQL driver for Python]"
+MSG_PYTHON_PSYCOPG="[PostgreSQL driver for Python]"
+
+e() {
+    print "`date`: $*"
+}
+
+set_env_vars() {
+    #set -x
+
+    case "$UNAME_OS" in
+	SunOS)
+	    add_to_path /usr/ccs/bin
+	    add_to_path /usr/local/bin
+	    add_to_path /opt/sfw/bin
+	    add_to_ld_library_path /usr/local/lib
+	    add_to_ld_library_path /opt/sfw/lib
+	    look_for_prg GZIP gzip /opt/sfw/bin /usr/local/bin /usr/bin
+	    look_for_prg TAR tar /opt/sfw/bin /usr/local/bin /usr/bin
+	    look_for_prg MAKE gmake /opt/sfw/bin /usr/local/bin
+	    [ -z "$MAKE" ] && look_for_prg MAKE make /opt/sfw/bin /usr/local/bin
+	    ;;
+	FreeBSD|Linux)
+	    PATH=/usr/local/bin:/usr/bin:/bin
+	    LD_LIBRARY_PATH=/usr/local/lib
+	    MAKE=/usr/local/bin/gmake
+	    ;;
+    esac
+    export PATH
+    export LD_LIBRARY_PATH
+    export GZIP
+    export TAR
+    export MAKE
+}
+
+get_file() {
+    print `ls $DMERCE_INSTALL/$1.*`
+}
+
+ungzip_distrib() {
+    #set -x
+
+    cd $DMERCE_BUILD
+    $GZIP -c -d `get_file $1` | $TAR xf -
+}
+
+cleanup_distrib() {
+    cd $DMERCE_BUILD
+    rm -rf $1
+}
+
+make_dmerce_dirs() {
+    mkdir $DMERCE_HOME 2>/dev/null
+    mkdir $DMERCE_BIN 2>/dev/null
+    mkdir $DMERCE_BUILD 2>/dev/null
+    mkdir $DMERCE_DOC 2>/dev/null
+    mkdir $DMERCE_EXAMPLES 2>/dev/null
+    mkdir $DMERCE_INSTALL 2>/dev/null
+    mkdir $DMERCE_JAR 2>/dev/null
+    mkdir $DMERCE_LIB 2>/dev/null
+    mkdir $DMERCE_LOG 2>/dev/null
+    mkdir $DMERCE_PRODUCT 2>/dev/null
+    mkdir $DMERCE_PRODUCT/apache 2>/dev/null
+    mkdir $DMERCE_PRODUCT/dmerce 2>/dev/null
+    mkdir $DMERCE_PRODUCT/mysql 2>/dev/null
+    mkdir $DMERCE_PRODUCT/oracle 2>/dev/null
+    mkdir $DMERCE_PRODUCT/postgresql 2>/dev/null
+    mkdir $DMERCE_PRODUCT/python 2>/dev/null
+    mkdir $DMERCE_SCRATCH 2>/dev/null
+    mkdir $DMERCE_SQL 2>/dev/null
+    mkdir $DMERCE_SQL/mysql 2>/dev/null
+    mkdir $DMERCE_SQL/mysql/dump 2>/dev/null
+    mkdir $DMERCE_SQL/mysql/dmerce 2>/dev/null
+    mkdir $DMERCE_SQL/oracle 2>/dev/null
+    mkdir $DMERCE_SQL/oracle/dump 2>/dev/null
+    mkdir $DMERCE_SQL/oracle/dmerce 2>/dev/null
+    mkdir $DMERCE_SQL/postgresql 2>/dev/null
+    mkdir $DMERCE_SQL/postgresql/dump 2>/dev/null
+    mkdir $DMERCE_SQL/postgresql/dmerce 2>/dev/null
+    mkdir $DMERCE_WEBSITES 2>/dev/null
+}
+
+dmercelog_dir() {
+    DMERCE_LOGDIR=$DMERCE_LOG/build-`date +%Y%m%d%H%M%S`
+    mkdir $DMERCE_LOGDIR 2>/dev/null
+}
+
+unpack_dmerce_distrib() {
+    cat $DMERCE_INSTALL/dmerce-*.tar.Z | uncompress -c | tar xf -
+}
+
+# MySQL
+unpack_mysql() {
+    ungzip_distrib mysql-$MYSQL_VERSION
+}
+
+compile_mysql() {
+
+#    OPT="--prefix=${PRODUCTMYSQL} --with-mysqld-user=dmerce ${MYSQL_BUILD_EXTRAOPT}"
+#    if [ ${UNAME_OS} = "SunOS" ]; then
+#        # we run solaris...
+#        if [ -x ${GCC} ]; then
+#            CC=gcc CFLAGS="-O3 -mcpu=v8 -Wa,-xarch=v8plusa" \
+#                CXX=gcc CXXFLAGS="-O3 -felide-constructors -fno-exceptions -fno-rtti -mcpu=v8 -Wa,-xarch=v8plusa" \
+#                ./configure ${OPT} --with-low-memory --enable-assembler \
+#                > ${LOG}/mysql.log 2>&1
+#        fi
+#        if [ -x "${cc}" ] && [ -x "${CC}" ]; then
+#            # if you have Sun Workshop (Forte) 5.3 (or newer) compiler
+#            CC=cc CFLAGS="-Xa -fast -xO4 -native -xstrconst -mt" \
+#                CXX=CC CXXFLAGS="-noex -xO4 -mt" \
+#                ./configure ${OPT} --enable-assembler >> ${LOG}/mysql.log 2>&1
+#        fi
+#    fi
+#    if [ ${UNAME_OS} = "Linux" ]; then
+#        # we run linux...
+#        if [ -x ${GCC} ]; then
+#            CC=gcc CFLAGS="" CXX=gcc CXXFLAGS="" \
+#                ./configure --prefix=${PRODUCTMYSQL} --enable-assembler \
+#                > ${LOG}/mysql.log 2>&1
+#        fi
+#    fi
+
+    cd $DMERCE_BUILD/mysql-$MYSQL_VERSION
+    ./configure --prefix=$MYSQL_HOME \
+	--with-mysqld-user=dmerce \
+	--enable-thread-safe-client \
+	>> ${DMERCE_LOGDIR}/mysql.log 2>> ${DMERCE_LOGDIR}/mysql.log
+    $MAKE >> ${DMERCE_LOGDIR}/mysql.log 2>> ${DMERCE_LOGDIR}/mysql.log
+}
+
+install_mysql() {
+    $MAKE install >> ${DMERCE_LOGDIR}/mysql.log 2>> ${DMERCE_LOGDIR}/mysql.log
+    scripts/mysql_install_db >> ${DMERCE_LOGDIR}/mysql.log 2>> ${DMERCE_LOGDIR}/mysql.log
+}
+
+cleanup_mysql() {
+    cleanup_distrib mysql-$MYSQL_VERSION
+}
+
+setup_mysql() {
+    #set -x
+
+    if [ ! -d $MYSQL_HOME ]; then
+	e "$MSG_MYSQL Unpacking distribution"
+	unpack_mysql
+	e "$MSG_MYSQL Compiling"
+	compile_mysql
+	e "$MSG_MYSQL Installing"
+	install_mysql
+    else
+	e "$MSG_MYSQL Already installed..."
+    fi
+    touch $DMERCE_LOGDIR/.dmerce.mysql.done
+}
+
+# PostgreSQL
+unpack_postgresql() {
+    ungzip_distrib postgresql-$PGSQL_VERSION
+}
+
+compile_postgresql() {
+    set -x
+    env | sort
+
+    cd $DMERCE_BUILD/postgresql-$PGSQL_VERSION
+    ./configure --prefix=$PGSQL_HOME \
+	>> ${DMERCE_LOGDIR}/postgresql.log 2>> ${DMERCE_LOGDIR}/postgresql.log
+    $MAKE >> ${DMERCE_LOGDIR}/postgresql.log 2>> ${DMERCE_LOGDIR}/postgresql.log
+}
+
+install_postgresql() {
+    $MAKE install >> ${DMERCE_LOGDIR}/postgresql.log 2>> ${DMERCE_LOGDIR}/postgresql.log
+    $MAKE install-all-headers >> ${DMERCE_LOGDIR}/postgresql.log 2>> ${DMERCE_LOGDIR}/postgresql.log
+}
+
+cleanup_postgresql() {
+    cleanup_distrib postgresql-$PGSQL_VERSION
+}
+
+setup_postgresql() {
+    #set -x
+
+    if [ ! -d $PGSQL_HOME ]; then
+	e "$MSG_PGSQL Unpacking distribution"
+	unpack_postgresql
+	e "$MSG_PGSQL Compiling"
+	compile_postgresql
+	e "$MSG_PGSQL Installing"
+	install_postgresql
+	if [ -n "$PGDATA" ]; then
+	    e "$MSG_PGSQL Initializing database in '$PGDATA'"
+	    [ ! -d $PGDATA ] && mkdir -p $PGDATA 2>/dev/null
+	    if [ -d $PGDATA ]; then
+		$PGSQL_HOME/bin/initdb >> ${DMERCE_LOGDIR}/postgresql.log 2>> ${DMERCE_LOGDIR}/postgresql.log
+	    else
+		e "$MSG_PGSQL Sorry cannot initialize database location!"
+	    fi
+	fi
+	e "$MSG_PGSQL Configuring"
+	cd $PGDATA
+	cat postgresql.conf | sed '/^#tcpip_socket/s/#\(tcpip_socket = \)false/\1 true/' > postgresql2.conf
+	mv postgresql2.conf postgresql.conf
+	chmod 0700 $PGDATA
+    else
+	e "$MSG_PGSQL Already installed..."
+    fi
+    touch $DMERCE_LOGDIR/.dmerce.postgresql.done
+}
+
+# Python 1.5.2
+unpack_python152() {
+    ungzip_distrib Python-1.5.2
+}
+
+compile_python152() {
+    cd $DMERCE_BUILD/Python-1.5.2
+    # configure: FreeBSD/5* einbauen!
+    #   LDSHARED=       gcc -shared
+    #   CCSHARED=       -fpic
+    #   LINKFORSHARED=  -Xlinker -export-dynamic
+    ./configure -prefix=$PYTHON152_HOME \
+	>> ${DMERCE_LOGDIR}/python152.log 2>> ${DMERCE_LOGDIR}/python152.log
+    $MAKE >> ${DMERCE_LOGDIR}/python152.log 2>> ${DMERCE_LOGDIR}/python152.log
+}
+
+install_python152() {
+    $MAKE install >> ${DMERCE_LOGDIR}/python152.log 2>> ${DMERCE_LOGDIR}/python152.log
+}
+
+# Python 2
+unpack_python2() {
+    ungzip_distrib Python-$PYTHON2_VERSION
+}
+
+compile_python2() {
+    cd $DMERCE_BUILD/Python-$PYTHON2_VERSION
+    ./configure -prefix=$PYTHON2_HOME \
+	>> ${DMERCE_LOGDIR}/python.log 2>> ${DMERCE_LOGDIR}/python2.log
+    $MAKE >> ${DMERCE_LOGDIR}/python2.log 2>> ${DMERCE_LOGDIR}/python2.log
+}
+
+compile_python2_nt() {
+    cd $DMERCE_BUILD/Python-$PYTHON2_VERSION
+    ./configure -prefix=$PYTHON2_NT_HOME \
+	--without-threads \
+	>> ${DMERCE_LOGDIR}/python-nt.log 2>> ${DMERCE_LOGDIR}/python-nt.log
+    $MAKE >> ${DMERCE_LOGDIR}/python-nt.log 2>> ${DMERCE_LOGDIR}/python-nt.log
+}
+
+install_python2() {
+    $MAKE install >> ${DMERCE_LOGDIR}/python2.log 2>> ${DMERCE_LOGDIR}/python2.log
+}
+
+install_python2_nt() {
+    $MAKE install >> ${DMERCE_LOGDIR}/python2-nt.log 2>> ${DMERCE_LOGDIR}/python2-nt.log
+}
+
+cleanup_python2() {
+    cleanup_distrib Python-$PYTHON2_VERSION
+}
+
+setup_python2() {
+    #set -x
+
+    if [ ! -d $PYTHON2_HOME ]; then
+	e "$MSG_PYTHON2 Unpacking distribution"
+	unpack_python2
+	e "$MSG_PYTHON2 Compiling"
+	compile_python2
+	e "$MSG_PYTHON2 Installing"
+	install_python2
+
+	e "$MSG_PYTHON2 Cleaning up"
+	cleanup_python2
+
+	e "$MSG_PYTHON2 Unpacking distribution"
+	unpack_python2
+	e "$MSG_PYTHON2 Compiling"
+	compile_python2_nt
+	e "$MSG_PYTHON2 Installing"
+	install_python2_nt
+    else
+	e "$MSG_PYTHON2 Already installed..."
+    fi
+    touch $DMERCE_LOGDIR/.dmerce.python.done
+}
+
+# Python - egenix mxDateTime
+unpack_egenix_mxdatetime() {
+    ungzip_distrib egenix-mx-base-$PYTHON2_EGENIX_MXDATETIME_VERSION
+}
+
+compile_egenix_mxdatetime() {
+    cd $DMERCE_BUILD/egenix-mx-base-$PYTHON2_EGENIX_MXDATETIME_VERSION
+    python setup.py build >> $DMERCE_LOGDIR/egenix_mxdatetime.log 2>> $DMERCE_LOGDIR/egenix_mxdatetime.log
+}
+
+install_egenix_mxdatetime() {
+    python setup.py install >> $DMERCE_LOGDIR/egenix_mxdatetime.log 2>> $DMERCE_LOGDIR/egenix_mxdatetime.log
+}
+
+cleanup_egenix_mxdatetime() {
+    cleanup_distrib egenix-mx-base-$PYTHON2_EGENIX_MXDATETIME_VERSION
+}
+
+setup_egenix_mxdatetime() {
+    e "[egenix mxDateTime for Python] Unpacking distribution"
+    unpack_egenix_mxdatetime
+    e "[egenix mxDateTime for Python] Compiling"
+    compile_egenix_mxdatetime
+    e "[egenix mxDateTime for Python] Installing"
+    install_egenix_mxdatetime
+}
+
+# Python - MySQL-python
+unpack_mysqlpython() {
+    ungzip_distrib MySQL-python-$PYTHON2_MYSQL_VERSION
+}
+
+compile_mysqlpython() {
+    python setup.py build >> $DMERCE_LOGDIR/mysqlpython.log 2>> $DMERCE_LOGDIR/mysqlpython.log
+}
+
+install_mysqlpython() {
+    python setup.py install >> $DMERCE_LOGDIR/mysqlpython.log 2>> $DMERCE_LOGDIR/mysqlpython.log
+}
+
+cleanup_mysqlpython() {
+    cleanup_distrib MySQL-python-$PYTHON2_MYSQL_VERSION
+}
+
+conf_mysqlpython_setup_py() {
+    set -x
+
+    cat setup.py | sed '
+/^thread_safe/s/YES/NO/
+/^include_dirs = \[$/a\
+\ \ \ \ os.environ[\"MYSQL_HOME\"] + \"\/include\/mysql\",
+/^library_dirs = \[$/a\
+\ \ \ \ os.environ[\"MYSQL_HOME\"] + \"\/lib\/mysql\",
+' > setup2.py
+    [ -f setup2.py ] && mv setup2.py setup.py
+}
+
+setup_mysqlpython() {
+    #set -x
+
+    e "$MSG_PYTHON_MYSQL Installing for Python w/o threads"
+    PATH=$PYTHON2_NT_HOME/bin:$PATH
+    unpack_mysqlpython
+    cd $DMERCE_BUILD/MySQL-python-$PYTHON2_MYSQL_VERSION
+    e "$MSG_PYTHON_MYSQL Configuring setup.py"
+    conf_mysqlpython_setup_py
+    e "$MSG_PYTHON_MYSQL Compiling"
+    compile_mysqlpython
+    e "$MSG_PYTHON_MYSQL Installing"
+    install_mysqlpython
+    rm -rf MySQL-python-$PYTHON2_MYSQL_VERSION
+
+    e "$MSG_PYTHON_MYSQL Installing for Python with threads"
+    PATH=$PYTHON2_HOME/bin:$PATH
+    unpack_mysqlpython
+    cd $DMERCE_BUILD/MySQL-python-$PYTHON2_MYSQL_VERSION
+    e "$MSG_PYTHON_MYSQL Configuring setup.py"
+    conf_mysqlpython_setup_py
+    e "$MSG_PYTHON_MYSQL Compiling"
+    compile_mysqlpython
+    e "$MSG_PYTHON_MYSQL Installing"
+    install_mysqlpython
+}
+
+# Python - psycopg
+unpack_psycopg() {
+    ungzip_distrib psycopg-$PYTHON2_PSYCOPG_VERSION
+}
+
+compile_psycopg() {
+    #set -x
+
+    cd $DMERCE_BUILD/psycopg-$PYTHON2_PSYCOPG_VERSION
+    ./configure --with-python=$PYTHON2_HOME/bin/python \
+	--with-postgres-libraries=$PGSQL_HOME/lib \
+	--with-postgres-includes=$PGSQL_HOME/include \
+	--with-mxdatetime-includes=$DMERCE_BUILD/egenix-mx-base-$PYTHON2_EGENIX_MXDATETIME_VERSION/mx/DateTime/mxDateTime \
+	>> $DMERCE_LOGDIR/psycopg.log 2>> $DMERCE_LOGDIR/psycopg.log
+    $MAKE >> $DMERCE_LOGDIR/psycopg.log 2>> $DMERCE_LOGDIR/psycopg.log
+}
+
+install_psycopg() {
+    $MAKE install >> $DMERCE_LOGDIR/psycopg.log 2>> $DMERCE_LOGDIR/psycopg.log
+}
+
+cleanup_psycopg() {
+    cleanup_distrib psycopg-$PYTHON2_PSYCOPG_VERSION
+}
+
+setup_psycopg() {
+    PATH=$PYTHON2_HOME/bin:$PATH
+    e "$MSG_PYTHON_PSYCOPG Unpacking distribution"
+    unpack_psycopg
+    e "$MSG_PYTHON_PSYCOPG Compiling"
+    compile_psycopg
+    e "$MSG_PYTHON_PSYCOPG Installing"
+    install_psycopg
+}
+
+# Apache 1.3.12/PyApache
+unpack_apache1312() {
+    ungzip_distrib apache_1.3.12
+}
+
+unpack_pyapache() {
+    ungzip_distrib PyApache-4.19
+}
+
+compile_apache1312() {
+    unpack_pyapache
+    ./configure --prefix=$DMERCE_PRODUCT/apache/1.3.12 \
+	--activate-module=src/modules/PyApache/mod_pyapache.c \
+	>> ${DMERCE_LOGDIR}/apache1312.log 2>> ${DMERCE_LOGDIR}/apache1312.log
+    cd src/modules
+    c=`cat Makefile | sed '/^EXTRA_INCLUDES=$/s/\(EXTRA_INCLUDES=\)/\1-I$PYTHON152_HOME/include/' > Makefile2`
+    eval $c
+    mv Makefile2 Makefile
+    $MAKE >> ${DMERCE_LOGDIR}/apache1312.log 2>> ${DMERCE_LOGDIR}/apache1312.log
+}
+
+install_apache1312() {
+    $MAKE install >> ${DMERCE_LOGDIR}/apache1312.log 2>> ${DMERCE_LOGDIR}/apache1312.log
+}
+
+conf_apache1312_httpd_conf() {
+    cd $DMERCE_PRODUCT/apache/1.3.12/conf
+    cat httpd.conf | sed '
+/^User/s/nobody/dmerce/
+/^Group/s/nobody/dmerce/
+/^Port/s/8080/80/
+/^ServerSignature/s/On/Off/
+/^ServerAdmin/s/ServerAdmin.*/ServerAdmin webmaster@1ci.net/
+/#AddHandler cgi-script .cgi/a\
+
+\ \ \ \ # dmerce/PyApache
+\ \ \ \ AddHandler python-cgi-script .pyc
+' > httpd2.conf
+    mv httpd.conf httpd.conf-`date +%Y%m%d`
+    mv httpd2.conf httpd.conf
+}
+
+setup_apache1312() {
+    #set -x
+
+    if [ ! -d $APACHE1312_HOME ]; then
+	e "$MSG_APACHE1312 Unpacking distribution"
+	unpack_apache1312
+	e "$MSG_APACHE1312 Compiling"
+	compile_apache1312
+	e "$MSG_APACHE1312 Installing"
+	install_apache1312
+	e "$MSG_APACHE1312 Configuring httpd.conf"
+	conf_apache1312_httpd_conf
+    else
+	e "$MSG_APACHE13 Already installed..."
+    fi
+    e "Copying example vhost.conf file to $APACHE1312_HOME/.."
+    cp $DMERCE_EXAMPLES/apache-vhost.conf $APACHE1312_HOME/..
+    touch $DMERCE_LOGDIR/.dmerce.apache.done
+}
+
+# Apache
+unpack_apache13() {
+    ungzip_distrib apache_$APACHE13_VERSION
+}
+
+compile_apache13() {
+    cd $DMERCE_BUILD/apache_$APACHE13_VERSION
+    ./configure --prefix=${APACHE13_HOME} --enable-module=so \
+	>> ${DMERCE_LOGDIR}/apache13.log 2>> ${DMERCE_LOGDIR}/apache13.log
+    $MAKE >> ${DMERCE_LOGDIR}/apache13.log 2>> ${DMERCE_LOGDIR}/apache13.log
+}
+
+install_apache13() {
+    $MAKE install >> ${DMERCE_LOGDIR}/apache13.log 2>> ${DMERCE_LOGDIR}/apache13.log
+}
+
+cleanup_apache13() {
+    cleanup_distrib apache_$APACHE13_VERSION
+}
+
+conf_apache13_httpd_conf() {
+    cd $APACHE13_HOME/conf
+    cat httpd.conf | sed '
+/^User/s/nobody/dmerce/
+/^Group/s/nobody/dmerce/
+/^Port/s/8080/80/
+/^ServerSignature/s/On/Off/
+/^ServerAdmin/s/ServerAdmin.*/ServerAdmin webmaster@1ci.net/
+/# LoadModule foo_module.*$/a\
+LoadModule python_module libexec/mod_python.so
+' > httpd2.conf
+    mv httpd.conf httpd.conf-`date +%Y%m%d`
+    mv httpd2.conf httpd.conf
+}
+
+setup_apache13() {
+    #set -x
+
+    if [ ! -d $APACHE13_HOME ]; then
+	e "$MSG_APACHE13 Unpacking distribution"
+	unpack_apache13
+	e "$MSG_APACHE13 Compiling"
+	compile_apache13
+	e "$MSG_APACHE13 Installing"
+	install_apache13
+	e "$MSG_APACHE13 Configuring httpd.conf"
+	conf_apache13_httpd_conf
+    else
+	e "$MSG_APACHE13 Already installed..."
+    fi
+    VHOST="$APACHE13_HOME/../vhost-$APACHE13_VERSION.conf"
+    if [ ! -f $VHOST ]; then
+	e "Copying example vhost.conf file to $VHOST"
+	cp $DMERCE_EXAMPLES/apache-vhost.conf $VHOST
+	e "Including $VHOST in Apache configuration"
+    fi
+    touch $DMERCE_LOGDIR/.dmerce.apache.done
+}
+
+# Apache - mod_python
+unpack_modpython() {
+    ungzip_distrib mod_python-$APACHE13_MODPYTHON_VERSION
+}
+
+compile_modpython() {
+    #set -x
+    echo $LD_LIBRARY_PATH
+
+    cd $DMERCE_BUILD/mod_python-$APACHE13_MODPYTHON_VERSION
+    ./configure --with-apxs=$APACHE13_HOME/bin/apxs \
+	--with-apache=$DMERCE_BUILD/apache_$APACHE13_VERSION \
+	--with-python=$DMERCE_BUILD/Python-$PYTHON2_VERSION-nt \
+	>> ${DMERCE_LOGDIR}/mod_python.log 2>> ${DMERCE_LOGDIR}/mod_python.log
+    cd src
+    cat Makefile | sed '/LIBS=-lm.*$/s/\(.*\)/\1 -lutil/' > Makefile2
+    mv Makefile2 Makefile
+    cd ..
+    $MAKE >> ${DMERCE_LOGDIR}/mod_python.log 2>> ${DMERCE_LOGDIR}/mod_python.log
+}
+
+install_modpython() {
+    $MAKE install >> ${DMERCE_LOGDIR}/mod_python.log 2>> ${DMERCE_LOGDIR}/mod_python.log
+}
+
+cleanup_modpython() {
+    cleanup_distrib mod_python-$APACHE13_MODPYTHON2_VERSION
+}
+
+setup_modpython() {
+    #set -x
+
+    PATH=$PYTHON2_HOME/bin:$PATH
+    e "$MSG_MODPYTHON Unpacking distribution"
+    unpack_modpython
+    e "$MSG_MODPYTHON Compiling"
+    compile_modpython
+    e "$MSG_MODPYTHON Installing"
+    install_modpython
+}
+
+# FreeBSD - install software from ports collection
+
+# Sun Solaris - install packages
+
+install_solaris_pkg() {
+    . $DMERCE_LIB/libsolaris
+    cd $DMERCE_INSTALL/solaris
+    [ `sol_checkpkginst SMCgcc` -eq 0 -a `sol_checkpkginst SMClibgcc` -eq 0 ] && sol_installpkg 
+}
+
+# Main
+main() {
+    set_env_vars
+
+    print
+    print "Operating system:\t$UNAME_OS $UNAME_RELEASE"
+    print "dmerce:\t\t\t$DMERCE_VERSION in $DMERCE_HOME"
+    print "dmerce log:\t\t$DMERCE_LOG"
+    print "Python:\t\t\t$PYTHON2_VERSION"
+    print "Python MySQL driver:\t$PYTHON2_MYSQL_VERSION"
+    print "Python PgSQL driver:\t$PYTHON2_PSYCOPG_VERSION"
+    print "Java:\t\t\t$JAVA_VERSION in $JAVA_HOME"
+    print "Apache:\t\t\t$APACHE13_VERSION in $APACHE13_HOME"
+    print "MySQL:\t\t\t$MYSQL_VERSION in $MYSQL_HOME"
+    print "PostgreSQL:\t\t$PGSQL_VERSION in $PGSQL_HOME"
+    print
+
+    print -n "Proceed? "
+    read c
+    if [ "$c" != "y" -a "$c" != "Y" ]; then
+	e "User cancelled"
+	print
+	exit 2
+    fi
+
+    if [ -f install/dmerce-*.tar.* ]; then
+	e "$MSG_DMERCE Unpacking distribution"
+	unpack_dmerce_distrib
+    else
+	e "$MSG_DMERCE Will not unpack distribution"
+    fi
+
+    e "$MSG_DMERCE Creating directories under '$DMERCE_HOME'"
+    make_dmerce_dirs
+
+    dmercelog_dir
+    e "$MSG_DMERCE Created log directory '$DMERCE_LOGDIR'"
+
+    if [ -f $DMERCE_INSTALL/mysql-$MYSQL_VERSION* ]; then
+	e "$MSG_MYSQL Starting installation in background"
+	#setup_mysql &
+    fi
+
+    if [ -f $DMERCE_INSTALL/postgresql-$PGSQL_VERSION* ]; then
+	e "$MSG_PGSQL Starting installation in background"
+	setup_postgresql
+    fi
+
+    if [ -f $DMERCE_INSTALL/py-$PYTHON1_VERSION* -o -f $DMERCE_INSTALL/Python-$PYTHON2_VERSION* ]; then
+	e "$MSG_PYTHON2 Starting installation in background"
+	setup_python2
+    fi
+
+    if [ -f $DMERCE_INSTALL/apache_$APACHE_VERSION* ]; then
+	e "$MSG_APACHE13 Starting installation in background"
+	setup_apache13
+    fi
+
+    while [ true ]; do
+	[ -f $DMERCE_LOGDIR/.dmerce.apache.done ] && ( e "$MSG_APACHE13 Done"; rm $DMERCE_LOGDIR/.dmerce.apache.done )
+	[ -f $DMERCE_LOGDIR/.dmerce.mysql.done ] && ( e "$MSG_MYSQL Done"; rm $DMERCE_LOGDIR/.dmerce.mysql.done )
+	[ -f $DMERCE_LOGDIR/.dmerce.postgresql.done ] && ( e "$MSG_PGSQL Done"; rm $DMERCE_LOGDIR/.dmerce.postgresql.done )
+	[ -f $DMERCE_LOGDIR/.dmerce.python.done ] && ( e "$MSG_PYTHON2 Done"; rm $DMERCE_LOGDIR/.dmerce.python.done )
+	if [ ! -f $DMERCE_LOGDIR/.dmerce.apache.done \
+	    -a ! -f $DMERCE_LOGDIR/.dmerce.mysql.done \
+	    -a ! -f $DMERCE_LOGDIR/.dmerce.postgresql.done \
+	    -a ! -f $DMERCE_LOGDIR/.dmerce.python.done ]; then
+	    break
+	fi
+	e "Waiting for builds to complete"
+	sleep 10
+    done
+
+    e "[egenix mxDateTime for Python] Starting installation"
+    setup_egenix_mxdatetime
+    e "[egenix mxDateTime for Python] Done"
+
+    e "[MySQL driver for Python] Starting installation"
+    setup_mysqlpython
+    e "[MySQL driver for Python] Done"
+
+    e "[PostgreSQL driver for Python] Starting"
+    setup_psycopg
+    e "[PostgreSQL driver for Python] Done"
+
+    e "$MSG_MODPYTHON Starting installation"
+    setup_modpython
+    e "$MSG_MODPYTHON Done"
+
+    #e "Cleaning up"
+    #cleanup_mysql
+    #cleanup_postgresql
+    #cleanup_python
+    #cleanup_apache
+    #cleanup_egenix_mxdatetime
+    #cleanup_modpython
+    #cleanup_mysqlpython
+    #cleanup_psycopg
+
+    e "Setting up dmerce user profile for ksh"
+    [ -f $DMERCE_HOME/.profile ] || cp $DMERCE_EXAMPLES/dot-profile $DMERCE_HOME/.profile
+
+    e "DONE"
+}
+
+main
+print

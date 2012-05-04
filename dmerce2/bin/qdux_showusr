@@ -1,0 +1,12 @@
+#!/bin/ksh
+
+typeset -L10 name
+typeset -L5 uid
+typeset -L5 gid
+typeset -L10 info
+typeset -L30 home
+IFS=":"
+while read name passwd uid gid info home shell
+do
+  echo $name $uid $gid $info $home `basename $shell`
+done < /etc/passwd

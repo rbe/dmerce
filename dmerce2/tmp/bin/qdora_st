@@ -1,0 +1,73 @@
+#!/usr/bin/ksh
+#################################################
+#
+# Copyright 2001-2002 1Ci GmbH, http://www.1ci.de
+#
+# $Id: qdora_st,v 1.1 2003/04/19 18:25:38 rb Exp $
+# $Author: rb $
+# $Revision: 1.1 $
+#
+# START/STOP ORACLE DATABASE INSTANCES
+# FROM oratab
+# 
+#################################################
+
+if [ x"${DMERCE_HOME}" = x"" ]; then
+    DMERCE_HOME="/opt/dmerce"
+    export DMERCE_HOME
+fi
+. ${DMERCE_HOME}/lib/libsh
+. ${DMERCE_HOME}/lib/libdmerce
+. ${DMERCE_HOME}/lib/liboracle
+
+libdmerce_copyr
+echo "ORACLE STARTUP/SHUTDOWN FROM INSTANCES (oratab)"
+echo
+libsh_discover_env
+libsh_amiroot > /dev/null
+if [ x"${ORACLE_HOME}" = x"" ]; then
+    echo "ORACLE_HOME not set!"
+    echo
+    exit 255
+fi
+
+e "* START"
+e "SHOWING INSTANCES FROM oratab"
+liboracle_show_oratab_y
+log="${DMERCE_HOME}/log/orclst.$1.`date +%Y%m%d%H%M%S`.log"
+case "$1" in
+    start)
+	e "STARTUP - SEE LOG FILE '${log}'"
+	if [ `libsh_amiroot` -eq 1 ]; then
+	    cmd1="ORACLE_HOME=${ORACLE_HOME}; PATH=${ORACLE_HOME}/bin:$PATH; export ORACLE_HOME PATH; ${ORACLE_HOME}/bin/dbstart"
+	    cmd2="ORACLE_HOME=${ORACLE_HOME}; PATH=${ORACLE_HOME}/bin:$PATH; export ORACLE_HOME PATH; ${ORACLE_HOME}/bin/lsnrctl start"
+	    su - oracle -c "$cmd1" > $log 2>&1
+	    su - oracle -c "$cmd2" >> $log 2>&1
+	else
+	    ${ORACLE_HOME}/bin/dbstart > $log 2>&1
+	    ${ORACLE_HOME}/bin/lsnrctl start >> $log 2>&1
+	fi
+	liboracle_show_check_all_insts
+	;;
+    stop)
+	e "SHUTDOWN - SEE LOG FILE '${log}'"
+	if [ `libsh_amiroot` -eq 1 ]; then
+	    cmd1="ORACLE_HOME=${ORACLE_HOME}; PATH=${ORACLE_HOME}/bin:$PATH; export ORACLE_HOME PATH; ${ORACLE_HOME}/bin/dbshut"
+	    cmd2="ORACLE_HOME=${ORACLE_HOME}; PATH=${ORACLE_HOME}/bin:$PATH; export ORACLE_HOME PATH; ${ORACLE_HOME}/bin/lsnrctl stop"
+	    su - oracle -c "$cmd1" > $log 2>&1
+	    su - oracle -c "$cmd2" >> $log 2>&1
+	else
+	    ${ORACLE_HOME}/bin/dbshut > $log 2>&1
+	    ${ORACLE_HOME}/bin/lsnrctl stop > $log 2>&1
+	fi
+	liboracle_show_check_all_insts
+	;;
+    *)
+	echo
+	echo "usage: $0 { start | stop }"
+	echo
+	;;
+esac
+e "* STOP"
+
+exit 0

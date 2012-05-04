@@ -1,0 +1,19 @@
+#!/bin/sh
+
+usage() {
+	echo "usage: $0 <application_name>"
+}
+
+_undeploy() {
+	DMERCE_APPNAME=$1
+	export DMERCE_APPNAME
+	$ANT_CALL undeploy-war
+}
+
+if [ $# -lt 1 ]; then
+	usage
+else
+	_undeploy $*
+fi
+
+exit 0

@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<workflows xmlns='http://www.1ci.de'
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+  xsi:schemaLocation='http://www.1ci.de ../../../etc/WORKFLOWS.xsd'
+  version="2.0"
+>
+
+<workflow id="dnszonesns_edit">
+
+        <page id="registerpage"
+                        template="XXXXXXXXXX.jsp"
+                        formid="dnszonesns"
+                        editable="true">
+
+            <formmap table="t_dnszonesns" primarykey="ID">
+                <fieldmap formfield="id" dbfield="ID"/>
+                <fieldmap formfield="position" dbfield="POSITION"/>
+                <fieldmap formfield="dnszonesid" dbfield="DNSZONESID"/>
+                <fieldmap formfield="dnsnsid" dbfield="DNSNSID"/>
+            </formmap>
+
+            <transition name="save_to_db" target="list">
+                    <condition type="buttonpressed" value="Ok"/>
+                    <action type="maintain">
+                    <formfield formid="dnszonesns" name="id"/>
+                    <formfield formid="dnszonesns" name="position"/>
+                    <formfield formid="dnszonesns" name="dnszonesid"/>
+                    <formfield formid="dnszonesns" name="dnsnsid"/>
+                                   </action>
+            </transition>
+
+            <transition name="abort" target="list" validation="false">
+                    <condition type="buttonpressed" value="Cancel"/>
+            </transition>
+
+        </page>
+
+        <page id="list" template="XXXXXXXXXX.jsp"/>
+
+    </workflow>
+
+<workflow id="dnszones">
+
+        <page id="registerpage"
+                        template="XXXXXXXXXX.jsp"
+                        formid="dnszones"
+                        editable="true">
+
+            <formmap table="t_dnszones" primarykey="ID">
+                <fieldmap formfield="id" dbfield="ID"/>
+                <fieldmap formfield="active" dbfield="ACTIVE"/>
+                <fieldmap formfield="name" dbfield="NAME"/>
+                <fieldmap formfield="soaserial" dbfield="SOASERIAL"/>
+                <fieldmap formfield="soasubserial" dbfield="SOASUBSERIAL"/>
+                <fieldmap formfield="soarefresh" dbfield="SOAREFRESH"/>
+                <fieldmap formfield="soaretry" dbfield="SOARETRY"/>
+                <fieldmap formfield="soaexpire" dbfield="SOAEXPIRE"/>
+                <fieldmap formfield="soaserial" dbfield="SOASERIAL"/>
+                <fieldmap formfield="ttl" dbfield="TTL"/>
+                <fieldmap formfield="legalpersonid" dbfield="LEGALPERSONID"/>
+                <fieldmap formfield="admincpersonid" dbfield="ADMINCPERSONID"/>
+                <fieldmap formfield="zonecpersonid" dbfield="ZONECPERSONID"/>
+                <fieldmap formfield="techcpersonid" dbfield="TECHCPERSONID"/>
+                <fieldmap formfield="validfrom" dbfield="VALIDFROM"/>
+                <fieldmap formfield="validuntil" dbfield="VALIDUNTIL"/>
+            </formmap>
+
+            <transition name="save_to_db" target="list">
+                    <condition type="buttonpressed" value="Ok"/>
+                    <action type="maintain">
+                    <formfield formid="dnszones" name="id"/>
+                    <formfield formid="dnszones" name="active"/>
+                    <formfield formid="dnszones" name="name"/>
+                    <formfield formid="dnszones" name="soaserial"/>
+                    <formfield formid="dnszones" name="soasubserial"/>
+                    <formfield formid="dnszones" name="soarefresh"/>
+                    <formfield formid="dnszones" name="soaretry"/>
+                    <formfield formid="dnszones" name="soaexpire"/>
+                    <formfield formid="dnszones" name="soaserial"/>
+                    <formfield formid="dnszones" name="ttl"/>
+                    <formfield formid="dnszones" name="legalpersonid"/>
+                    <formfield formid="dnszones" name="admincpersonid"/>
+                    <formfield formid="dnszones" name="zonecpersonid"/>
+                    <formfield formid="dnszones" name="techcpersonid"/>
+                    <formfield formid="dnszones" name="validfrom"/>
+                    <formfield formid="dnszones" name="validuntil"/>
+
+                                </action>
+            </transition>
+
+            <transition name="abort" target="list" validation="false">
+                    <condition type="buttonpressed" value="Cancel"/>
+            </transition>
+
+        </page>
+
+        <page id="list" template="XXXXX.jsp"/>
+
+    </workflow>
+
+<workflow id="dnsrrtypes_edit">
+
+        <page id="registerpage"
+                        template="XXXXXXXXXX.jsp"
+                        formid="dnsrrtypes"
+                        editable="true">
+
+            <formmap table="t_dnsrrtypes" primarykey="ID">
+                <fieldmap formfield="id" dbfield="ID"/>
+                <fieldmap formfield="name" dbfield="NAME"/>
+            </formmap>
+
+            <transition name="save_to_db" target="list">
+                    <condition type="buttonpressed" value="Ok"/>
+                    <action type="maintain">
+                    <formfield formid="dnsrrtypes" name="id"/>
+                    <formfield formid="dnsrrtypes" name="name"/>
+                                      </action>
+            </transition>
+
+            <transition name="abort" target="list" validation="false">
+                    <condition type="buttonpressed" value="Cancel"/>
+            </transition>
+
+        </page>
+
+        <page id="list" template="XXXXXXXXXX.jsp"/>
+
+    </workflow>
+
+<workflow id="dnsrecords_edit">
+
+        <page id="registerpage"
+                        template="XXXXXXXXXX.jsp"
+                        formid="dnszonesns"
+                        editable="true">
+
+            <formmap table="t_dnsrecords" primarykey="ID">
+                <fieldmap formfield="id" dbfield="ID"/>
+                <fieldmap formfield="dnszoneid" dbfield="DNSZONEID"/>
+                <fieldmap formfield="active" dbfield="ACTIVE"/>
+                <fieldmap formfield="name" dbfield="NAME"/>
+                <fieldmap formfield="type" dbfield="TYPE"/>
+                <fieldmap formfield="mxprio" dbfield="MXPRIO"/>
+                <fieldmap formfield="value" dbfield="VALUE"/>
+                <fieldmap formfield="ptr" dbfield="PTR"/>
+                <fieldmap formfield="validfrom" dbfield="VALIDFROM"/>
+                <fieldmap formfield="validuntil" dbfield="VALIDUNTIL"/>
+            </formmap>
+
+            <transition name="save_to_db" target="list">
+                    <condition type="buttonpressed" value="Ok"/>
+                    <action type="maintain">
+                    <formfield formid="dnsrecords" name="id"/>
+                    <formfield formid="dnsrecords" name="dnszoneid"/>
+                    <formfield formid="dnsrecords" name="active"/>
+                    <formfield formid="dnsrecords" name="name"/>
+                    <formfield formid="dnsrecords" name="type"/>
+                    <formfield formid="dnsrecords" name="mxprio"/>
+                    <formfield formid="dnsrecords" name="value"/>
+                    <formfield formid="dnsrecords" name="ptr"/>
+                    <formfield formid="dnsrecords" name="validfrom"/>
+                    <formfield formid="dnsrecords" name="validuntil"/>
+                                 </action>
+            </transition>
+
+            <transition name="abort" target="list" validation="false">
+                    <condition type="buttonpressed" value="Cancel"/>
+            </transition>
+
+        </page>
+
+        <page id="list" template="XXXXXXXXXX.jsp"/>
+
+    </workflow>
+
+<workflow id="dnsns_edit">
+
+        <page id="registerpage"
+                        template="XXXXXXXXXX.jsp"
+                        formid="dnsns"
+                        editable="true">
+
+            <formmap table="t_dnsns" primarykey="ID">
+                <fieldmap formfield="id" dbfield="ID"/>
+                <fieldmap formfield="position" dbfield="POSITION"/>
+                <fieldmap formfield="ipaddress" dbfield="IPADDRESS"/>
+            </formmap>
+
+            <transition name="save_to_db" target="list">
+                    <condition type="buttonpressed" value="Ok"/>
+                    <action type="maintain">
+                    <formfield formid="dnsns" name="id"/>
+                    <formfield formid="dnsns" name="name"/>
+                    <formfield formid="dnsns" name="ipaddress"/>
+                               </action>
+            </transition>
+
+            <transition name="abort" target="list" validation="false">
+                    <condition type="buttonpressed" value="Cancel"/>
+            </transition>
+
+        </page>
+
+        <page id="list" template="XXXXXXXXXX.jsp"/>
+
+    </workflow>
+
+<workflow id="dnslistenon_edit">
+
+        <page id="registerpage"
+                        template="XXXXXXXXXX.jsp"
+                        formid="dnslistenon"
+                        editable="true">
+
+            <formmap table="t_dnslistenon" primarykey="ID">
+                <fieldmap formfield="id" dbfield="ID"/>
+                <fieldmap formfield="position" dbfield="POSITION"/>
+                <fieldmap formfield="ipaddress" dbfield="IPADDRESS"/>
+            </formmap>
+
+            <transition name="save_to_db" target="list">
+                    <condition type="buttonpressed" value="Ok"/>
+                    <action type="maintain">
+                    <formfield formid="dnslistenon" name="id"/>
+                    <formfield formid="dnslistenon" name="position"/>
+                    <formfield formid="dnslistenon" name="ipaddress"/>
+                               </action>
+            </transition>
+
+            <transition name="abort" target="list" validation="false">
+                    <condition type="buttonpressed" value="Cancel"/>
+            </transition>
+
+        </page>
+
+        <page id="list" template="XXXXXXXXXX.jsp"/>
+
+    </workflow>
+
+<workflow id="dnshandles_edit">
+
+        <page id="registerpage"
+                        template="XXXXXXXXXX.jsp"
+                        formid="dnshandles"
+                        editable="true">
+
+            <formmap table="t_dnshandles" primarykey="ID">
+                <fieldmap formfield="id" dbfield="ID"/>
+                <fieldmap formfield="position" dbfield="DNSNSID"/>
+                <fieldmap formfield="handle" dbfield="HANDLE"/>
+                <fieldmap formfield="comments" dbfield="COMMENTS"/>
+            </formmap>
+
+            <transition name="save_to_db" target="list">
+                    <condition type="buttonpressed" value="Ok"/>
+                    <action type="maintain">
+                    <formfield formid="dnshandles" name="id"/>
+                    <formfield formid="dnshandles" name="dnsnsid"/>
+                    <formfield formid="dnshandles" name="handle"/>
+                    <formfield formid="dnshandles" name="comments"/>
+                               </action>
+            </transition>
+
+            <transition name="abort" target="list" validation="false">
+                    <condition type="buttonpressed" value="Cancel"/>
+            </transition>
+
+        </page>
+
+        <page id="list" template="XXXXXXXXXX.jsp"/>
+
+    </workflow>
+
+<workflow id="dnsforwarders_edit">
+
+        <page id="registerpage"
+                        template="XXXXXXXXXX.jsp"
+                        formid="dnsforwarders"
+                        editable="true">
+
+            <formmap table="t_dnsforwarders" primarykey="ID">
+                <fieldmap formfield="id" dbfield="ID"/>
+                <fieldmap formfield="dnsnsid" dbfield="DNSNSID"/>
+                <fieldmap formfield="ip" dbfield="IP"/>
+            </formmap>
+
+            <transition name="save_to_db" target="list">
+                    <condition type="buttonpressed" value="Ok"/>
+                    <action type="maintain">
+                    <formfield formid="dnsforwarders" name="id"/>
+                    <formfield formid="dnsforwarders" name="dnsnsid"/>
+                    <formfield formid="dnsforwarders" name="ip"/>
+                               </action>
+            </transition>
+
+            <transition name="abort" target="list" validation="false">
+                    <condition type="buttonpressed" value="Cancel"/>
+            </transition>
+
+        </page>
+
+        <page id="list" template="XXXXXXXXXX.jsp"/>
+
+    </workflow>
+
+</workflows>

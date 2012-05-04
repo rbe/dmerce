@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project basedir="." default="help"
+	name="dmerce Web Application Development Framework">
+	
+	<import file="buildproperties.xml"/>
+	<echo messages="dmerce.sys.images=${dmerce.sys.images}"/>
+	<splash imageurl="file:///${dmerce.sys.images}/1ci_splashscreen.jpg"/>
+	<import file="systemtargets.xml"/>
+	<import file="applicationtargets.xml"/>
+	
+	<target name="help">
+		<echo message="DSTAMP=${DSTAMP}"/>
+		<echo message="TSTAMP=${TSTAMP}"/>
+	</target>
+	    
+</project>

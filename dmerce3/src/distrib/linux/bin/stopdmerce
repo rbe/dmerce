@@ -1,0 +1,5 @@
+#!/bin/sh
+
+[ "$START_JBOSS" = "YES" ] && $DMERCE_BASE/bin/stopjboss &
+[ "$START_APACHE" = "YES" ] && sudo $XAMPP_BASE/lampp stopapache &
+[ "$START_MYSQL" = "YES" ] && sudo $XAMPP_BASE/lampp stopmysql &

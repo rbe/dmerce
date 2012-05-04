@@ -1,0 +1,20 @@
+#!/bin/ksh
+
+#################################################
+#
+# Copyright 2000-2003 1Ci GmbH, http://www.1ci.de
+#
+# $Id: qdux_nsl2hosts,v 1.1 2003/04/19 18:25:38 rb Exp $
+# $Author: rb $
+# $Revision: 1.1 $
+#
+# nslookup -> hostnames (/etc/hosts)
+# 
+#################################################
+
+i=3
+while [ $i -lt 52 ]; do
+    n=`nslookup 10.48.31.$i 2>/dev/null | grep Name | sed 's#Name[ ]*:##g'`
+    [ -n "$n" ] && echo "10.48.31.$i $n"
+    i=`expr $i + 1`
+done >> /etc/hosts

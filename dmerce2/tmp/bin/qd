@@ -1,0 +1,183 @@
+#!/bin/ksh
+
+#################################################
+#
+# Copyright 2000-2003 1Ci GmbH, http://www.1ci.com
+#
+# $Id: qd,v 1.4 2003/04/22 12:54:29 rb Exp $
+# $Author: rb $
+# $Revision: 1.4 $
+#
+#################################################
+
+. ${DMERCE_HOME}/dmercerc
+[ $? -gt 0 ] && exit 2
+. ${DMERCE_HOME}/lib/libsh
+[ $? -gt 0 ] && exit 2
+. ${DMERCE_HOME}/lib/libdmerce
+[ $? -gt 0 ] && exit 2
+
+usage() {
+    libdmerce_copyr
+    if [ $1 -eq 1 ]; then
+	echo "ERROR: wrong parameters!"
+    elif [ $1 -eq 2 ]; then
+	echo "ERROR: command not found!"
+    fi
+    echo "
+$0 [section] [command] [arguments]
+
+section ::= bsd            - FreeBSD
+            d              - 1Ci(R) dmerce(R)
+            inet           - Internet services
+            lin            - Linux
+            ora            - ORACLE(R)
+            pgsql          - PostgreSQL
+            sol            - Sun Solaris(TM)
+            ux             - UNIX(R)
+
+d:
+--
+command ::= chkfs          - Check permissions in dmerce filesystem
+            cpprj          - Copy project
+            crmf           - Create mandantory fields in SQL tables
+            crprj          - Create project from scratch
+            csvimp         - CSV -> SQL import
+            distrib        - Make dmerce distribution
+            dmp            - (un)dump dmerce projects
+            drpprj         - Drop dmerce projects
+            mktmpl         - Template maker
+            stripel        - Strip empty lines from file
+            tmpl2sam       - Templates to SAM
+
+inet:
+-----
+command ::= pop3del        - Delete mail from POP3 account
+
+ora:
+----
+
+command ::= crdb           - Create dmerce/Oracle database
+            crtbs          - Create dmerce tablespaces
+            mvdf           - Move Oracle datafiles
+            st             - Start/stop Oracle databases
+
+pgsql:
+------
+
+command ::= crdb           - Create dmerce/PostgreSQL database
+
+sol:
+----
+
+command ::= genhostnames   - Generate /etc/hosts file
+            inst_gnu       - Install GNU packages
+            inst_ossh      - Install OpenSSH on Solaris 8
+            inst_ppro      - Install PatchPro(TM)
+            ls_patches     - List installed Solaris patches
+            mkpkg          - Generate dmerce(R) Solaris package
+            ss_dmp         - Dump SunScreen(TM) firewall configuration
+            stat           - Generate Solaris System Report
+            svc            - Manage services in /etc/init.d, /etc/rc?.d
+            svm_rootmirr   - Create root-Mirror with Solaris Volume Manager
+            svm_syncwatch  - Watch syncing of Solaris Volume Manager metadevices
+
+ux:
+___
+
+command ::= dfh            - Output of 'df -k' converted to MB/GB
+
+option  ::= specific to command
+            RTFM
+
+"
+}
+
+check_params() {
+    if [ $# -eq 2 ]; then
+	DMERCE_SECTION=$1
+	shift
+	DMERCE_CMD=$1
+	shift
+	DMERCE_CMD_OPT=$*
+    elif [ $# -eq 1 ]; then
+	DMERCE_SECTION=d
+	DMERCE_CMD=$1
+	shift
+	DMERCE_CMD_OPT=$*
+    else
+	usage 1 1
+	exit
+    fi
+    export DMERCE_SECTION DMERCE_CMD DMERCE_CMD_OPT
+}
+
+d_section() {
+    case "${DMERCE_CMD}" in
+	'distrib' | 'tmpl2sam' | 'dmp' | 'dump' | 'crscr' | 'crprj' | 'drpprj' | 'chkfs' | 'ptf')
+	    ${DMERCE_HOME}/bin/qdd_${DMERCE_CMD} ${DMERCE_CMD_OPT}
+	    ;;
+	'crmf' | 'mktmpl' | 'stripel' | 'cfgbk' | 'csvimp')
+	    python $DMERCE_HOME/bin/qdd_$DMERCE_CMD.pyc $DMERCE_CMD_OPT
+	    ;;
+	'test')
+	    java com.wanci.dmerce.cli.$DMERCE_CMD $DMERCE_CMD_OPT
+	    ;;
+    esac
+}
+
+inet_section() {
+    case "${DMERCE_CMD}" in
+	'pop3del')
+	    python $DMERCE_HOME/bin/qdinet_$DMERCE_CMD.pyc $DMERCE_CMD_OPT
+	    ;;
+    esac
+}
+
+ora_section() {
+    ${DMERCE_HOME}/bin/qdora_${DMERCE_CMD} ${DMERCE_CMD_OPT}
+}
+
+sol_section() {
+    ${DMERCE_HOME}/bin/qdsol_${DMERCE_CMD} ${DMERCE_CMD_OPT}
+}
+
+ux_section() {
+    ${DMERCE_HOME}/bin/qdux_${DMERCE_CMD} ${DMERCE_CMD_OPT}
+}
+
+exe() {
+    case "${DMERCE_SECTION}" in
+	bsd)
+	    bsd_section
+	    ;;
+	d)
+	    d_section
+	    ;;
+	inet)
+	    inet_section
+	    ;;
+	lin)
+	    lin_section
+	    ;;
+	ora)
+	    ora_section
+	    ;;
+	sol)
+	    sol_section
+	    ;;
+	ux)
+	    ux_section
+	    ;;
+	*)
+	    usage
+	;;
+    esac
+}
+
+check_params $*
+exe
+DMERCE_SECTION=
+DMERCE_CMD=
+DMERCE_CMD_OPTS=
+export DMERCE_SECTION DMERCE_CMD DMERCE_CMD_OPTS

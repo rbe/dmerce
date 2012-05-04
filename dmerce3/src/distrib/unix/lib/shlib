@@ -1,0 +1,260 @@
+#!/bin/ksh
+#################################################
+#
+# Copyright 2000-2004 1[wan]Ci GmbH
+# http://www.1ci.com
+#
+# $Id$
+# $Author$
+# $Revision$
+#
+# dmerce(R) Shell Library
+#
+#################################################
+
+DMERCE_shlib=1
+export DMERCE_shlib
+
+e() {
+    [ -z "${DMERCE_QUIET}" ] && echo "`date`: $1"
+}
+
+snip() {
+    e "---8<---8<---8<---8<---8<---8<---"
+}
+
+shlib_set_log_quiet() {
+    DMERCE_QUIET=1
+    export DMERCE_QUIET
+}
+
+shlib_set_log_echo() {
+    DMERCE_QUIET=0
+    export DMERCE_QUIET
+}
+
+shlib_set_date_once() {
+    if [ -z "${DMERCE_DATE}" ]; then
+	DMERCE_DATE=`date +%Y%m%d%H%M%S`
+	export DMERCE_DATE
+    fi
+    echo $DMERCE_DATE
+}
+
+shlib_set_log_filename() {
+    [ -n "$1" ] && DMERCE_LOGFILENAME=$1
+    [ -z "$1" ] && DMERCE_LOGFILENAME="unknown"
+    export DMERCE_LOGFILENAME
+}
+
+shlib_set_syslog() {
+    DMERCE_SYSLOG=1
+    export DMERCE_SYSLOG
+}
+
+shlib_set_syslog_facility() { # $1 = facility, default = INFO
+    [ -n "$1" ] && DMERCE_SYSLOG_FACILITY=$1
+    [ -z "$1" ] && DMERCE_SYSLOG_FACILITY="INFO"
+    export DMERCE_SYSLOG_FACILITY
+}
+
+shlib_syslog_facility_get_logto() { # returns where facility is logged
+    cat /etc/syslog.conf | grep $1
+}
+
+shlib_log() {
+    if [ -n "${DMERCE_LOGFILENAME}" ]; then
+	s=`e "$1"`
+	echo $s
+	echo $s >> ${DMERCE_LOG}/${DMERCE_LOGFILENAME}-`shlib_set_date_once`.log
+    fi
+    [ -n "${DMERCE_SYSLOG}" ] && ( [ -z "${DMERCE_SYSLOG_FACILITY}" ] && shlib_set_syslog_facility; /usr/bin/logger -p ${DMERCE_SYSLOG_FACILITY} $1 )
+}
+
+shlib_set_wr2f_file() {
+    DMERCE_WR2F_FILE=$1
+    export DMERCE_WR2F_FILE
+}
+
+shlib_wr2f() { # write to file
+    echo "$1" >> ${DMERCE_WR2F_FILE}
+}
+
+shlib_ask_continue() {
+    if [ -n $1 ]; then
+	what=$1
+    else
+	what="ehm... what?!"
+    fi
+    echo
+    snip
+    e "About to $what"
+    print -n "`date`: Continue (y/n)?"
+    read s
+    if [ x"$s" = x"y" -o x"$s" = x"Y" ]; then
+	e "User chooses to CONTINUE!"
+	snip
+	echo
+	return 0
+    else
+	e "User chooses to ABORT!"
+	cleanup
+    fi
+}
+
+shlib_discover_env() {
+    # init standard variables
+    CUT=${CUT:-cut}
+    CP=${CP:-cp}
+    MV=${MV:-mv}
+    RM=${RM:-rm}
+    CHMOD=${CHMOD:-chmod}
+    CHOWN=${CHOWN:-chown}
+    CHGRP=${CHGRP:-chgrp}
+    MKDIR=${MKDIR:-mkdir}
+    FIND=${FIND:-find}
+    CPIO=${CPIO:-cpio}
+    SHAR=${SORT:-shar}
+    SORT=${SORT:-sort}
+    GREP=${GREP:-grep}
+    GREPVER=`${GREP} -V | ${GREP} grep | ${CUT} -d " " -f 4` > /dev/null 2>&1 /dev/null
+    EGREP=${EGREP:-egrep}
+    SED=${SED:-sed}
+    SEDVER=`${SED} -V | ${GREP} version | ${CUT} -d " " -f 4` > /dev/null 2>&1 /dev/null
+    TAR=${TAR:-tar}
+    TARVER=`${TAR} --version | ${GREP} tar | ${CUT} -d " " -f 4` > /dev/null 2>&1 /dev/null
+    COMPRESS=${COMPRESS:-compress}
+    GZIP=${GZIP:-gzip}
+    GZIPVER=`${GZIP} -V 2>&1 | ${GREP} gzip | ${CUT} -d " " -f 2` > /dev/null 2>&1 /dev/null
+    MAKE=${MAKE:-make}
+    MAKEVER=`${MAKE} -v 2> /dev/null | ${GREP} version | ${CUT} -d " " -f 4`
+    export COPYR CP MV RM CHMOD CHOWN CHGRP MKDIR FIND CPIO TAR SED DATE
+}
+
+shlib_discover_devenv() {
+    INST_PYTHON=${INST_PYTHON:-`which python1.5`}
+    INST_PYTHONINCLUDE=${INST_PYINCLUDE:-`which python1.5 | ${SED} 's/bin/include/g'`}
+    INST_PYTHONVER=`${INST_PYTHON} -c "import sys; print sys.version[0:6]"`
+    GCC=${GCC:-`which gcc`}
+    GCCVER=`${GCC} -v 2>&1 | ${GREP} version | ${CUT} -d " " -f 3` > /dev/null
+    cc=${cc:-`which cc`}
+    CC=${CC:-`which CC`}
+    NM=`which nm`
+    export INST_PYTHON INST_PYTHONINCLUDE INST_PYTHONVER GCC cc CC NM
+    shlib_determine_uname
+    shlib_system_init
+}
+
+shlib_deinit_discover_env() {
+    unset COPYR CP MV RM CHMOD MKDIR FIND TAR SED DATE INST_PYTHON INST_PYTHONINCLUDE INST_PYTHONVER GCC cc CC NM
+}
+
+shlib_get_shell_type() {
+    # determine shell type
+    testref=test
+    test=x
+    sleep=`type sleep`
+    [ "`(echo ${testref#t}) 2> /dev/null`" = est ] || {
+          echo sh
+          unset testref test sleep
+          return
+    }
+    if    [ "`(echo ${(S)testref#e}) 2> /dev/null`" = tst ]
+    then  echo zsh
+    elif  [ "${sleep##* }" = builtin ]
+    then  echo ksh93
+    elif  [ -n "`(eval 'cat <(echo hallo)') 2>/dev/null`" ]
+    then
+          if    ( a[1]=x; [ "${a[1]}" = x ] ) > /dev/null 2>&1
+          then
+                if    ( [ `eval '${!testref}'` = x ] ) > /dev/null 2>&1
+                then  echo bash2
+                else  echo ksh88
+                fi
+          else  echo bash1
+          fi
+    elif  ( eval '[[ x == x ]]' ) > /dev/null 2>&1
+    then  echo ksh86
+    else  echo ksh
+    fi
+    unset testref test sleep    
+}
+
+shlib_determine_machtype() {
+    type=$1
+    if [ x"${MACHTYPE}" != x"" ]; then
+	if [ ${type} = "arch" ]; then
+	    echo ${MACHTYPE} | cut -d "-" -f 1
+	elif [ ${type} = "vendor" ]; then
+	    echo ${MACHTYPE} | cut -d "-" -f 2
+	elif [ ${type} = "system" ]; then
+	    echo ${MACHTYPE} | cut -d "-" -f 3-
+	fi
+    fi
+}
+
+shlib_determine_uname() {
+    UNAME_MACHINE=`uname -m`
+    UNAME_PROC=`uname -p`
+    UNAME_OS=`uname -s`
+    UNAME_RELEASE=`uname -r`
+    UNAME_VERSION=`uname -v`
+    export UNAME_MACHINE UNAME_PROC UNAME_OS UNAME_RELEASE UNAME_VERSION
+}
+
+shlib_system_init() {
+    shlib_determine_uname
+    # set variables depending on system
+    case ${UNAME_OS} in
+	*Linux*)
+	    CPR="${CP} -a"
+	;;
+	*FreeBSD*|SunOS*)
+	    CPR="${CP} -R"
+	;;
+	default)
+	    CPR="not set"
+	;;
+    esac
+    export CPR
+}
+
+shlib_isalpha() {
+    echo "$*" | grep '[a-zA-ZäüößÜÄÖ]';
+}
+
+shlib_isupper() {
+    echo "$*" | grep '[A-ZÄÜÖ]';
+}
+
+shlib_islower() {
+    echo "$*" | grep '[a-zäüöß]';
+}
+
+shlib_isdigit() {
+    echo "$*" | egrep '[+-]?[0-9]*\.?[0-9]+';
+}
+
+shlib_readkwe() {
+    stty -echo
+    read key
+    stty echo
+}
+
+shlib_amiroot() {
+    if [ x"${DMERCE_AMIROOT}" = x"" ]; then
+		DMERCE_AMIROOT=`id | grep -c root`
+		export DMERCE_AMIROOT
+		echo ${DMERCE_AMIROOT}
+    else
+		echo ${DMERCE_AMIROOT}
+    fi
+}
+
+shlib_get_ip_from_etchosts() { # $1 = search for hostname
+    while read -r IP HNAME1 HNAME2 HNAME3; do
+      if [ x"$HNAME1" = x"$1" -o x"$HNAME2" = x"$1" -o x"$HNAME3" = x"$1" ]; then
+	  	echo $IP
+      fi
+    done < /etc/hosts
+}

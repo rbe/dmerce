@@ -1,0 +1,158 @@
+#!/bin/ksh
+
+#
+# Script for adding/removing dependancies from a SysV PKG file
+# Written by Philip Brown
+#
+# Version @(#) pkgdepend.ksh 1.2@(#)
+
+usage(){
+	print "Usage:"
+	print " pkg-depends: file.pkg PKGone [...PKGtwo]"
+	print " pkg-depends -r file.pkg"
+	print ""
+	print "This script changes the dependancies of a package"
+	print "You can give a list of packages, and it will change the package"
+	print "file dependancies. This is overwrite, not add"
+	print "Or, you can give the -r option, which will remove all dependancies"
+	print ""
+	print "BUGS:"
+	print "  This also only handles 'depends on', not other depend stuff"
+	print "  You cannot specify versions of packages with this script."
+	print "  (but on the brighter side, pkg-get will eventually try "
+	print "  to grab the 'latest' version when it sees a depend)"
+	print "SEE ALSO:"
+	print "    pkgreloc.ksh"
+	
+}
+
+if [ $# -lt 2 ] ; then
+	usage
+	exit 1
+fi
+
+if [ "$1" == "-r" ] ; then
+	removedepend=1
+	shift
+fi
+
+############################################################
+# Subroutine section
+
+#I'm highly ashamed of this. There should be a better way to calculate
+# the durn SysV pkg checksum of a file. But I dont know it yet.
+# So make an empty package, for the sole purpose of calculating a checksum
+# assumes "depend" file is in current directory
+hackdependchecksum() {
+	print Doing nasty checksum hack >/dev/fd/2
+	
+	HACKDIR=/tmp/hack.$$
+	mkdir $HACKDIR
+
+	(print "PKG=fakepkg";print "NAME=fakepkg";print "CATEGORY=system"
+	 )>$HACKDIR/pkginfo
+	(print "i depend";print "i pkginfo") >$HACKDIR/prototype
+	cp depend $HACKDIR
+	(cd $HACKDIR && pkgmk -d . )
+	if [ $? -ne 0 ] ; then
+		print ERROR: checksum generation failed
+		exit 1
+	fi
+
+	line=`grep depend $HACKDIR/fakepkg/pkgmap`
+
+	if [ $? -ne 0 ] ; then
+		print ERROR: checksum generation failed
+		exit 1
+	fi
+
+	rm -r /tmp/hack.$$
+	print "$line"
+}
+
+############################################################
+
+ORGPKGFILE="$1"
+shift
+
+
+case $ORGPKGFILE in
+	*/*)
+		print "Sorry, this script has to run in same directory as pkg"
+		exit 1
+		# because I dont want to have to deal with
+		# doing basename on top of everything else
+		# See comment on pkgtrans at bottom
+	;;
+	*.gz)
+		PKGFILE=${ORGPKGFILE%.gz}
+		print "gunzipping, in preparation for modification"
+		gunzip -c $ORGPKGFILE >$PKGFILE
+	;;
+	*)
+	PKGFILE=$ORGPKGFILE
+	;;
+esac
+
+
+head -1 $PKGFILE | grep 'PaCkAgE DaTaStReAm' >/dev/null
+if [[ $? -ne 0 ]] ; then
+        print $PKGFILE is not a SysV PKG file.
+	if [ "$PKGFILE" != "$ORGPKGFILE" ] ; then
+		rm $PKGFILE
+	fi
+        exit 1
+fi
+
+PKGNAME=`awk 'NR==2 {print $1; exit;}' $PKGFILE`
+
+TDIR=/tmp/pkg.$$
+mkdir $TDIR
+
+print Extracting pkg files for modification
+pkgtrans $PKGFILE $TDIR $PKGNAME
+
+ORIGDIR=$PWD
+
+cd $TDIR/$PKGNAME
+if [ $? -ne 0 ] ; then
+	print ERROR: something went wrong with extraction
+	exit 1
+fi
+
+# skip any existing depend line
+#egrep -v ' i depend|^: ' pkgmap >pkgmap.tmp
+egrep -v 'i depend[ $]' pkgmap >pkgmap.tmp
+
+if [ "$removedepend" != "-r" ] ; then
+	# in case it isnt there already
+	mkdir install 2>/dev/null
+	while [ $# -gt 0 ] ; do
+		print "P $1" >>depend
+		shift
+	done
+	dependline=`hackdependchecksum`
+	echo "$dependline" >>pkgmap.tmp
+	mv depend install/depend
+fi
+mv pkgmap.tmp pkgmap
+
+cd $ORIGDIR
+
+print renaming original pkg file to $ORGPKGFILE.old
+mv $ORGPKGFILE ${ORGPKGFILE}.old
+
+print Reassembling pkg file
+
+pkgtrans $TDIR $PKGFILE $PKGNAME
+# Wierd thing about pkgtrans. It makes the PKGFILE in TDIR, NOT
+# in your current directory
+#
+mv $TDIR/$PKGFILE .
+
+
+if [ "$PKGFILE" != "$ORGPKGFILE" ] ; then
+	print "Adjustment done. Gzipping..."
+	gzip $PKGFILE
+	print "done"
+fi

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration 
+  xmlns="http://java.sun.com/xml/ns/jax-rpc/ri/config">
+  <service 
+      name="SQLWebservice" 
+      targetNamespace="urn:dmerce" 
+      typeNamespace="urn:dmerce" 
+      packageName="com.wanci.dmerce.webservice.db">
+      <interface name="com.wanci.dmerce.webservice.db.SQLWebservice"/>
+  </service>
+</configuration>

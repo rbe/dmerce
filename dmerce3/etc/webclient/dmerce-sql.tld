@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
+	"http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
+<taglib>
+
+	<tlib-version>0.1</tlib-version>
+	<jsp-version>1.2</jsp-version>
+	<short-name>qsql</short-name>
+	<uri>http://www.1Ci.de/dmerce-sql</uri>
+	<description>dmerce sql taglib</description>
+	
+	<tag>
+		<name>alternate</name>
+		<tag-class>com.wanci.dmerce.taglib.sql.AlternateTag</tag-class>
+		<body-content>empty</body-content>
+		<description>get alternating row number (1 or 2)</description>
+	</tag>
+	
+	<tag>
+		<name>datefield</name>
+		<tag-class>com.wanci.dmerce.taglib.sql.DateFieldTag</tag-class>
+		<body-content>empty</body-content>
+		<description>get a date value</description>
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>String</type>
+		</attribute>
+		<attribute>
+			<name>format</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>String</type>
+		</attribute>
+	</tag>
+	
+	<tag>
+		<name>delete</name>
+		<tag-class>com.wanci.dmerce.taglib.sql.DeleteTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>table</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>String</type>
+		</attribute>
+		<attribute>
+			<name>key</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>String</type>
+		</attribute>
+		<attribute>
+			<name>template</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>String</type>
+		</attribute>
+	</tag>
+	<tag>
+		<name>edit</name>
+		<tag-class>com.wanci.dmerce.taglib.sql.EditTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>workflow</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>String</type>
+		</attribute>
+		<attribute>
+			<name>key</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>String</type>
+		</attribute>
+	</tag>
+	<tag>
+		<name>empty</name>
+		<tag-class>com.wanci.dmerce.taglib.sql.EmptyTag</tag-class>
+		<body-content>JSP</body-content>
+		<description>print body if result is empty</description>
+	</tag>
+	<tag>
+		<name>execute</name>
+		<tag-class>com.wanci.dmerce.taglib.sql.ExecuteTag</tag-class>
+		<body-content>JSP</body-content>
+		<description>execute an sql query</description>
+		<attribute>
+			<name>id</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>String</type>
+		</attribute>
+	</tag>
+	<tag>
+		<name>field</name>
+		<tag-class>com.wanci.dmerce.taglib.sql.FieldTag</tag-class>
+		<body-content>empty</body-content>
+		<description>renders a value from the current dataset</description>
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>String</type>
+		</attribute>
+		<attribute>
+			<name>file</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>boolean</type>
+		</attribute>
+		<attribute>
+			<name>format</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>string</type>
+			<description>Format-String wie in SimpleDateFormat (nur für Calendar-Werte)</description>
+		</attribute>
+		<attribute>
+			<name>maxprecision</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>int</type>
+			<description>maximale Anzahl Nachkommastellen (nur für Double-Werte)</description>
+		</attribute>
+		<attribute>
+			<name>minprecision</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>int</type>
+			<description>minimale Anzahl Nachkommastellen (nur für Double-Werte)</description>
+		</attribute>
+		<attribute>
+			<name>precision</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>int</type>
+			<description>genaue Anzahl Nachkommastellen (nur für Double-Werte)</description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>fieldempty</name>
+		<tag-class>com.wanci.dmerce.taglib.sql.FieldEmptyTag</tag-class>
+		<body-content>JSP</body-content>
+		<description>evaluates the body if the given field is NULL or an empty string</description>
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>String</type>
+		</attribute>
+		<attribute>
+			<name>file</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>boolean</type>
+		</attribute>
+	</tag>
+	<tag>
+		<name>fieldnotempty</name>
+		<tag-class>com.wanci.dmerce.taglib.sql.FieldNotEmptyTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>String</type>
+		</attribute>
+		<attribute>
+			<name>file</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>boolean</type>
+		</attribute>
+	</tag>
+	<tag>
+		<name>nextrow</name>
+		<tag-class>com.wanci.dmerce.taglib.sql.NextRowTag</tag-class>
+		<body-content>empty</body-content>
+		<description>goes to the next dataset in QResult</description>
+	</tag>
+	<tag>
+		<name>notempty</name>
+		<tag-class>com.wanci.dmerce.taglib.sql.NotEmptyTag</tag-class>
+		<body-content>JSP</body-content>
+		<description>print body if result is not empty</description>
+	</tag>
+	<tag>
+		<name>number</name>
+		<tag-class>com.wanci.dmerce.taglib.sql.NumberTag</tag-class>
+		<body-content>empty</body-content>
+		<description>number consecutively the rows</description>
+	</tag>
+<!--
+	<tag>
+		<name>parameter</name>
+		<tag-class>com.wanci.dmerce.taglib.sql.ParameterTag</tag-class>
+		<body-content>empty</body-content>
+		<description>NOT YET IMPLEMENTED!!!</description>
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>String</type>
+		</attribute>
+		<attribute>
+			<name>value</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>String</type>
+		</attribute>
+	</tag>
+-->
+	<tag>
+		<name>prepare</name>
+		<tag-class>com.wanci.dmerce.taglib.sql.PrepareTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>id</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>String</type>
+		</attribute>
+		<attribute>
+			<name>preparedid</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>String</type>
+		</attribute>
+	</tag>
+	<tag>
+		<name>row</name>
+		<tag-class>com.wanci.dmerce.taglib.sql.RowTag</tag-class>
+		<body-content>JSP</body-content>
+		<description>SQL result loop</description>
+	</tag>
+	<tag>
+		<name>rowcount</name>
+		<tag-class>com.wanci.dmerce.taglib.sql.RowCountTag</tag-class>
+		<body-content>empty</body-content>
+		<description>renders the number of rows in the resultset</description>
+	</tag>
+	<tag>
+		<name>rowempty</name>
+		<tag-class>com.wanci.dmerce.taglib.sql.RowEmptyTag</tag-class>
+		<body-content>JSP</body-content>
+		<description>print body if current row is empty</description>
+	</tag>
+	<tag>
+		<name>rownotempty</name>
+		<tag-class>com.wanci.dmerce.taglib.sql.RowNotEmptyTag</tag-class>
+		<body-content>JSP</body-content>
+		<description>print body if current row is not empty</description>
+	</tag>
+</taglib>

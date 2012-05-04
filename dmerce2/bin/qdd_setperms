@@ -1,0 +1,21 @@
+#!/bin/sh
+
+if [ x"$1" = x"websites" ]; then
+    cf="0660"
+    cd="0770"
+elif [ x"$1" = x"dmerce" ]; then
+    cf="0660"
+    cd="0770"
+fi
+
+pyc=`expr "$2" : '.*pyc$'`
+bindir=`expr "$2" : '.*\/bin\/*'`
+libexecdir=`expr "$2" : '.*\/libexec\/*'`
+
+if [ $pyc != 0 -o $bindir != 0 -o $libexecdir != 0 -o -d $2 ]; then
+    echo "Setting permission of $2 to $cd"
+    chmod $cd $2
+else
+    echo "Setting permission of $2 to $cf"
+    chmod $cf $2
+fi

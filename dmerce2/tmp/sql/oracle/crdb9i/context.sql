@@ -1,0 +1,9 @@
+CONNECT SYS/$DMERCE_ORACLE_SYSDBAPWD AS SYSDBA
+SET ECHO OFF
+SPOOL $DMERCE_HOME/logs/crdb$DMERCE_ORACLE_VER/$DMERCE_ORACLE_INST/context.log
+@$ORACLE_HOME/ctx/admin/dr0csys $DMERCE_ORACLE_SYSDBAPWD DRSYS TEMP;
+CONNECT CTXSYS/change_on_install
+@$ORACLE_HOME/ctx/admin/dr0inst $ORACLE_HOME/ctx/lib/libctxx9.so;
+@$ORACLE_HOME/ctx/admin/defaults/drdefus.sql;
+SPOOL OFF
+EXIT;

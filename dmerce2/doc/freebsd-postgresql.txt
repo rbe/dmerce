@@ -1,0 +1,123 @@
+The PostgreSQL port has a collection of "side orders":
+
+postgresql-doc
+  For all of the html documentation
+
+p5-Pg
+  A perl5 API for client access to PostgreSQL databases.
+
+postgresql-tcltk 
+  If you want tcl/tk client support. You get a neat GUI, pgaccess, as
+  a bonus!
+
+postgresql-jdbc
+  For Java JDBC support.
+
+postgresql-odbc
+  For client access from unix applications using ODBC as access
+  method. Not needed to access unix PostgreSQL servers from Win32
+  using ODBC. See below.
+
+ruby-postgres, py-PyGreSQL
+  For client access to PostgreSQL databases using the ruby & python
+  languages.
+
+p5-postgresql-plperl, postgresql-pltcl & postgresql-plruby
+  For using perl5, tcl & ruby as procedural languages.
+
+etc etc...
+
+Note that many files have moved around compared to previous versions
+of PostgreSQL. For example, plpgsql.so and all other language modules
+are now in /usr/local/lib/postgresql.
+
+If you have many tables and many clients running, consider raising
+kern.maxfiles using sysctl(8), or reconfigure your kernel
+appropriately.
+
+You should vacuum and backup your database regularly. There is a
+periodic script, /usr/local/share/postgresql/502.pgsql, that you may
+find useful.
+
+To allow many simultaneous connections to your PostgreSQL server, you
+should raise the SystemV shared memory limits in your kernel. Here are
+example values for allowing up to 180 clients (tinkering in
+postgresql.conf also needed, of course):
+  options         SYSVSHM
+  options         SYSVSEM
+  options         SYSVMSG
+  options         SHMMAXPGS=65536
+  options         SEMMNI=40
+  options         SEMMNS=240
+  options         SEMUME=40
+  options         SEMMNU=120
+
+If you plan to access your PostgreSQL server using ODBC, please
+consider running the SQL script /usr/local/share/postgresql/odbc.sql
+to get the functions required for ODBC compliance.
+======================================================================
+
+      * IMPORTANT UPGRADE NOTICE * IMPORTANT UPGRADE NOTICE *
+
+The PostgreSQL port now obeys hier(7) by default, which means that it
+installs into:
+
+/usr/local/bin
+/usr/local/lib
+/usr/local/include  (NOTE! Changed again in 7.2, since PostgreSQL
+                           handles standard install nowadays)
+
+You *must* move away your pre-7.1 installation from users' and
+ldconfig(8)'s PATHs.
+
+The pgsql user's home dir is /usr/local/pgsql by default, but can be
+changed with for example chpass(1). Datadir defaults to ~pgsql/data,
+but can be changed by modifying the ~pgsql/.profile script.
+
+======================================================================
+
+To initialize the database, you should run initdb as the "pgsql" user
+(if you want to use your locale for collation, edit ~pgsql/.profile
+and set the locale to your preference first).
+
+Example:
+
+  su -l pgsql -c initdb
+
+You can then start PostgreSQL by running:
+
+  /usr/local/etc/rc.d/010.pgsql.sh start
+
+For postmaster settings, see ~pgsql/data/postgresql.conf
+For more tips, read ~pgsql/post-install-notes
+======================================================================
+===>   Compressing manual pages for postgresql-7.3.1
+===>   Running ldconfig
+/sbin/ldconfig -m /usr/local/lib
+===>   Registering installation for postgresql-7.3.1
+===>  SECURITY REPORT: 
+      This port has installed the following files which may act as network
+      servers and may therefore pose a remote security risk to the system.
+/usr/local/bin/ecpg
+/usr/local/bin/pg_controldata
+/usr/local/bin/pg_dump
+/usr/local/bin/pg_dumpall
+/usr/local/bin/pg_encoding
+/usr/local/bin/pg_id
+/usr/local/bin/pg_resetxlog
+/usr/local/bin/pg_restore
+/usr/local/bin/postgres
+/usr/local/bin/psql
+
+      This port has installed the following startup scripts which may cause
+      these network services to be started at boot time.
+/usr/local/etc/rc.d/010.pgsql.sh
+
+      If there are vulnerabilities in these programs there may be a security
+      risk to the system. FreeBSD makes no guarantee about the security of
+      ports included in the Ports Collection. Please type 'make deinstall'
+      to deinstall the port if this is a concern.
+
+      For more information, and contact details about the security
+      status of this software, see the following webpage: 
+http://www.postgresql.org/

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<forms xmlns="http://www.1ci.de"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.1ci.de ../FORMS.xsd">
+
+     <form id="dummy">
+          <name>dummy</name>
+          <description>dummy</description>
+          <formversion>0.1</formversion>
+          <field name="dummy">
+               <description>dummy</description>
+               <type>string</type>
+          </field>
+     </form>
+
+</forms>

@@ -1,0 +1,9 @@
+package com.wanci.dmerce.webservice.db.xmlbridge
+
+requires:
+
+jaxb-api.jar
+jaxb-libs.jar
+jaxb-impl.jar
+namespace.jar
+relaxngDatatype.jar

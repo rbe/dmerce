@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project basedir="." default="help" name="dmerce Build Properties">
+
+	<property environment="env"/>
+	<import file="${env.DMERCE_BASE}/etc/system.xml"/>
+	<tstamp/>
+	
+	<target name="help" description="Help for buildproperties.xml"/>
+
+	<!--
+		
+		Paths
+	  	- All "dmerce.*" paths are relative to "dmerce.base"
+	  	- All "dmerce.product.*" paths are relative to "dmerce.product.base"
+	  
+	-->
+	
+	<!-- dmerce -->
+	<property name="dmerce.product.base" value="${dmerce.base}/product"/>
+	<property name="dmerce.product.dmerce" value="${dmerce.product.base}/dmerce"/>
+	<property name="dmerce.product.ant" value="${dmerce.product.base}/ant"/>
+	<property name="dmerce.product.eclipse" value="${dmerce.product.base}/eclipse"/>
+	<property name="dmerce.product.xampp" value="${dmerce.product.base}/xampp"/>
+	<property name="dmerce.product.j2sdk" value="${dmerce.product.base}/j2sdk"/>
+    <property name="dmerce.product.jboss" value="${dmerce.product.base}/jboss"/>
+    <property name="dmerce.product.jboss.base" value="${dmerce.product.base}/jboss"/>
+    <property name="dmerce.product.jboss.defaultserver.dir"
+    	value="${dmerce.product.jboss.base}/server/default"/>
+    <property name="dmerce.product.jboss.defaultserver.tmpdir"
+    	value="${dmerce.product.jboss.defaultserver.dir}/tmp"/>
+    <property name="dmerce.product.jboss.defaultserver.logdir"
+    	value="${dmerce.product.jboss.defaultserver.dir}/log"/>
+    <property name="dmerce.product.jboss.defaultserver.deploydir"
+    	value="${dmerce.product.jboss.defaultserver.dir}/deploy"/>
+    <property name="dmerce.product.xampp" value="${dmerce.product.base}/xampp"/>
+    <property name="dmerce.deploydir"
+    	value="${dmerce.product.jboss.defaultserver.deploydir}"/>
+	<property name="dmerce.product.mysql" value="${dmerce.base}/product/xampp/mysql"/>
+	<property name="dmerce.sys" value="${dmerce.product.dmerce}/sys"/>
+	<property name="dmerce.sys.etc" value="${dmerce.sys}/etc"/>
+	<property name="dmerce.sys.images" value="${dmerce.sys}/images"/>
+	<property name="dmerce.sys.lib" value="${dmerce.sys}/lib"/>
+	<property name="dmerce.sys.src" value="${dmerce.sys}/src"/>
+	<property name="dmerce.sys.sql.mysql" value="${dmerce.sys}/sql/mysql"/>
+	<property name="dmerce.sys.sql.oracle" value="${dmerce.sys}/sql/oracle"/>
+	<property name="dmerce.sys.sql.postgresql" value="${dmerce.sys}/sql/postgresql"/>
+	<property name="dmerce.sys.templates" value="${dmerce.sys}/templates"/>
+	<property name="dmerce.appl" value="${dmerce.base}/applications"/>
+	<property name="dmerce.backup" value="${dmerce.base}/backup"/>
+	<property name="dmerce.bin" value="${dmerce.base}/bin"/>
+	<property name="dmerce.build" value="${dmerce.sys}/build"/>
+	<property name="dmerce.etc" value="${dmerce.base}/etc"/>
+	<property name="dmerce.etc.templates" value="${dmerce.sys}/templates"/>
+	<property name="dmerce.install" value="${dmerce.base}/install"/>
+	<property name="dmerce.uploadedfiles" value="${dmerce.base}/uploadedfiles"/>
+	<property name="dmerce.backup.today" value="${dmerce.backup}/${DSTAMP}"/>
+	<property name="dmerce.backup.now" value="${dmerce.backup}/${DSTAMP}/${TSTAMP}"/>
+    <property name="dmercews.war" value="${dmerce.sys.lib}/dmercews.war"/>
+
+	<!-- dmerce Applications / Web Archives -->
+    <property name="app.name" value="${env.DMERCE_APPNAME}"/>
+    <property name="app.base" value="${dmerce.base}/applications"/>
+    <property name="app.builddir" value="${dmerce.build}/${app.name}"/>
+    <property name="app.resdir" value="${app.builddir}/com/wanci/dmerce/res"/>
+    <property name="app.resdir.propertiesxml" value="${app.resdir}/properties.xml"/>
+    <property name="app.dir" value="${app.base}/${app.name}"/>
+    <property name="src.dir" value="${app.dir}/src"/>
+    <property name="etc.user.dir" value="${app.dir}/etc"/>
+    <property name="lib.user.dir" value="${app.dir}/lib"/>
+    <property name="src.web.dir" value="${app.dir}/web"/>
+    <property name="sql.user.dir" value="${app.dir}/sql"/>
+    <property name="app.war" value="${dmerce.deploydir}/${app.name}.war"/>
+    <property name="appws.tmpdir" value="${dmerce.build}/${app.name}ws"/>
+	<property name="appws.resdir"
+		value="${appws.tmpdir}/WEB-INF/classes/com/wanci/dmerce/res"/>
+	<property name="appws.resdir.propertiesxml"
+		value="${appws.resdir}/properties.xml"/>
+    <property name="appws.war"
+    	value="${dmerce.product.jboss.defaultserver.deploydir}/${app.name}ws.war"/>
+
+    <path id="build.classpath">
+        <fileset dir="${dmerce.sys.lib}">
+                <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="${lib.user.dir}">
+                <include name="**/*.jar"/>
+        </fileset>
+    </path>
+    
+</project>

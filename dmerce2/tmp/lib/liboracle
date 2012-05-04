@@ -1,0 +1,151 @@
+#################################################
+#
+# Copyright 2001-2002 1Ci GmbH, http://www.1ci.de
+#
+# $Id: liboracle,v 1.11 2002/12/13 19:07:00 rb Exp $
+# $Author: rb $
+# $Revision: 1.11 $
+#
+# liboracle - dmerce ORACLE(R) Library
+# 
+#################################################
+
+DMERCE_LIBORACLE=1
+export DMERCE_LIBORACLE
+
+PROCESSES="pmon smon lgwr dbw chkpt reco arc"
+
+liboracle_get_oracle_version() {
+    if [ -x ${NM} ]; then
+	${NM} ${ORACLE_HOME}/lib/libclntsh.so | grep OCIConnectionPoolCreate > /dev/null
+	if [ "$?" = "0" ]; then
+	    echo "9i"
+	else
+	    ${NM} ${ORACLE_HOME}/lib/libclntsh.so | grep OCIEnvCreate > /dev/null
+	    if [ "$?" = "0" ]; then
+		echo "8i"
+	    else
+		echo "8"
+	    fi
+	fi
+    else
+	echo "0"
+    fi
+}
+
+liboracle_ask_oracle_env() {
+    if [ x"${ORACLE_HOME}" = x"" ]; then
+	e "Please enter ORACLE_HOME: "
+	read ORACLE_HOME
+	export ORACLE_HOME
+    fi
+    if [ x"${ORACLE_SID}" = x"" ]; then
+	e "Please enter ORACLE_SID: "
+	read ORACLE_SID
+	export ORACLE_SID
+    fi
+}
+
+liboracle_ask_oracle_datafiles() {
+    e "Please enter directory for datafiles ($ORACLE_HOME/oradata): "
+    read DMERCE_ORACLE_DATAFILES
+    if [ x"${DMERCE_ORACLE_DATAFILES}" = x"" ]; then
+	DMERCE_ORACLE_DATAFILES=$ORACLE_HOME/oradata
+    fi
+    export DMERCE_ORACLE_DATAFILES
+}
+
+liboracle_ask_oracle_sysdbapwd() {
+    e "Please enter password for 'sys': "
+    stty -echo
+    read DMERCE_ORACLE_SYSDBAPWD
+    stty echo
+    export DMERCE_ORACLE_SYSDBAPWD
+    e "Please enter password for 'system': "
+    stty -echo
+    read DMERCE_ORACLE_SYSTEMPWD
+    stty echo
+    export DMERCE_ORACLE_SYSTEMPWD
+}
+
+liboracle_crdb_subst() {
+    cat $1 | ${SED} "
+s#\$DMERCE_ORACLE_VER#$DMERCE_ORACLE_VER#g
+s#\$ORACLE_HOME#$ORACLE_HOME#g
+s#\$DMERCE_ORACLE_INST#$DMERCE_ORACLE_INST#g
+s#\$DMERCE_ORACLE_DBDOMAIN#$DMERCE_ORACLE_DBDOMAIN#g
+s#\$DMERCE_ORACLE_SYSDBAPWD#$DMERCE_ORACLE_SYSDBAPWD#g
+s#\$DMERCE_HOME#$DMERCE_HOME#g
+s#\$DMERCE_ORACLE_DATAFILES#$DMERCE_ORACLE_DATAFILES#g
+s#\$DMERCE_TMP#$DMERCE_TMP#g
+"
+}
+
+liboracle_check_oratab_exists() { # Check existance of /var/opt/oracle/oratab
+    [ -r /var/opt/oracle/oratab ] && echo 1 || echo 0
+}
+
+liboracle_get_oratab_y() {
+    while read -r A B C
+      do
+      if [ "$C" = "Y" -o "$C" = "y" ]; then
+	  print -n "$A,$B,$C:"
+      fi
+    done < /var/opt/oracle/oratab
+}
+
+liboracle_show_oratab_y() {
+    OLDIFS=$IFS
+    IFS=":"
+    set -A oratab `liboracle_get_oratab_y`
+    for ora in ${oratab[@]}
+      do
+      IFS=","
+      set -A inst $ora
+      e "ORACLE INSTANCE '${inst[0]}' - ORACLE_HOME '${inst[1]}'"
+      IFS=":"
+    done
+    IFS=$OLDIFS
+}
+
+liboracle_check_inst() { # $1 = instance name
+    INSTANCE=$1
+    i=0
+    for p in ${PROCESSES}
+      do
+      r=$(/usr/bin/ps -ef | ${GREP} ${INSTANCE} | ${GREP} -v grep | ${GREP} -c ${p})
+      a[$i]=$r
+      i=$((i + 1))
+    done
+    echo ${a[@]}
+}
+
+liboracle_show_check_inst() { # $1 = instance name
+    INSTANCE=$1
+    i=0
+    set -A inst `liboracle_check_inst ${INSTANCE}`
+    for p in ${PROCESSES}
+      do
+      if [ $i -eq 0 -a ${inst[$i]} -eq 0 -o $i -eq 1 -a ${inst[$i]} -eq 0 ]; then
+	  e "!!! ORACLE INSTANCE '${INSTANCE}' DOWN!!! NO ${p} PROCESS FOUND!!!"
+      else
+	  e "ORACLE INSTANCE '${INSTANCE}' PROCESS ${p}: ${inst[$i]} RUNNING"
+      fi
+      i=$((i + 1))
+    done
+}
+
+liboracle_show_check_all_insts() {
+    OLDIFS=$IFS
+    IFS=":"
+    set -A oratab `liboracle_get_oratab_y`
+    for ora in ${oratab[@]}
+      do
+      IFS=","
+      set -A inst $ora
+      IFS=$OLDIFS
+      liboracle_show_check_inst ${inst[0]}
+      IFS=":"
+    done
+    IFS=$OLDIFS
+}

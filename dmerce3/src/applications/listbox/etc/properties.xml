@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding="UTF-8"?>
+
+<!DOCTYPE properties [
+  <!ELEMENT properties (property)+>
+  <!ELEMENT property EMPTY>
+  
+  <!ATTLIST property
+  		name CDATA #REQUIRED
+  		value CDATA #REQUIRED
+  >
+]>
+
+<properties>
+
+	<!-- 1[wan]Ci(R) dmerce(R) License-Key for dmerce(R) -->
+	<property name="sys.license.key" value="0123456789ABCDEFGH"/>
+	<property name="sys.license.nclients" value="10"/>
+	<property name="sys.license.nprojects" value="10"/>
+	
+	<!-- WEB SERVICE CONNECTION -->
+	<property name="defaultDS.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+	<property name="defaultDS.jdbc.url" value="jdbc:mysql://localhost/dmerce"/>
+	<property name="defaultDS.jdbc.username" value="dmerce"/>
+	<property name="defaultDS.jdbc.password" value="dmerce"/>
+	
+	<!-- ENDPOINT FOR WEBSERVICE -->
+	<property name="endpointaddress" value="http://localhost:8080/dmercews/sqlservice"/>
+
+</properties>

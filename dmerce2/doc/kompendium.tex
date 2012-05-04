@@ -1,0 +1,294 @@
+\documentclass[10pt, twoside, a4paper, openany]{book}
+\usepackage{german,a4} \usepackage{epsfig} \usepackage[pdftex,
+colorlinks, linkcolor=blue]{hyperref} \usepackage{times}
+\usepackage{graphicx} \usepackage{varioref} \usepackage{makeidx}
+\usepackage{fancyheadings} \selectlanguage{german}
+
+\sloppy
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{6}
+\setlength{\parindent}{0pt}   % abschalten erstzeileneinzug
+
+\newcommand{\wancilogocenter}[0]{
+  \begin{center}
+    \includegraphics{1ci_logo.pdf}
+  \end{center}
+}
+\newcommand{\dmercever}[0]{2.2.4}
+\newcommand{\wanci}[0]{\textbf{\small 1Ci GmbH\textregistered}}
+\newcommand{\dmerce}[0]{\textbf{\small dmerce\textregistered}}
+\newcommand{\dmercedk}[0]{\wanci \textbf{\small dmerce\textregistered - Das
+    Kompendium}}
+\newcommand{\dmercewancicopy}[0]{\bfseries \dmercedk}
+\newcommand{\wancinormalfont}[0]{\fontsize{12}{10pt}\usefont{OT1}{cmss}{m}{n}}
+\newcommand{\wancicode}[1]{\fontsize{10}{10pt}\usefont{OT1}{cmtt}{m}{n}#1\fontsize{12}{10pt}\usefont{OT1}{cmss}{m}{n}}
+\newcommand{\wancicodeblock}[1]{
+
+  \bigskip
+
+  \fontsize{10}{10pt}\usefont{OT1}{cmtt}{m}{n} #1
+
+  \bigskip
+
+  \wancinormalfont
+}
+\newcommand{\wancislang}[1]{
+  \fontsize{10}{10pt}\usefont{OT1}{cmr}{m}{it}#1\wancinormalfont}
+\newcommand{\wancitableheader}[1]{\textbf{\normalsize #1}\normalfont}
+\newcommand{\wancisee}[1]{(siehe Kapitel \vref{#1})}
+\newcommand{\wancidmercemacrodef}[7]{
+
+  \medskip
+
+  \label{#1}
+  \subsection{#2} Makro
+
+  \begin{tabular*}{128mm}{p{30mm} p{90mm}}
+    \wancitableheader{Syntax} & \wancicode{#3}\\ 
+    \hline
+    \wancitableheader{Version} & #4\\
+    \hline
+    \wancitableheader{Feature} & #5\\
+    \hline
+    \wancitableheader{Beschreibung} & #6\\
+    \hline
+    \wancitableheader{Siehe auch} & #7\\
+    \hline
+  \end{tabular*}
+
+  \medskip
+
+}
+\newcommand{\wancidmercesubmacrodef}[7]{
+
+  \medskip
+
+  \label{#1}
+  \subsubsection{#2} Makro
+
+  \begin{tabular*}{128mm}{p{30mm} p{90mm}}
+    \wancitableheader{Syntax} & #3\\ 
+    \hline
+    \wancitableheader{Version} & #4\\
+    \hline
+    \wancitableheader{Feature} & #5\\
+    \hline
+    \wancitableheader{Beschreibung} & #6\\
+    \hline
+    \wancitableheader{Siehe auch} & #7\\
+    \hline
+  \end{tabular*}
+
+  \medskip
+
+}
+\newcommand{\wancidmerceqvardef}[6]{
+
+  \medskip
+
+  \label{#1}
+  \subsection{#2} private Variable
+
+  \begin{tabular*}{128mm}{p{30mm} p{90mm}}
+    \wancitableheader{Syntax} & \wancicode{#3}\\ 
+    \hline
+    \wancitableheader{Version} & #4\\
+    \hline
+    \wancitableheader{Feature} & #5\\
+    \hline
+    \wancitableheader{Beschreibung} & #6\\
+    \hline
+  \end{tabular*}
+
+  \medskip
+}
+\newcommand{\wancidmerceexecdef}[6]{
+
+  \medskip
+
+  \label{#1}
+  \subsection{#2} %Funktion/Trigger
+
+  \begin{tabular*}{128mm}{p{35mm} p{85mm}}
+    \wancitableheader{Typ} & #3\\
+    \hline
+    \wancitableheader{Version} & #4\\
+    \hline
+    \wancitableheader{Beschreibung} & #5\\
+    \hline
+    \wancitableheader{Syntax} & \wancicode{#6}\\
+    \hline
+  \end{tabular*}
+  
+  \medskip
+
+}
+\newcommand{\wancidmerceexecparamdefbegin}[0]{
+  \begin{tabular*}{128mm}{p{35mm} p{63mm} p{22mm}}
+    \hline
+    \wancitableheader{Parameter} & \wancitableheader{Beschreibung} & \wancitableheader{Notwendig?}\\
+    \hline
+}
+\newcommand{\wancidmerceexecparamdef}[3]{
+  #1
+  & #2
+  & #3\\}
+\newcommand{\wancidmerceexecparamdefend}[0]{
+  \hline
+  \end{tabular*}
+}
+\newcommand{\wancidmerceexecex}[4]{
+
+  \medskip
+
+  Beispiel:\\
+
+  \framebox{\parbox{126mm}{
+      Parameter: #1\\
+      R\"uckgabe: #2\\
+      \\
+      \underline{HTML-Template}:\\
+      \wancicode{
+        $<$html$>$\\
+        $<$body$>$\\
+        #3\\
+        $<$/body$>$\\
+        $<$/html$>$\\
+      }
+    
+      \medskip
+
+      \underline{Ausgabe}:\\
+      \wancicode{
+        $<$html$>$\\
+        $<$body$>$\\
+        #4\\
+        $<$/body$>$\\
+        $<$/html$>$ }}}
+}
+\newcommand{\wanciprgpackage}[3]{
+
+  \medskip
+
+  \subsection{#1} Packagedefinition
+
+  \begin{tabular*}{128mm}{p{35mm} p{85mm}}
+    \wancitableheader{Name} & #1\\
+    \hline
+    \wancitableheader{Beschreibung} & #2\\
+    \hline
+    \wancitableheader{Module} & #3\\
+    \hline
+  \end{tabular*}
+  
+  \medskip
+
+}
+\newcommand{\wanciprgclass}[4]{
+
+  \medskip
+
+  \subsubsection{#1} Klassendefinition
+
+  \begin{tabular*}{128mm}{p{35mm} p{85mm}}
+    \wancitableheader{Name} & #1\\
+    \hline
+    \wancitableheader{Mutterklasse(n)} & #2\\
+    \hline
+    \wancitableheader{Instanzierung} & \wancicode{#3}\\
+    \hline
+    \wancitableheader{Beschreibung} & #4\\
+    \hline
+  \end{tabular*}
+  
+  \medskip
+
+}
+\newcommand{\wanciprgmethodbegin}[2]{
+
+  \medskip
+
+  \paragraph{#1} Methodendefinition
+
+  \medskip
+
+  \begin{tabular*}{128mm}{p{35mm} p{85mm}}
+    \wancitableheader{Name} & #1\\
+    \hline
+    \wancitableheader{Beschreibung} & #2\\
+    \hline
+}
+\newcommand{\wanciprgmethodparam}[4]{
+  \wancitableheader{Parameter} & #1\\
+  \hline
+  \wancitableheader{Typ} & #2\\
+  \hline
+  \wancitableheader{Standard-Wert} & #3\\
+  \hline
+  \wancitableheader{erforderlich} & #4\\
+  \hline
+}
+\newcommand{\wanciprgmethodend}[0]{
+  \end{tabular*}
+  
+  \medskip
+
+}
+\newcommand{\wancicliinv}[3]{
+
+  \medskip
+
+  \paragraph{#1} Definition Command-Line-Interface 
+
+  \begin{tabular*}{128mm}{p{35mm} p{85mm}}
+    \wancitableheader{Skript} & #1\\
+    \hline
+    \wancitableheader{Parameter} & \wancicode{#2}\\
+    \hline
+    \wancitableheader{Beschreibung} & #3\\
+    \hline
+  \end{tabular*}
+  
+  \medskip
+
+}
+
+\pagestyle{fancy} \lhead[]{\dmercewancicopy} \chead{}
+\rhead[\dmercewancicopy]{} \lfoot[]{Seite \thepage -
+  \thepart-\thesubsection} \cfoot[]{} \rfoot[Seite \thepage -
+\thepart-\thesubsection]{}
+
+\setlength{\headrulewidth}{0.4pt}
+\setlength{\footrulewidth}{0.4pt}
+
+\makeindex
+
+\input{title.tex}
+
+\begin{document}
+
+\wancinormalfont
+
+\frontmatter
+
+\maketitle
+
+\tableofcontents
+
+\mainmatter
+
+\renewcommand{\arraystretch}{1.5} % Zeilen in Tabellen mit mehr Abstand
+
+\input{vorwort.tex}
+\input{admin-guide.tex}
+\input{users-guide.tex}
+\input{prog-guide.tex}
+\input{lit.tex}
+
+%\backmatter
+
+\newpage
+\printindex
+
+\end{document}

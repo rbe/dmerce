@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<forms xmlns="http://www.1ci.de"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.1ci.de ../FORMS.xsd">
+
+     <form id="1cs_adverts">
+
+          <name>Adverts - 1Ci(R) Community Services</name>
+          <description>Manage advertisements in your web application</description>
+          <formversion>1.0</formversion>
+
+          <field name="advertcategoryid" required="true">
+               <description>Category of advertisement</description>
+	       <type>list</type>
+	       <options sql="SELECT id, name FROM t_advertcategories ORDER BY name" sqlkey="id" sqlvalue="name"/>
+          </field>
+
+          <field name="advertcategoryid2">
+               <description>Category of advertisement</description>
+	       <type>string</type>
+          </field>
+
+          <field name="realname" required="true">
+               <description>Real name</description>
+               <type>string</type>
+          </field>
+
+          <field name="email" required="true">
+               <description>Email address</description>
+               <type>string</type>
+               <constraints>
+                  <constraint type="format" description="alias@domain.tld">.+@.+\..+</constraint>
+               </constraints>
+          </field>
+
+          <field name="url">
+               <description>URL</description>
+               <type>string</type>
+               <constraints>
+                  <constraint type="format" description="www.domain.tld (ohne http://)">\w+\..+\.\w{2,4}</constraint>
+               </constraints>
+          </field>
+
+          <field name="description" required="true">
+               <description>Short description</description>
+               <type>string</type>
+          </field>
+
+          <field name="text" required="true">
+               <description>Text</description>
+               <type>string</type>
+          </field>
+
+          <field name="foto">
+                <description>Foto</description>
+                <type>file</type>
+          </field>
+
+          <field name="foto_original">
+                <description>Foto</description>
+                <type>string</type>
+          </field>
+
+          <field name="foto_server">
+                <description>Foto</description>
+                <type>string</type>
+          </field>
+
+     </form>
+
+     <!-- Appointments
+
+     SQL> desc t_appointments
+     Name                  Null?    Type
+     ID                          NOT NULL NUMBER(1)
+     ACTIVE                   NOT NULL NUMBER(1)
+     CREATEDDATETIME                   TIMESTAMP(6)
+     DATEOFAPPOINTMENT          NOT NULL TIMESTAMP(6)
+     DESCRIPTION          NOT NULL VARCHAR2(250)
+     URL                           VARCHAR2(50)
+     EMAIL                  NOT NULL VARCHAR2(50)
+     PHONE                           VARCHAR2(50)
+
+     -->
+     <form id="1cs_appointments">
+
+          <name>Appointments - 1Ci(R) Community Services</name>
+          <description>Manage appointments in your web application</description>
+          <formversion>1.0</formversion>
+
+          <field name="dateofappointment" required="true">
+               <description>Date of appointment</description>
+               <type>string</type>
+               <constraints>
+                  <constraint type="format" description="TT.MM.JJJJ">\d{2}\.\d{2}\.\d{4}</constraint>
+               </constraints>
+          </field>
+
+          <field name="description" required="true">
+               <description>Detailed description of appointment</description>
+               <type>string</type>
+          </field>
+
+          <field name="url">
+               <description>URL</description>
+               <type>string</type>
+               <constraints>
+                  <constraint type="format" description="www.domain.tld (ohne http://)">\w+\..+\.\w{2,4}</constraint>
+               </constraints>
+          </field>
+
+          <field name="email" required="true">
+               <description>Email-address of main contact</description>
+               <type>string</type>
+               <constraints>
+                  <constraint type="format" description="alias@domain.tld">.+@.+\..+</constraint>
+               </constraints>
+          </field>
+
+          <field name="phone">
+              <description>Phone number of main contact</description>
+              <type>string</type>
+          </field>
+
+          <field name="realname" required="true">
+              <description>Real name of main contact</description>
+              <type>string</type>
+          </field>
+
+     </form>
+
+     <!-- A guest book
+
+     SQL> desc t_guestbook
+     Name                      Null?    Type
+     ID                              NOT NULL  NUMBER(1)
+     ACTIVE                      NOT NULL  NUMBER(1)
+     CREATEDDATETIME                        TIMESTAMP(6)
+     REALNAME                      NOT NULL  VARCHAR2(50)
+     EMAIL                      NOT NULL  VARCHAR2(50)
+     URL                                 VARCHAR2(50)
+     TEXT                      NOT NULL  VARCHAR2(250)
+
+     -->
+     <form id="1cs_guestbook">
+
+          <name>Guestbook - 1Ci(R) Community Services</name>
+          <description>Entries in a guestbook for your website</description>
+          <formversion>1.0</formversion>
+
+          <field name="realname" required="true">
+               <description>Your real name</description>
+               <type>string</type>
+          </field>
+
+          <field name="email" required="true">
+               <description>Email of author</description>
+               <type>string</type>
+               <constraints>
+                  <constraint type="format" description="alias@domain.tld">.+@.+\..+</constraint>
+               </constraints>
+          </field>
+
+          <field name="url">
+               <description>URL of author</description>
+               <type>string</type>
+               <constraints>
+                  <constraint type="format" description="www.domain.tld (ohne http://)">\w+\..+\.\w{2,4}</constraint>
+               </constraints>
+          </field>
+
+          <field name="text" required="true">
+               <description>Comment</description>
+               <type>string</type>
+          </field>
+
+     </form>
+
+     <!-- Links
+
+     SQL> desc t_linkcategories
+     Name                         Null?    Type
+     ID                                  NOT NULL NUMBER(1)
+     ACTIVE                           NOT NULL NUMBER(1)
+     CREATEDDATETIME                           TIMESTAMP(6)
+     NAME                          NOT NULL VARCHAR2(50)
+     DESCRIPTION                  NOT NULL VARCHAR2(250)
+
+     SQL> desc t_links
+     Name                          Null?    Type
+     ID                                  NOT NULL NUMBER(1)
+     ACTIVE                           NOT NULL NUMBER(1)
+     CREATEDDATETIME                           TIMESTAMP(6)
+     LINKCATEGORIESID                  NOT NULL NUMBER
+     NEW                          NOT NULL NUMBER(1)
+     NAME                          NOT NULL VARCHAR2(50)
+     DESCRIPTION                  NOT NULL VARCHAR2(250)
+     URL                          NOT NULL VARCHAR2(50)
+     HITS                                   NUMBER
+
+     -->
+     <form id="1cs_linkcategories">
+
+          <name>Link categories - 1Ci(R) Community Services</name>
+          <description>Manage categories for links in your web application</description>
+          <formversion>1.0</formversion>
+
+          <field name="name" required="true">
+               <description>Name of a link category</description>
+               <type>string</type>
+          </field>
+
+          <field name="description" required="true">
+               <description>Detailed description of a link category</description>
+               <type>string</type>
+          </field>
+
+     </form>
+
+     <form id="1cs_links">
+
+          <name>Links - 1Ci(R) Community Services</name>
+          <description>Manage link lists in your web application</description>
+          <formversion>1.0</formversion>
+
+          <field name="linkcategoryid" required="true">
+               <description></description>
+               <type>string</type>
+          </field>
+
+          <field name="realname">
+               <description></description>
+               <type>string</type>
+          </field>
+
+          <field name="email">
+               <description></description>
+               <type>string</type>
+          </field>
+
+          <field name="name" required="true">
+               <description></description>
+               <type>string</type>
+          </field>
+
+          <field name="description" required="true">
+               <description></description>
+               <type>string</type>
+          </field>
+
+          <field name="url" required="true">
+               <description></description>
+               <type>string</type>
+               <constraints>
+                  <constraint type="format" description="www.domain.tld (ohne http://)">\w+\..+\.\w{2,4}</constraint>
+               </constraints>
+          </field>
+
+     </form>
+
+     <form id="vwadmin_advertcats">
+
+           <name>List Advert Categories</name>
+           <description>ListAdvert Categories</description>
+           <formversion>1.0</formversion>
+
+           <field name="name" required="true">
+               <description>Name of Advert Category</description>
+               <type>string</type>
+           </field>
+
+           <field name="description" required="true">
+               <description>Description of Advert Category</description>
+               <type>string</type>
+           </field>
+
+     </form>
+
+</forms>

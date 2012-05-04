@@ -1,0 +1,4 @@
+ALTER TABLE samsessions NOLOGGING;
+ALTER TABLE samsessions DISABLE TABLE LOCK;
+ALTER TABLE configuration CACHE;
+ALTER TABLE templates CACHE;

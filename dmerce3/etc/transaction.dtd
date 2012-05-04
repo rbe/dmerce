@@ -1,0 +1,50 @@
+<!ELEMENT transactions (transaction+)>
+<!ELEMENT transaction (sender?, priority?, blocking?, dsn?, scan*, sql*, 
+	attempt?, error?)>
+<!ELEMENT sender EMPTY>
+<!ELEMENT priority EMPTY>
+<!ELEMENT blocking EMPTY>
+<!ELEMENT dsn EMPTY>
+<!ELEMENT scan (cmd+, parameter*, cmdpre*, condition*, cmdpost*, 
+	successstring*)>
+<!ELEMENT sql (cmd+, parameter*, cmdpre*, condition*, cmdpost*, successstring*)>
+<!ELEMENT storedproc (cmd+, parameter*, returnvalue+)>
+<!ELEMENT attempt EMPTY>
+<!ELEMENT error EMPTY>
+<!ELEMENT cmd EMPTY>
+<!ELEMENT parameter EMPTY>
+<!ELEMENT cmdpre EMPTY>
+<!ELEMENT condition EMPTY>
+<!ELEMENT cmdpost EMPTY>
+<!ELEMENT successstring EMPTY>
+<!ELEMENT returnvalue EMPTY>
+<!-- sender-name = Programm, dass die Daten sendet
+		    date = timestamp wann die Daten losgeschickt wurden -->
+<!ATTLIST sender name CDATA #REQUIRED date NMTOKEN #REQUIRED >
+<!-- error value = Art des Fehlers der aufgetreten ist -->
+<!ATTLIST error value CDATA #REQUIRED >
+<!-- attempt value = Versuche der Aktion, die durchgefuehrt werden soll -->
+<!ATTLIST attempt value CDATA #REQUIRED date CDATA #REQUIRED >
+<!-- priority number = Prioritaet der Transaktion -->
+<!ATTLIST priority number CDATA #REQUIRED >
+<!-- blocking value = "yes" oder "no"
+	 Abarbeiten der Queue erst dann moeglich, wenn diese Aktion
+	 erfolgreich war (bei "yes") der nicht? -->
+<!ATTLIST blocking value CDATA #REQUIRED >
+<!-- dsn value = Database Connect String -->
+<!ATTLIST dsn value CDATA #REQUIRED >
+<!-- cmd value = command, Aktion, Befehl -->
+<!ATTLIST cmd value CDATA #REQUIRED >
+<!-- parameter value = uebergebene Parameter -->
+<!ATTLIST parameter value CDATA #REQUIRED name CDATA #REQUIRED type CDATA 
+	#REQUIRED >
+<!-- cmdpre value = Aktion vor command -->
+<!ATTLIST cmdpre value CDATA #REQUIRED >
+<!-- condition value -->
+<!ATTLIST condition value CDATA #REQUIRED >
+<!-- cmdpost value = Aktion nach command -->
+<!ATTLIST cmdpost value CDATA #REQUIRED >
+<!-- successstring value =  -->
+<!ATTLIST successstring value CDATA #REQUIRED >
+<!-- returnvalue -->
+<!ATTLIST returnvalue type CDATA #REQUIRED expectedvalue CDATA #REQUIRED >

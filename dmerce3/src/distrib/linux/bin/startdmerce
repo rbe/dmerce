@@ -1,0 +1,6 @@
+#!/bin/sh
+
+[ "$START_JBOSS" = "YES" ] && $DMERCE_BASE/bin/startjboss &
+[ "$START_APACHE" = "YES" ] && sudo $XAMPP_BASE/lampp startapache &
+[ "$START_MYSQL" = "YES" ] && sudo $XAMPP_BASE/lampp startmysql &
+[ "$START_ECLIPSE" = "YES" ] && $ECLIPSE_CALL &

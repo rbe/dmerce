@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<webServices
+    xmlns="http://java.sun.com/xml/ns/jax-rpc/ri/dd"
+    version="1.0"
+    targetNamespaceBase="urn:dmerce"
+    typeNamespaceBase="urn:dmerce"
+    urlPatternBase="/ws">
+
+    <endpoint
+        name="SQLWebservice"
+        displayName="SQL Webervice"
+        description="A SQL Webservice" 
+        interface="com.wanci.dmerce.webservice.db.SQLWebservice"
+        model="/WEB-INF/model.gz"
+        implementation="com.wanci.dmerce.impl.webservice.db.SQLWebserviceImpl"/> 
+ 
+    <endpointMapping
+        endpointName="SQLWebservice"
+        urlPattern="/sqlservice"/>
+
+</webServices>

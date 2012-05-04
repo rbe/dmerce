@@ -1,0 +1,92 @@
+#!/bin/ksh
+
+#################################################
+#
+# Copyright 2000-2003 1Ci GmbH, http://www.1ci.de
+#
+# $Id: qdd_distrib,v 1.7 2003/06/02 10:37:53 rb Exp $
+# $Author: rb $
+# $Revision: 1.7 $
+#
+# Make dmerce distribution set
+# 
+#################################################
+
+. ${DMERCE_HOME}/lib/libsh
+[ $? -gt 0 ] && exit 2
+. ${DMERCE_HOME}/lib/libdmerce
+[ $? -gt 0 ] && exit 2
+
+DMERCE_TMP=".tmp.$$"
+
+usage() {
+    echo "ERROR: wrong arguments!
+
+$0 [arguments]
+
+arguments ::=
+              installsrc	include sources, default: no
+              installsolaris	include Sun Solaris(TM) packages
+                                default: no
+"
+}
+
+make_temp_dir() {
+    e "Creating temporary directory ${DMERCE_TMP}..."
+    ${MKDIR} -p ${DMERCE_TMP}/install
+}
+
+delete_temp_dir() {
+    e "Removing temporary directory ${DMERCE_TMP}..."
+    ${RM} -rf ${DMERCE_TMP}
+}
+
+make_dmerce() {
+    e "Compiling dmerce..."
+    DESTPATH=${DMERCE_TMP}/product/dmerce sh ${DMERCE_BIN}/qddev_make
+}
+
+copy_components() {
+    e "Copying components..."
+    ${CP} ${DMERCE_HOME}/dmerce.patchlevel ${DMERCE_TMP}
+    [ -n "${installsrc}" ] && ${CPR} ${DMERCE_HOME}/install/*.t* ${DMERCE_TMP}/install
+    [ -n "${installsolaris}" ] && ${CPR} ${DMERCE_HOME}/install/solaris ${DMERCE_TMP}/install
+    ${CPR} ${DMERCE_HOME}/bin ${DMERCE_TMP}
+    ${CPR} ${DMERCE_HOME}/doc/*.pdf ${DMERCE_TMP}/doc
+    ${CPR} ${DMERCE_HOME}/examples ${DMERCE_TMP}
+    ${CPR} ${DMERCE_HOME}/examples/dmercerc ${DMERCE_TMP}
+    ${CPR} ${DMERCE_HOME}/examples/dot-profile ${DMERCE_TMP}/.profile
+    ${CPR} ${DMERCE_HOME}/lib ${DMERCE_TMP}
+    ${CPR} ${DMERCE_HOME}/scratch ${DMERCE_TMP}
+    ${CPR} ${DMERCE_HOME}/sql ${DMERCE_TMP}
+}
+
+make_archive() {
+    e "Creating archive..."
+    ver=`cat ${DMERCE_HOME}/vars.py | grep "^VERSION" | awk '{FS=" = "; print $3}' | sed "s#'##g"`
+    cd ${DMERCE_TMP}
+    python -c "import compileall; compileall.compile_dir('bin');" > /dev/null 2>&1
+    ${FIND} . -type f -name "*~" -exec ${RM} {} \;
+    ${FIND} . -type d -name "CVS" -exec ${RM} -rf {} \;
+    ${FIND} . -type f -name "*.py" -exec ${RM} -rf {} \;
+    n="../dmerce-$ver.`cat ${DMERCE_HOME}/dmerce.patchlevel`.tar"
+    ${TAR} cf $n *
+    ${COMPRESS} $n > /dev/null 2>&1
+    cd ..
+}
+
+trap 'delete_temp_dir; exit 1' INT
+libdmerce_copyr
+echo "CREATE DMERCE DISTRIBUTION"
+echo
+eval $*
+libsh_discover_env
+libsh_determine_uname
+libsh_system_init
+make_temp_dir
+make_dmerce
+copy_components
+make_archive
+delete_temp_dir
+libsh_deinit_discover_env
+e "Done"

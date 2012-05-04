@@ -1,0 +1,16 @@
+db_name = $oracle_inst
+db_files = 1024
+control_files = ("$DMERCE_ORACLE_DATAFILES/control01.ctl", "$DMERCE_ORACLE_DATAFILES/control02.ctl")
+db_file_multiblock_read_count = 8
+db_block_buffers = 8192
+shared_pool_size = 15728640
+log_checkpoint_interval = 10000
+log_checkpoint_timeout = 1800
+processes = 100
+parallel_max_servers = 5
+log_buffer = 32768
+max_dump_file_size = 10240
+rollback_segments = (rb1, rb2, rb3, rb4)
+global_names = true
+db_domain = $oracle_dbdomain
+compatible = 8.1.0

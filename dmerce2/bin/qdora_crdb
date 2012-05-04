@@ -1,0 +1,121 @@
+#!/usr/bin/ksh
+
+#################################################
+#
+# Copyright 2000-2002 1Ci GmbH, http://www.1ci.de
+#
+# $Id: qdora_crdb,v 1.1 2003/04/19 18:25:38 rb Exp $
+# $Author: rb $
+# $Revision: 1.1 $
+#
+# Create ORACLE database on UNIX operating
+# systems
+# 
+#################################################
+
+[ -r ${DMERCE_HOME}/lib/dmercerc ] && . ${DMERCE_HOME}/lib/dmercerc || ( echo "dmercerc not found!"; exit 255 )
+[ -r ${DMERCE_HOME}/lib/libsh ] && . ${DMERCE_HOME}/lib/libsh || ( echo "dmerce libsh not found!"; exit 255 )
+[ -r ${DMERCE_HOME}/lib/liboracle ] && . ${DMERCE_HOME}/lib/liboracle || ( echo "dmerce liboracle not found!"; exit 255 )
+
+crdb_dirs() {
+    e "Creating directory '${DMERCE_CRDB_DIR}'"
+    wr2f "${MKDIR} -p ${DMERCE_CRDB_DIR}"
+    e "Creating directory '${DMERCE_ORACLE_ADMIN}'"
+    wr2f "${MKDIR} -p ${DMERCE_ORACLE_ADMIN}"
+    e "Creating directories in '${DMERCE_ORACLE_ADMIN}'"
+    for i in udump bdump cdump pfile create
+    do
+      wr2f "${MKDIR} -p ${DMERCE_ORACLE_ADMIN}/$i"
+    done
+    wr2f "${MKDIR} -p ${DMERCE_ORACLE_DATAFILES}/${DMERCE_ORACLE_INST}"
+}
+
+crdb_orapwd() {
+    ORAPWDFILE="${ORACLE_HOME}/dbs/orapw${DMERCE_ORACLE_INST}"
+    ORAPWDPARAMS="file=${ORAPWDFILE} password=${DMERCE_ORACLE_SYSDBAPWD} entries=3"
+    e "Creating orapwd file '${ORAPWDFILE}' with parameters: '${ORAPWDPARAMS}'"
+    [ -r ${ORAPWDFILE} ] && wr2f "${RM} ${ORAPWDFILE}"
+    wr2f "${ORACLE_HOME}/bin/orapwd ${ORAPWDPARAMS}"
+}
+
+create_db() {
+    crdb_dirs
+    crdb_orapwd
+    e "Creating scripts"
+    echo "ORACLE_SID=$DMERCE_ORACLE_INST; export ORACLE_SID" >> ${DMERCE_CRDB_FP}
+    if [ "${DMERCE_ORACLE_VER}" = "9i" ]; then
+	files="crdb crdbfiles crdbcatalog jserver ordinst intermedia context spfile alterlas"
+    elif [ "${DMERCE_ORACLE_VER}" = "8i" ]; then
+	files="crdb crrbs crdbcatalog alterlas"
+    fi
+    for i in $files
+    do
+      liboracle_crdb_subst ${DMERCE_ORACLE_CRDB}/$i.sql >> ${DMERCE_CRDB_FP}.$i.sql
+      echo "$ORACLE_HOME/bin/sqlplus /nolog @${DMERCE_CRDB_FP}.$i.sql" >> ${DMERCE_CRDB_FP}
+    done
+    liboracle_crdb_subst ${DMERCE_ORACLE_BASE}/init.ora > ${DMERCE_ORACLE_ADMIN}/${DMERCE_ORACLE_INST}/pfile/init${DMERCE_ORACLE_INST}.ora 
+    liboracle_crdb_subst ${DMERCE_SQLORACLE_BASE}/utlxplan.sql > ${DMERCE_CRDB_FP}.utlxplan.sql
+    echo "$ORACLE_HOME/bin/sqlplus /nolog @${DMERCE_CRDB_FP}.utlxplan.sql" >> ${DMERCE_CRDB_FP}
+    ${CHMOD} 0770 ${DMERCE_CRDB_FP}
+    ${CHMOD} 0660 ${DMERCE_CRDB_FP}.*
+    e "Execute ${DMERCE_CRDB_FP} as user oracle"
+}
+
+show_params() {
+    e "ORACLE VERSION=${DMERCE_ORACLE_VER}"
+    e "ORACLE HOME='${ORACLE_HOME}'"
+    e "ORACLE DATAFILES='${DMERCE_ORACLE_DATAFILES}'"
+    e "ORACLE SID='${ORACLE_SID}'"
+    e "ORACLE DATABASE NAME='${DMERCE_ORACLE_INST}'"
+    e "ORACLE ADMIN='${ORACLE_HOME}/admin/${DMERCE_ORACLE_INST}'"
+    e "Creating files in '${DMERCE_HOME}/sql/oracle/crdb9i/${DMERCE_ORACLE_INST}'"
+    e "Main ORACLE creation script is '${DMERCE_CRDB_DIR}/orclcrdb.$$'"
+}
+
+ask() {
+    DMERCE_ORACLE_VER=`liboracle_get_oracle_version`
+    liboracle_ask_oracle_env
+    liboracle_ask_oracle_sysdbapwd
+    liboracle_ask_oracle_datafiles
+    DMERCE_SQLORACLE_CRDB="${DMERCE_HOME}/sql/oracle/crdb${DMERCE_ORACLE_VER}"
+    e "Enter new database name (without domain):"
+    read DMERCE_ORACLE_INST
+    ORACLE_SID=$DMERCE_ORACLE_INST
+    export ORACLE_SID
+    e "Enter database domain:"
+    read DMERCE_ORACLE_DBDOMAIN
+    DMERCE_CRDB_FP="${DMERCE_CRDB_DIR}/orclcrdb.$$"
+    export DMERCE_CRDB_FP
+    DMERCE_ORACLE_ADMIN="${ORACLE_HOME}/admin/${DMERCE_ORACLE_INST}"
+    export DMERCE_ORACLE_ADMIN
+    show_params
+}
+
+clean() {
+    e "Cleaning"
+    if [ x"${DMERCE_CRDB_FP}" != x"" ]; then
+	${RM} -f ${DMERCE_CRDB_FP}*
+    fi
+    stty echo
+    unset DMERCE_CRDB_DIR
+    unset DMERCE_CRDB_FP
+    unset DMERCE_ORACLE_ADMIN
+}
+
+main() {
+    discover_env
+    discover_devenv
+    ask
+    set_wr2f_file ${DMERCE_HOME}/sql/oracle/crdb${DMERCE_ORACLE_VER}/${DMERCE_ORACLE_INST}/orclcrdb.sh
+    wr2f "#!/usr/bin/ksh"
+    create_db
+}
+
+trap 'clean; exit 1' INT KILL
+copyr
+echo "CREATE ORACLE DATABASE INSTANCE"
+echo
+e "* START"
+main
+e "* STOP"
+exit 0

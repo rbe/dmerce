@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project basedir="." default="jar" name="dmerce Ant-Tasks">
+
+	<property name="appname" value="dmerce-ant"/>
+	<property name="src.dir" value="src"/>
+	<property name="src.core.dir" value="${src.dir}/core"/>
+	<property name="src.ant.dir" value="${src.dir}/ant"/>
+	<property name="build.dir" value="build"/>
+	<property name="lib.dir" value="lib"/>
+	<property name="lib.shared.dir" value="${lib.dir}/shared"/>
+	<property name="lib.core.dir" value="${lib.dir}/core"/>
+	<property name="lib.distrib.dir" value="${lib.dir}/distrib"/>
+	<property name="lib.webclient.dir" value="${lib.dir}/webclient"/>
+	<property name="dist.dir" value="dist"/>
+
+	<!-- CLASSPATH used during compilation -->
+	<path id="build.classpath">
+		<fileset dir="${lib.shared.dir}">
+			<include name="**/*.jar"/>
+		</fileset>
+<!--
+		<fileset dir="${lib.dir}">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${lib.core.dir}">
+			<include name="*.jar"/>
+		</fileset>
+-->
+	</path>
+
+	<!-- *********************************************************************** -->
+	<!-- *** PREPARE                                                         *** -->
+	<!-- *********************************************************************** -->
+	<target name="prepare" depends="clean">
+		<tstamp/>
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${dist.dir}"/>
+	</target>
+	
+	<!-- *********************************************************************** -->
+	<!-- *** CLEAN                                                           *** -->
+	<!-- *********************************************************************** -->
+	<target name="clean">
+		<delete dir="${build.dir}"/>
+	</target>
+	<target name="distclean">
+		<antcall target="clean"/>
+		<delete file="${dist.dir}/${appname}.jar"/>
+	</target>
+	
+	<!-- *********************************************************************** -->
+	<!-- *** COMPILE                                                         *** -->
+	<!-- *********************************************************************** -->
+	<target depends="prepare" name="compile">
+		<javac destdir="${build.dir}" source="1.4" deprecation="true">
+			<classpath refid="build.classpath"/>
+			<src path="${src.ant.dir}"/>
+		</javac>
+	</target>
+	
+
+	<!-- *********************************************************************** -->
+	<!-- *** JAR                                                             *** -->
+	<!-- *********************************************************************** -->
+	<target depends="compile" name="jar">
+		<echo>building jar...</echo>
+		<delete file="${dist.dir}/${appname}.jar"/>
+		<jar basedir="${build.dir}" destfile="${lib.distrib.dir}/${appname}.jar"/>
+		<copy file="${lib.distrib.dir}/${appname}.jar" todir="${lib.webclient.dir}"/>
+	</target>
+	
+</project>

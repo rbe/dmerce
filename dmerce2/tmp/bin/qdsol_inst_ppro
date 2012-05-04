@@ -1,0 +1,124 @@
+#!/bin/ksh
+
+#################################################
+#
+# Copyright 2001-2002 1Ci GmbH, http://www.1ci.de
+#
+# $Id: qdsol_inst_ppro,v 1.1 2003/04/19 18:25:38 rb Exp $
+# $Author: rb $
+# $Revision: 1.1 $
+#
+# Install Sun PatchPro
+# 
+#################################################
+
+. ${DMERCE_HOME}/lib/libsh
+. ${DMERCE_HOME}/lib/libsolaris
+
+PPRO_SERVER="https://emea.patchmanager.sun.com/patchmanager/"
+
+usage() {
+    echo "ERROR: wrong arguments!
+
+$0 [arguments]
+
+arguments ::=
+              server       Ask for PatchPro server
+"
+}
+
+ask() {
+    echo "`date`: Which server do you want?"
+    echo "        (1) America"
+    echo "        (2) EMEA"
+    echo "        (3) Japan"
+    echo "        Answer: "
+    read $a
+    if [ $a = 1 ]; then
+	PPRO_SERVER="https://america.patchmanager.sun.com/patchmanager/"
+    elif [ $a = 2 ]; then
+	PPRO_SERVER="https://emea.patchmanager.sun.com/patchmanager/"
+    elif [ $a = 3 ]; then
+	PPRO_SERVER="https://japan.patchmanager.sun.com/patchmanager/"
+    fi
+    export PPRO_SERVER
+}
+
+install_SUNWcert() {
+    echo "`date`: Unpacking SUNWcert"
+    tar xzf ${DMERCE_HOME}/solpkg/SUNWcert.tar.gz
+    echo "`date`: Installaing SUNWcert"
+    pkgadd -n -d . SUNWcert > /dev/null 2>&1
+    echo "`date`: Installing SUNWcert certificates"
+    /usr/j2se/jre/bin/keytool -import -alias smirootcacert \
+	-file /etc/certs/SUNW/smirootcacert.b64 \
+	-keystore /usr/j2se/jre/lib/security/cacerts \
+	-storepass changeit -noprompt
+    /usr/j2se/jre/bin/keytool -import -alias smirootcacert \
+	-file /etc/certs/SUNW/smirootcacert.b64 \
+	-keystore /usr/j2se/jre/lib/security/cacerts \
+	-storepass changeit -noprompt
+    /usr/j2se/bin/keytool -import -alias patchsigning \
+	-file /opt/SUNWppro/etc/certs/patchsigningcert.b64 \
+	-keystore /usr/j2se/jre/lib/security/cacerts \
+	-storepass changeit -noprompt
+}
+
+install_ppro() {
+    echo "`date`: Unpacking PatchPro"
+    if [ `sol_rev` -eq 580 ]; then
+	pkg="sparc5.8"
+    elif [ `sol_rev` -eq 590 ]; then
+	pkg="sparc5.9"
+    fi
+    ${TAR} xzf ${DMERCE_HOME}/solpkg/pproSunOS${pkg}jre2.1.tar.gz
+    cd pproSunOSsparc5.8jre2.1
+    echo "`date`: Starting PatchPro installation"
+    ./setup
+    if [ $? -eq 0 ]; then
+	DMERCE_PPRO_INSTALLED=0
+	export DMERCE_PPRO_INSTALLED
+    else
+	DMERCE_PPRO_INSTALLED=1
+	export DMERCE_PPRO_INSTALLED
+	SUNWppro_INSTALLED=`sol_checkpkginst SUNWppro`
+	export SUNWppro_INSTALLED
+    fi
+}
+
+pre() {
+    echo "`date`: START"
+    cd /tmp
+}
+
+post() {
+    if [ ${DMERCE_PPRO_INSTALLED} -eq 1 -a ${SUNWppro_INSTALLED} -eq 1 ]; then
+	echo "`date`: Setting up PatchPro"
+	PATH=/opt/SUNWppro/bin:/usr/sadm/bin:$PATH
+	export PATH
+	if [ x"${PPRO_SERVER}" != x"" ]; then
+	    pprosetup -P ${PPRO_SERVER}
+	else
+	    echo "`date`: Cannot set server for PatchPro"
+	fi
+	echo "`date`: STOP"
+    else
+	echo "`date`: PatchPro was not installed"
+    fi
+}
+
+trap '' KILL INT EXIT
+copyr
+echo "SUN SOLARIS PATCHPRO INSTALLATION"
+echo
+eval $*
+if [ x"${help}" != x"" ]; then
+    usage
+fi
+if [ x"${server}" != x"" ]; then
+    ask
+fi
+pre
+install_ppro
+install_SUNWcert
+post

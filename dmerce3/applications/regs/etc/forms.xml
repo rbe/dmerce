@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<forms xmlns="http://www.1ci.de"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.1ci.de ../FORMS.xsd">
+
+  <form id="blpreg">
+
+    <name>Branchenloesungen - Partner - Register</name>
+    <description>1Ci - Registration - branchenloesungen.de</description>
+    <formversion>0.1</formversion>
+
+    <field name="partnerid" required="true">
+      <description>1Ci internal ID for partner</description>
+      <type>string</type>
+      <constraints>
+         <constraint type="format">\d{3,}</constraint>
+      </constraints>
+    </field>
+
+    <field name="product" required="true">
+      <description>1Ci internal ID for products</description>
+      <type>string</type>
+      <constraints>
+         <constraint type="format">\w+</constraint>
+      </constraints>
+    </field>
+
+    <field name="company">
+      <description>Firma</description>
+      <type>string</type>
+    </field>
+
+    <field name="lastname" required="true">
+      <description>Name</description>
+      <type>string</type>
+      <constraints>
+	<constraint type="format" description="Name muss mehr als zwei Buchstaben haben">.{3,}</constraint>
+      </constraints>
+    </field>
+
+    <field name="firstname">
+      <description>Vorname</description>
+      <type>string</type>
+    </field>
+
+    <field name="street">
+      <description>Strasse</description>
+      <type>string</type>
+    </field>
+
+    <field name="zipcode">
+      <description>PLZ</description>
+      <type>string</type>
+      <constraints>
+         <constraint type="format">\d{5}</constraint>
+      </constraints>
+    </field>
+
+    <field name="city">
+      <description>Ort</description>
+      <type>string</type>
+    </field>
+
+    <field name="country">
+      <description>Land</description>
+      <type>string</type>
+    </field>
+
+    <field name="phone">
+      <description>Telefon</description>
+      <type>string</type>
+    </field>
+
+    <field name="fax">
+      <description>Fax</description>
+      <type>string</type>
+    </field>
+
+    <field name="email" required="true">
+      <description>Email</description>
+      <type>string</type>
+      <constraints>
+         <constraint type="format">.+@.+\..+</constraint>
+      </constraints>
+    </field>
+
+    <field name="remarks">
+      <description>Mitteilung</description>
+      <type>string</type>
+    </field>
+
+    <field name="tacread" required="true">
+      <description>AGB gelesen</description>
+      <type>string</type>
+    </field>
+
+  </form>
+
+  <form id="dmercereg">
+
+    <name>1Ci - dmerce(R) - Register</name>
+    <description>1Ci - Registration - dmerce</description>
+    <formversion>0.1</formversion>
+
+    <field name="partnerid" required="true">
+      <description>1Ci internal ID for partner</description>
+      <type>string</type>
+      <constraints>
+         <constraint type="format">\d{3,}</constraint>
+      </constraints>
+    </field>
+
+	<!--
+    <field name="product" required="true">
+      <description>1Ci internal ID for products</description>
+      <type>string</type>
+      <constraints>
+         <constraint type="format">\w+</constraint>
+      </constraints>
+    </field>
+    -->
+
+    <field name="company">
+      <description>Firma</description>
+      <type>string</type>
+    </field>
+    
+    <field name="companytype">
+    	<description>Art der Firma</description>
+    	<type>string</type>
+		<options>
+			<option key="ISV">Independent Software Vendor (ISV)</option>
+			<option key="SI">System Integrator (SI)</option>
+			<option key="RS">Reseller</option>
+			<option key="DIV">Sonstige</option>
+		</options>
+	</field>
+
+    <field name="lastname" required="true">
+      <description>Name</description>
+      <type>string</type>
+      <constraints>
+			<constraint type="format" description="Name muss mehr als zwei Buchstaben haben">.{3,}</constraint>
+      </constraints>
+    </field>
+
+    <field name="firstname">
+      <description>Vorname</description>
+      <type>string</type>
+    </field>
+
+    <field name="street">
+      <description>Strasse</description>
+      <type>string</type>
+    </field>
+
+    <field name="zipcode">
+      <description>PLZ</description>
+      <type>string</type>
+      <constraints>
+         <constraint type="format">\d{5}</constraint>
+      </constraints>
+    </field>
+
+    <field name="city">
+      <description>Ort</description>
+      <type>string</type>
+    </field>
+
+    <field name="country">
+      <description>Land</description>
+      <type>string</type>
+    </field>
+
+    <field name="phone">
+      <description>Telefon</description>
+      <type>string</type>
+    </field>
+
+    <field name="fax">
+      <description>Fax</description>
+      <type>string</type>
+    </field>
+
+    <field name="email" required="true">
+      <description>Email</description>
+      <type>string</type>
+      <constraints>
+         <constraint type="format">.+@.+\..+</constraint>
+      </constraints>
+    </field>
+
+    <field name="url">
+      <description>URL</description>
+      <type>string</type>
+      <constraints>
+         <constraint type="format" description="www.domain.tld (ohne http://)">\w+\..+\.\w{2,4}</constraint>
+      </constraints>
+    </field>
+
+    <field name="remarks">
+      <description>Mitteilung</description>
+      <type>string</type>
+    </field>
+
+    <field name="licread" required="true">
+      <description>Lizenzbestimmungen gelesen</description>
+      <type>string</type>
+    </field>
+
+  </form>
+
+</forms>

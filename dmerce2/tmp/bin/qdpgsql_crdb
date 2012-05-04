@@ -1,0 +1,33 @@
+#!/bin/sh
+
+#################################################
+#
+# Copyright 2000-2002 1Ci GmbH, http://www.1ci.de
+#
+# $Id: qdpgsql_crdb,v 1.1 2003/04/19 18:25:38 rb Exp $
+# $Author: rb $
+# $Revision: 1.1 $
+#
+# CREATE POSTGRESQL DATABASE
+# 
+#################################################
+
+[ -r ${DMERCE_HOME}/lib/libsh ] && . ${DMERCE_HOME}/lib/libsh || ( echo "dmerce libsh not found!"; exit 255 )
+
+createdb() {
+    ${DMERCE_PGSQL_HOME}/bin/createdb dmerce_sys
+}
+
+dmerce_sys() {
+    ${DMERCE_PGSQL_HOME}/bin/psql dmerce_sys < ${DMERCE_SQLPGSQL_HOME}/dmerce_sys_tables.sql
+}
+
+main() {
+    createdb
+    dmerce_sys
+}
+
+copyr
+echo ""
+echo
+main

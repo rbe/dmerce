@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project basedir="../.." default="war" name="dmerce Example Application SecureApp">
+
+	<property environment="env"/>
+	
+    <property name="appname" value="secureapp"/>
+    <property name="example.base.dir" value="examples/${appname}"/>
+    
+    <property name="webserver.home" value="${env.JBOSS_HOME}"/>
+    <property name="webserver.deploy.dir" value="${webserver.home}/server/default/deploy"/>
+    <property name="webserver.conf.dir" value="${webserver.home}/server/default/conf"/>
+
+    <property name="src.dir" value="src"/>
+    <property name="src.core.dir" value="${src.dir}/core"/>
+    <property name="src.webclient.dir" value="${src.dir}/webclient"/>
+    <property name="src.web.dir" value="${example.base.dir}/web"/>
+    <property name="src.example.dir" value="${example.base.dir}/src"/>
+
+    <property name="build.dir" value="build"/>
+    <property name="build.web.dir" value="${build.dir}/webclient"/>
+
+    <property name="web-inf.dir" value="${build.web.dir}/WEB-INF"/>
+    <property name="web-inf.classes.dir" value="${web-inf.dir}/classes"/>
+    <property name="web-inf.lib.dir" value="${web-inf.dir}/lib"/>
+
+    <property name="etc.example.dir" value="${example.base.dir}/etc"/>
+
+    <property name="lib.dir" value="lib"/>
+    <property name="lib.shared.dir" value="${lib.dir}/shared"/>
+    <property name="lib.webclient.dir" value="${lib.dir}/webclient"/>
+    <property name="lib.core.dir" value="${lib.dir}/core"/>
+
+    <property name="dist.dir" value="dist"/>
+
+    <property name="etc.webclient.dir" value="etc/webclient"/>
+    
+    <!-- CLASSPATH used during compilation -->
+    <path id="build.classpath">  
+        <fileset dir="${lib.shared.dir}">
+                <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="${lib.webclient.dir}">
+                <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}">
+                <include name="*.jar"/>
+        </fileset>
+        <pathelement path="${lib.dir}/distrib/dmerce-ant.jar"/>
+    </path>
+    
+	<taskdef name="datasource" classname="com.wanci.dmerce.ant.DatasourceTask" classpathref="build.classpath" />
+	<taskdef name="securityconfig" classname="com.wanci.dmerce.ant.SecurityConfigTask" classpathref="build.classpath" />
+
+<!-- *********************************************************************** -->
+<!-- *** DEPLOYMENT                                                      *** -->
+<!-- *********************************************************************** -->
+
+	<target depends="war" name="deploy">
+        <echo>deploying warfile as ${appname}</echo>
+        <copy file="${dist.dir}/${appname}.war" todir="${webserver.deploy.dir}"/>
+	</target>
+
+<!-- *********************************************************************** -->
+<!-- *** COMPILE                                                         *** -->
+<!-- *********************************************************************** -->
+
+	<target depends="prepare" name="compile">
+        <javac deprecation="on" destdir="${build.web.dir}" source="1.4">
+            <classpath refid="build.classpath"/>
+            <src path="${src.webclient.dir}"/>
+			<src path="${src.core.dir}/com/wanci/dmerce/res"/>
+			<src path="${src.core.dir}/com/wanci/dmerce/exceptions"/>
+        </javac>
+	</target>
+
+<!-- *********************************************************************** -->
+<!-- *** WAR                                                             *** -->
+<!-- *********************************************************************** -->
+
+	<target depends="setup-web-inf, compile" name="war">
+        <echo>building war...</echo>
+        <delete file="${dist.dir}/${appname}.war"/>
+        <war basedir="${src.web.dir}" warfile="${dist.dir}/${appname}.war" webxml="${etc.example.dir}/web.xml">
+            <lib dir="${lib.webclient.dir}"/>
+            <lib dir="${lib.shared.dir}"/>
+            <classes dir="${build.web.dir}"/>
+            <webinf dir="${etc.webclient.dir}">
+            	<include name="*.tld"/>
+            </webinf>
+            <webinf dir="${etc.example.dir}">
+            	<include name="jboss-web.xml"/>
+            </webinf>
+        </war>
+	</target>
+
+
+<!-- *********************************************************************** -->
+<!-- *** PREPARE                                                         *** -->
+<!-- *********************************************************************** -->
+
+	<target name="prepare" depends="clean">
+		<tstamp/>
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${build.web.dir}"/>
+		<mkdir dir="${dist.dir}"/>
+		<mkdir dir="${src.example.dir}"/>
+	</target>
+	
+<!-- *********************************************************************** -->
+<!-- *** CLEAN                                                           *** -->
+<!-- *********************************************************************** -->
+
+	<target name="clean">
+        <delete dir="${build.dir}"/>
+	</target>
+
+	<target name="distclean">
+        <antcall target="clean"/>
+        <delete file="${dist.dir}/${appname}.war"/>
+	</target>
+
+
+<!-- *********************************************************************** -->
+<!-- *** SETUP WEB INF                                                   *** -->
+<!-- *********************************************************************** -->
+
+	<target depends="prepare, security-config" name="setup-web-inf">
+        <!-- res-Zeug -->
+        <copy todir="${build.web.dir}/com/wanci/dmerce/res">
+            <fileset dir="${src.core.dir}/com/wanci/dmerce/res"/>
+        </copy>
+        <!-- xml dateien: forms.xml workflows.xml -->
+        <copy file="${etc.example.dir}/forms.xml" todir="${build.web.dir}/com/wanci/dmerce/res"/>
+        <copy file="${etc.example.dir}/workflows.xml" todir="${build.web.dir}/com/wanci/dmerce/res"/>
+   		<copy file="${etc.example.dir}/properties.xml" todir="${build.web.dir}/com/wanci/dmerce/res"/>
+   		<copy file="${etc.example.dir}/security.xml" todir="${build.web.dir}/com/wanci/dmerce/res"/>
+        <!-- jaxb -->
+        <copy todir="${build.web.dir}">
+            <fileset dir="${src.webclient.dir}">
+                <include name="**/jaxb.properties"/>
+                <include name="**/bgm.ser"/>
+            </fileset>
+        </copy>
+	</target>
+	
+	<target name="security-config">
+        <!-- Security-Einstellungen vorbereiten -->
+        <copy file="${etc.webclient.dir}/web.xml" todir="${etc.example.dir}"/>
+		<datasource appname="${appname}" datasource="${webserver.deploy.dir}/${appname}-ds.xml" properties="${etc.example.dir}/properties.xml"/>
+		<securityconfig appname="${appname}" web="${etc.example.dir}/web.xml" security="${etc.example.dir}/security.xml" loginconfig="${webserver.conf.dir}/login-config.xml" jbossweb="${etc.example.dir}/jboss-web.xml"/>
+	</target>
+	
+</project>

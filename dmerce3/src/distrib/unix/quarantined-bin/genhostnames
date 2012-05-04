@@ -1,0 +1,18 @@
+#!/bin/sh
+
+#################################################
+#
+# Copyright 2000-2004 1[wan]Ci GmbH, http://www.1ci.com
+#
+# $Id$
+# $Author$
+# $Revision$
+#
+# 
+#################################################
+
+i=0
+while [ $i -lt 51 ]; do
+  i=`expr $i + 1`
+  echo "addif 10.48.31.$i netmask 255.255.255.0 broadcast 10.48.31.255 private up"
+done

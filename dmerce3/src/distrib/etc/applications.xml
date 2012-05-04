@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." name="dmerce Application Properties">
+	
+	<!--
+		
+		Per application properties: SQL-Webservice endpoint,
+		file upload directory and column suffixes, SQL configuration
+		
+		Use <applname> instead of "dmerce"
+		
+	-->
+	
+	<!--
+		
+		Default settings for dmerce
+		
+	-->
+	
+	<!-- Webservice endpoint -->
+	<property name="dmerce.endpointaddress"
+		value="http://localhost:8080/dmercews/sqlservice"/>
+	
+	<!-- File uploads -->
+	<property name="dmerce.fileupload.path" value="/dmerce/uploadedfiles"/>
+	<property name="dmerce.fileupload.columnsuffix.originalfile"
+		value="_original"/>
+	<property name="dmerce.fileupload.columnsuffix.serverfile"
+		value="_server"/>
+		
+	<!-- Authentication/Authorization  -->
+	<property name="dmerce.auth.table" value="auth"/>
+	<property name="dmerce.auth.usernamefield" value="username"/>
+	<property name="dmerce.auth.passwordfield" value="password"/>
+	<property name="dmerce.auth.realmfield" value="realm"/>
+	<property name="dmerce.auth.datafields" value="firstname,lastname"/>
+	<property name="dmerce.auth.lastloginfield" value="lastlogin"/>
+	<property name="dmerce.auth.loggedinflagfield" value="loggedin"/>
+	<property name="dmerce.auth.login.successfullpage" value="loginok.jsp"/>
+	<property name="dmerce.auth.login.unsuccessfullpage" value="loginnotok.jsp"/>
+	<property name="dmerce.auth.logout.page" value="logout.jsp"/>
+
+	<!-- Database connection for webservice: Oracle -->
+	<property name="dmerce.jdbc.driver" value="oracle.jdbc.OracleDriver"/>
+	<property name="dmerce.jdbc.url"
+		value="jdbc:oracle:thin:dmerce/dmerce@localhost:1521:dmerce"/>
+	<property name="dmerce.jdbc.username" value="dmerce"/>
+	<property name="dmerce.jdbc.password" value="dmerce"/>
+	
+	<!-- Database connection for webservice: HypersonicSQL
+	<property name="dmerce.jdbc.driver" value="org.hsqldb.jdbcDriver"/>
+	<property name="dmerce.jdbc.url" value="jdbc:hsqldb:hsql://localhost:1702"/>
+	<property name="dmerce.jdbc.username" value="sa"/>
+	<property name="dmerce.jdbc.password" value=""/>
+	-->
+	
+	<!-- Database connection for webservice: MySQL
+	<property name="dmerce.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+	<property name="dmerce.jdbc.url" value="jdbc:mysql://localhost/dmerce"/>
+	<property name="dmerce.jdbc.username" value="dmerce"/>
+	<property name="dmerce.jdbc.password" value="dmerce"/>
+	-->
+
+	<!-- Database connection for webservice: PostgreSQL
+	<property name="dmerce.jdbc.driver" value="org.postgresql.Driver"/>
+	<property name="dmerce.jdbc.url"
+		value="jdbc://postgresql://localhost:5432/dmerce"/>
+	<property name="dmerce.jdbc.username" value="dmerce"/>
+	<property name="dmerce.jdbc.password" value="dmerce"/>
+	-->
+	
+	<property name="debug" value="false"/>
+
+</project>

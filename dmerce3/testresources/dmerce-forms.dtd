@@ -1,0 +1,103 @@
+  <!-- @author mm -->
+  <!-- @version $Id$ -->
+  <!-- dmerce-forms.dtd version 0.1 -->
+  
+  
+  
+  <!-- root element -->
+
+  <!ELEMENT forms (form)>
+
+
+  <!ELEMENT form (page*)>
+
+  <!-- page element -->
+
+  <!ELEMENT page (name, description?, target?, formversion, (field | group)* )>
+
+
+  <!-- form elements -->
+
+  <!ELEMENT name (#PCDATA)>
+  
+  <!ELEMENT description (#PCDATA)>
+
+  <!ELEMENT target (#PCDATA)>
+
+  <!ELEMENT formversion (#PCDATA)>
+
+  <!ELEMENT field (description?, type?, format?, constraints?)>
+
+  <!ELEMENT group (field | option)*>
+
+
+  <!-- missing field elements -->
+ 
+  <!ELEMENT type (#PCDATA)>
+
+  <!ELEMENT format (#PCDATA)>
+  
+  <!ELEMENT constraints (minlength, maxlength, mininclusive, maxinclusive, precision, scale, period)>
+  
+
+  <!-- constraints elements -->
+
+  <!ELEMENT minlength (#PCDATA)>
+
+  <!ELEMENT maxlength (#PCDATA)>
+
+  <!ELEMENT mininclusive (#PCDATA)>
+
+  <!ELEMENT maxinclusive (#PCDATA)>
+
+  <!ELEMENT precision (#PCDATA)>
+
+  <!ELEMENT scale (#PCDATA)>
+
+  <!ELEMENT period (startdate, enddate)>
+  
+  
+  <!-- period elements -->
+  
+  <!ELEMENT startdate (#PCDATA)>
+  
+  <!ELEMENT enddate (#PCDATA)>
+  
+
+  <!-- group elements -->
+  
+  <!ELEMENT option (#PCDATA)> 
+ 
+
+  <!-- form attlist -->
+
+  <!ATTLIST form id CDATA #REQUIRED>
+  
+
+  <!-- page attlist -->
+  
+  <!ATTLIST page number CDATA #IMPLIED>
+
+  
+  <!-- target attlist -->
+  
+  <!ATTLIST target type CDATA #IMPLIED>
+  
+ 
+  <!-- field attlist -->
+
+  <!ATTLIST field name CDATA #REQUIRED>
+
+  <!ATTLIST field required CDATA #IMPLIED>
+  
+  
+  <!-- group attlist -->
+  
+  <!ATTLIST group minselected CDATA #REQUIRED>
+  
+  <!ATTLIST group maxselected CDATA #REQUIRED>
+  
+
+  <!-- option attlist -->
+  
+  <!ATTLIST option value CDATA #REQUIRED>

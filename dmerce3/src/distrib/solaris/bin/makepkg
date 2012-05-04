@@ -1,0 +1,141 @@
+#!/bin/ksh
+#################################################
+#
+# Copyright 2000-2004 1[wan]Ci GmbH, http://www.1ci.de
+#
+# $Id$
+# $Author: rb $
+# $Revision: 1.1 $
+#
+# Create a dmerce/Sun Solaris Package
+# 
+#################################################
+
+[ -r ${DMERCE_HOME}/lib/libsh ] && . ${DMERCE_HOME}/lib/libsh || ( echo "dmerce libsh not found!"; exit 255 )
+[ -r ${DMERCE_HOME}/lib/libdmerce ] && . ${DMERCE_HOME}/lib/libdmerce || ( echo "dmerce libdmerce not found!"; exit 255 )
+myinit
+
+DMERCE_PKG="`/usr/bin/pwd | /usr/bin/sed 's/.*\///
+		                          s/-.*//
+		                         '`"
+#DMERCE_VERSION="`/usr/bin/pwd | /usr/bin/sed 's/.*\///
+#		                               s/.*-//
+#		                              '`"
+DMERCE_NAME=$DMERCE_PKG
+DMERCE_VERSION=$DMERCE_VER
+DMERCE_ARCH="sparc"
+DMERCE_BASEDIR="/opt/dmerce"
+DMERCE_CATEGORY="application"
+DMERCE_VENDOR="Your company"
+DMERCE_CLASSES="none"
+DMERCE_HOTLINE="Your contact info"
+
+ask() {
+    e "Package [$DMERCE_PKG]: "
+    read s
+    [ -n "$s" ] && DMERCE_PKG="$s"
+
+    DMERCE_NAME="$DMERCE_PKG"
+    e "Package name [$DMERCE_NAME]: "
+    read s
+    [ -n "$s" ] && DMERCE_NAME="$s"
+
+    e "Architecture [$DMERCE_ARCH]: "
+    read s
+    [ -n "$s" ] && DMERCE_ARCH="$s"
+
+    e "Version [$DMERCE_VERSION]: "
+    read s
+    [ -n "$s" ] && DMERCE_VERSION="$s"
+
+    e "Base directory [$DMERCE_BASEDIR]: "
+    read s
+    [ -n "$s" ] && DMERCE_BASEDIR="$s"
+
+    e "Category [$DMERCE_CATEGORY]: "
+    read s
+    [ -n "$s" ] && DMERCE_CATEGORY="$s"
+
+    e "Vendor [$DMERCE_VENDOR]: "
+    read s
+    [ -n "$s" ] && DMERCE_VENDOR="$s"
+
+    e "Classes [$DMERCE_CLASSES]: "
+    read s
+    [ -n "$s" ] && DMERCE_CLASSES="$s"
+
+    e "Hotline [$DMERCE_HOTLINE]: "
+    read s
+    [ -n "$s" ] && DMERCE_HOTLINE="$s"
+
+    export DMERCE_PKG DMERCE_NAME DMERCE_ARCH DMERCE_VERSION DMERCE_BASEDIR \
+	DMERCE_CATEGORY DMERCE_VENDOR DMERCE_CLASSES DMERCE_HOTLINE
+}
+
+show_settings() {
+    e "SETTINGS"
+    echo
+    echo "Package:        ${DMERCE_PKG}"
+    echo "Name:           ${DMERCE_NAME}"
+    echo "Version:        ${DMERCE_VERSION}"
+    echo "Architecture:   ${DMERCE_ARCH}"
+    echo "Base directory: ${DMERCE_BASEDIR}"
+    echo "Category:       ${DMERCE_CATEGORY}"
+    echo "Verndor:        ${DMERCE_VENDOR}"
+    echo "Classes:        ${DMERCE_CLASSES}"
+    echo "Hotline:        ${DMERCE_HOTLINE}"
+    echo
+}
+
+create_pkginfo() {
+    e "Creating package information"
+    (
+	echo PKG="${DMERCE_PKG}"
+	echo NAME="${DMERCE_NAME}"
+	echo ARCH="${DMERCE_ARCH}"
+	echo VERSION="${DMERCE_VERSION}"
+	echo BASEDIR="${DMERCE_BASEDIR}"
+	echo CATEGORY="${DMERCE_CATEGORY}"
+	echo VENDOR="${DMERCE_VENDOR}"
+	echo CLASSES="${DMERCE_CLASSES}"
+	echo HOTLINE="${DMERCE_HOTLINE}"
+    ) > /tmp/pkginfo
+}
+
+make_pkg() {
+    e "Creating package prototype from '${DMERCE_HOME}'"
+    cd ${DMERCE_HOME}
+    ID=`/usr/bin/id | awk -F\( '{print $2}'|awk -F\) '{print $1}'`
+    GID=`/usr/bin/id | awk -F\( '{print $3}'|awk -F\) '{print $1}'`
+    echo "i pkginfo=./pkginfo" > /tmp/prototype
+    /usr/bin/find ${DMERCE_DIRS_4PKG} -print | /usr/bin/pkgproto >> /tmp/prototype
+    /usr/bin/cat /tmp/prototype | sed "s/$ID/root/g
+  			   	       s/$GID/other/g" > /tmp/prototype2
+    /usr/bin/mv /tmp/prototype2 /tmp/prototype
+    e "Creating package"
+    cd /tmp
+    /usr/bin/pkgmk -b ${DMERCE_HOME} -o /var/spool/pkg/dmerce
+    cd - > /dev/null 2&>1
+}
+
+remove_pkginfofiles() {
+    e "Removing package information files"
+    rm pkginfo
+    rm prototype
+}
+
+main() {
+    show_settings
+    e "Settings ok (y/n)?"
+    read r
+    [ "$r" = "n" ] && ask
+    create_pkginfo
+    make_pkg
+    #remove_pkginfofiles
+}
+
+copyr
+echo "CREATE SUN SOLARIS PACKAGE"
+echo
+discover_env
+main

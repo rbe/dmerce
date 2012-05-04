@@ -1,0 +1,19 @@
+#!/bin/ksh
+
+#################################################
+#
+# Copyright 2000-2003 1Ci GmbH, http://www.1ci.com
+#
+# $Id: qdd_sys2grant,v 1.2 2003/04/22 12:54:29 rb Exp $
+# $Author: rb $
+# $Revision: 1.2 $
+#
+#################################################
+
+. ${DMERCE_LIB}/libdmerce
+[ $? -gt 0 ] && exit 2
+
+libdmerce_copyr
+echo "GENERATE SQL-GRANT-STATEMENTS FROM dmerce.cfg FILES"
+
+find $DMERCE_WEBITES -type f -name dmerce.cfg | grep Sys | sed 's#@#:#' | awk -F: '{print "GRANT ALL ON "$5".* TO "$2"@"$4" IDENTIFIED BY \""$3"\";"}'

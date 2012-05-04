@@ -1,0 +1,589 @@
+\subsection{HTML-Konstrukte aus Datenbankabfragen: Db2HTML}
+
+\newpage
+\wancidmerceexecdef{}{Db2HTML.Select.Options}{Funktion}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Db2HTML.Checkbox.isChecked}{Funktion}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Db2HTML.Radiobox.isChecked}{Funktion}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\subsection{Sicherheit: Security}
+
+\newpage
+\wancidmerceexecdef{}{Security.Password.Generate}{Funktion}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\subsection{HTML}
+
+\newpage
+\wancidmerceexecdef{}{HTML.PlainToHTML.FormatFields}{Trigger}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{HTML.HTMLToPlain.Format}{Funktion}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\subsection{Benutzer im SAM anmelden: Login}
+
+\newpage
+\wancidmerceexecdef{BibExecLoginUserCheck}{Login.User.Check}{Trigger}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\subsection{Datums- und Zeitfunktionen: Time}
+
+Es gibt Conversion, Get, Select
+
+\newpage
+\wancidmerceexecdef{}{Time.Conversion.Actual}{Funktion}{}{Das aktuelle
+  Datum formatiert oder als Timestamp
+  zur\"uckgeben.}{\wancicode{\parbox{85mm}{Time.Conversion.Actual
+      [formatDate='<Datumsformatierung>'
+      [,formatTime='<Zeitformatierung>']]}}}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{formatDate}{Formatierung der Ausgabe des
+  Datums. Standard: \%Y-\%m-\%d \wancisee{FormatierungDatumZeit}}{Nein}
+\wancidmerceexecparamdef{formatTime}{Formatierung der Ausgabe der
+  Zeit. Standard: \%H-\%M-\%S \wancisee{FormatierungZeit}}{Nein}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{keine}{2001-11-11
+  22:42:30}{Das heutige Datum: (exec Time.Conversion.Actual cexe)}{Das
+  heutige Datum: 2001-11-11 22:42:30}
+
+\wancidmerceexecex{formatDate='europe',formatTime=''}{11.11.2001}{Das
+  heutige Datum: (exec Time.Conversion.Actual
+  formatDate='europe',formatTime='' cexe)}{Das heutige Datum:
+  11.11.2001}
+
+\newpage
+\wancidmerceexecdef{}{Time.Conversion.ActualDate}{Funktion}{}{Das aktuelle
+  Datum formatiert
+  zur\"uckgeben}{\wancicode{Time.Conversion.ActualDate
+    [format='<format>']}}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{format}{Parameter f\"ur Formatierung
+  Standard: \%Y-\%m-\%d \wancisee{FormatierungDatumZeit}}{Nein}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{keine}{2001-11-11}{Das heutige Datum: (exec
+  Time.Conversion.ActualDate cexe)}{Das heutige Datum: 2001-11-11}
+
+\wancidmerceexecex{formatDate='europe'}{11.11.2001}{Das heutige Datum:
+  (exec Time.Conversion.Actual format='europe' cexe)}{Das heutige
+  Datum: 11.11.2001}
+
+\newpage
+\wancidmerceexecdef{}{Time.Conversion.ActualTime}{Funktion}{}{Das
+  aktuelle Zeit formatiert
+  zur\"uckgeben.}{\wancicode{Time.Conversion.ActualTime
+    [format='<format>']}}
+  
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{format}{Formatierung der Ausgabe des Datums
+  Standard: \%H-\%M-\%S (\wancisee{FormatierungDatumZeit})}{Nein}
+\wancidmerceexecparamdefend
+  
+\wancidmerceexecex{keine}{22:42:30}{Die aktuelle Zeit: (exec
+  Time.Conversion.ActualTime cexe)}{Die aktuelle Zeit: 22:42:30}
+  
+\wancidmerceexecex{format='\%H:\%M'}{22:42}{Die aktuelle Zeit: (exec
+  Time.Conversion.ActualTime format='\%H:\%M' cexe)}{Die aktuelle
+  Zeit: 22:42}
+  
+\newpage
+\wancidmerceexecdef{}{Time.Conversion.Calc}{Funktion}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Time.Conversion.DiffInDays}{Funktion}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Time.Conversion.MergeFieldsToDateTime}{Trigger}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Time.Conversion.UnixToLocal}{Funktion}{}{Eine
+  Zeitangabe als Unix-TimeStamp wird formatiert
+  ausgegeben}{\wancicode{Time.Conversion.UnixToLocal
+    secs=<Unix-Timestamp>[,format='<format>']}}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{secs}{Wert in
+  Sekunden. Standard = jetzt}{Nein}
+\wancidmerceexecparamdef{format}{Formatierung der Ausgabe.
+  Standard-Format: \%Y-\%m-\%d \%H:\%M:\%S
+  \wancisee{Formatierung}.}{Nein}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{secs=1000000000.00}{2001-09-09 01:46:40}{Sie waren
+  zuletzt eingeloggt am (exec Time.Conversion.UnixToLocal
+  secs=1000000000.00 cexe)}{Sie waren zuletzt eingeloggt am 2001-09-09
+  01:46:40}
+
+\wancidmerceexecex{secs=1000000000.00,format='\%d.\%m.\%Y
+  \%H:\%M:\%S'}{09.09.2001 01:46:40}{Sie waren zuletzt eingeloggt am
+  (exec Time.Conversion.UnixToLocal
+  secs=1000000000.00,format='\%d.\%m.\%Y \%H:\%M:\%S cexe)}{Sie waren
+  zuletzt eingeloggt am 09.09.2001 01:46:40 01:46:40}
+
+\newpage
+\wancidmerceexecdef{}{Time.Conversion.isGermanDate}{Funktion}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Time.Conversion.isISODate}{Funktion}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\subsection{Time.Get}
+
+\newpage
+\wancidmerceexecdef{}{Time.Get.ActualDay}{Funktion}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Time.Get.ActualMonth}{Funktion}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Time.Get.ActualYear}{Funktion}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Time.Get.ActualHour}{Funktion}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Time.Get.ActualMinute}{Funktion}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Time.Get.ActualSecond}{Funktion}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Time.Select.ActualDay}{Funktion}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Time.Select.ActualMonth}{Funktion}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Time.Select.ActualYear}{Funktion}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Time.Select.ActualHour}{Funktion}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Time.Select.ActualMinute}{Funktion}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Time.Select.ActualSecond}{Funktion}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\subsection{OS}
+
+\newpage
+\wancidmerceexecdef{}{OS.File.Exists}{Funktion}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{OS.File.Upload}{Trigger}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\subsection{Merchant}
+
+\newpage
+\subsubsection{Merchant.Article}
+
+\newpage
+\wancidmerceexecdef{}{Merchant.Article.isSpecialOffer}{Funktion}{ab 2.2.2}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{artNo}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Merchant.Article.GetPriceNet}{Funktion}{ab 2.2.2}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{artNo}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Merchant.Article.GetPriceGross}{Funktion}{ab 2.2.2}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{artNo}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Merchant.Article.GetTaxRate}{Funktion}{ab 2.2.2}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{artNo}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Merchant.Article.GetVAT}{Funktion}{ab 2.2.2}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{artNo}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\subsubsection{Merchant.Basket}
+
+\newpage
+\wancidmerceexecdef{}{Merchant.Basket.hasArticle}{Funktion}{ab 2.2.2}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{artNo}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Merchant.Basket.PutArticle}{Funktion / Trigger}{ab 2.2.2}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{artNo}{}{}
+\wancidmerceexecparamdef{qty}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Merchant.Basket.SetQty}{Funktion / Trigger}{ab 2.2.2}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{artNo}{}{}
+\wancidmerceexecparamdef{qty}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Merchant.Basket.IncQty}{Funktion / Trigger}{ab 2.2.2}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{artNo}{}{}
+\wancidmerceexecparamdef{qty}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Merchant.Basket.DecQty}{Funktion / Trigger}{ab 2.2.2}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{artNo}{}{}
+\wancidmerceexecparamdef{qty}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Merchant.Basket.SumQty}{Funktion / Trigger}{ab 2.2.2}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{artNo}{}{}
+\wancidmerceexecparamdef{qty}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Merchant.Basket.RemoveArticle}{Funktion / Trigger}{ab 2.2.2}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{artNo}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Merchant.Basket.Remove}{Funktion / Trigger}{ab 2.2.2}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{keine}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Merchant.Basket.GetSumNet}{Funktion}{ab 2.2.2}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{curr}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Merchant.Basket.GetSumGross}{Funktion}{ab 2.2.2}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{curr}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Merchant.Basket.GetSumVAT}{Funktion}{ab 2.2.2}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{curr}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\subsection{Messaging}
+
+\newpage
+\wancidmerceexecdef{}{Messaging.Email.Send}{Funktion / Trigger}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\wancidmerceexecdef{}{Messaging.Memo}{Funktion / Trigger}{}{}{}{}
+
+\wancidmerceexecparamdefbegin
+\wancidmerceexecparamdef{}{}{}
+\wancidmerceexecparamdefend
+
+\wancidmerceexecex{}{}{}{}
+
+\newpage
+\subsection{Auction}
+
+\newpage
+\subsection{Formatierung von Datums- und Zeitangaben}
+\label{FormatierungDatumZeit}
+\index{Formatierung}
+
+Innerhalb eines Formats sind alle ASCII-Zeichen erlaubt. Diese werden
+1:1 ausgegeben.
+
+\medskip Folgende Formatelemente sind bekannt:
+
+\begin{tabular*}{128mm}{l p{100mm}}
+\hline
+\wancitableheader{Bezeichner} & \wancitableheader{Beschreibung}\\
+\hline
+\%a & Der systemspezifische Wert f\"ur den abgek\"urzten Wochentag.\\
+\hline
+\%A & Der systemspezifische Wert f\"ur den Wochentag.\\
+\hline
+\%b & Der systemspezifische Wert f\"ur den agek\"urzten Monat.\\
+\hline
+\%B & Der systemspezifische Wert f\"ur den Monat.\\
+\hline
+\%c & Der systemspezifische Wert f\"ur Datum und Zeit.\\
+\hline
+\%d & Der Tag im Monat als Ganzzahl {[}01, 31{]}.\\
+\hline
+\%H & Die Stunde (24-h Format) als Ganzzahl {[}00, 23{]}.\\
+\hline
+\%I & Die Stunde (12-h Format) als Ganzzahl {[}00, 12{]}.\\
+\hline
+\%j & Der Tag im Jahr als Ganzzahl {[}001, 366{]}.\\
+\hline
+\%m & Der Monat als Ganzzahl {[}01, 12{]}.\\
+\hline
+\%M & Die Minute als Ganzzahl {[}00, 59{]}.\\
+\hline
+\%p & Die Systemspezifische Entsprechung f\"ur AM und PM.\\
+\hline
+\%S & Die Sekunde als Ganzzahl {[}00, 59{]}.\\
+\hline
+\%U & Die Nummer der Woche im Jahr als Ganzzahl (Sonntag ist der erste 
+      Tag in der Woche) als Ganzzahl {[}00, 53{]}. Alle Tage eines neuen
+      Jahres vor dem ersten Sonntag im Jahr liegen in der Woche 0.\\
+\hline
+\%w & Der Wochentag als Ganzzahl {[}0 (Sonntag), 6 (Samstag){]}.\\
+\hline
+\%W & Die Nummer der Woche im Jahr als Ganzzahl (Montag ist der erste
+      Tag in der Woche) als Ganzzahl {[}00,53{]}. Alle Tage eines neuen
+      Jahres vor dem ersten Montag im Jahr liegen in der Woche 0.\\
+\hline
+\%x & Der Systemspezifische Wert f\"ur das Datum.\\
+\hline
+\%X & Der Systemspezifische Wert f\"ur die Zeit.\\
+\hline
+\%y & Das Jahr im Jahrhundert als Ganzzahl {[}00, 99{]}.\\
+\hline
+\%Y & Die Jahreszahl als Ganzzahl.\\
+\hline
+\%Z & Die Bezeichnung der Zeitzone\\
+\hline
+\%\% & Zur Ausgabe eines Prozentzeichens.\\
+\hline
+europe & Alias f\"ur \%D.\%M.\%Y \%H:\%M:\%S\\
+\hline
+ISO & Alias f\"ur \%Y-\%M-\%D \%H:\%M:\%S\\
+\hline
+\end{tabular*}

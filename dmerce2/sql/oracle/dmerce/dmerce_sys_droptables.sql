@@ -1,0 +1,17 @@
+DROP TABLE availprojects;
+DROP TABLE coldefs;
+DROP TABLE colpermcounts;
+DROP TABLE colperms;
+DROP TABLE configuration;
+DROP TABLE ippool;
+DROP TABLE log;
+DROP TABLE manageprojects;
+DROP TABLE mclg;
+DROP TABLE projectnames;
+--ALTER TABLE samsessions ENABLE TABLE LOCK;
+DROP TABLE samsessions;
+DROP TABLE sendemail;
+DROP TABLE tabdefs;
+DROP TABLE tabperms;
+DROP TABLE templates;
+DROP TABLE uxsgroups;

@@ -1,0 +1,88 @@
+%%%
+\part{Vorwort}
+
+%%
+\chapter{Einleitung}
+
+Diese Dokumentation ist die komplette Beschreibung von dmerce. Sie ist
+gedruckt, als DVI, Postscript, HTML und PDF verf\"{u}gbar. Diese
+Dokumentation ist nach bestem Wissen erstellt worden. F\"{u}r
+eventuelle Fehler in der Dokumentation und er daraus resultierenden
+Folgen \"{u}bernimmt die 1Ci GmbH keine Gew\"{a}hrleistung.
+
+Weitere Resourcen zu dmerce:
+
+\begin{itemize}
+\item \href{dmerce}{http://www.1ci.de/dmerce}
+\item \href{1Ci}{http://www.1ci.de}
+\item \href{dmerce-ref}{http://www.1ci.de/dmerce/referenzen}
+\end{itemize}
+
+\section{Warum dmerce?}
+
+dmerce stellt Inhalte aus Datenbanken im Web dar.
+
+- Kosten/Nutzen
+- leicht zu handhaben
+- Geschwindigkeit
+- gute kombination aus einem ausgegluegelten system auf der einen seite und wenig
+  aber gezieltem aufwand auf der anderen seite (der aufwand liegt dort, wo auch
+  die kontrolle liegt; beim HTMLer/Templater)
+- gratwanderung zwischen aufwendiger auftragsprogrammierung und einem (nicht zu 
+  kompliziertem) framework, bei sehr gutem funktionsumfang
+- informationssysteme bestehen zu einem grossen teil daraus, wann wer (authentisierung,
+  autohorisierung/rechtesystem) wie (art und weise der sicht auf daten) wo/von wo zugriff
+  auf daten erhaelt
+
+... ist aus diesen gruenden eine gute investition fuer die zukunft
+
+TECHNIK:
+--------
+
+ Wie und auf welche Datenbank
+zugegriffen wird, ergibt sich aus dem Aufruf.
+
+dmerce basiert auf Templates.
+Templates sind Vorlagen f\"{u}r Webseiten oder Emails. In die Templates werden
+Elemente der dmerce Template Language eingef\"{u}gt. Durch die Verwendung von
+Templates k\"{o}nnen viele, in der Struktur \"{a}hnliche, Datenbankabfragen
+mit einem einzigen Template ausgegeben werden. Der Aufwand in der Gestaltung
+und Erstellung von vielen gleichartigen Seiten entf\"{a}llt. Wird die Datenbank
+erg\"{a}nzt oder ge\"{a}ndert sind die neuen Eintr\"{a}ge sofort im Web verf\"{u}gbar,
+die aufwendige Pflege von vielen Seiten entf\"{a}llt damit ebenso.
+
+Alle Templates
+befinden sich in einem Verzeichnis templates, welches sich im Root des Webservers
+befindet. Dieses Verhalten kann in der Konfiguration ver\"{a}ndert werden.
+In diesem Verzeichnis k\"{o}nnen wiederum Unterverzeichnisse zur Strukturierung
+der Templates eingerichtet werden. Ein Template enth\"{a}lt im Regelfall zwei
+Inhalte, die Information \"{u}ber die Zugriffststeuerung und eine Schleifenbedingung,
+um auch mehrfache Treffer - aufgrund des Datenbankaufrufs - auf die Datenbank
+anzeigen zu k\"{o}nnen. Innerhalb der Schleifenbedingung finden sich Platzhalter
+f\"{u}r die Datenbankfelder. In diesen wird der Inhalt eines Datenbankfeldes
+ausgegeben.
+
+%%
+\section{Konventionen}
+
+Wir beschreiben hier die in diesem Buch verwendeten Schreibweisen. Wir versuchen dabei,
+uns an g\"angige Layouts zu halten, damit das Lesen sich entsprechend leicht gestaltet.
+
+\section{Schreibweisen in diesem Buch}
+
+\begin{tabular*}{128mm}{p{50mm} p{70mm}}
+\hline
+\wancitableheader{Typ} & \wancitableheader{Schrift} \\
+\hline
+UNIX-Befehle, Programmcode, 
+Konfigurationsdirektiven      & \fontsize{9}{10pt}\usefont{OT1}{cmtt}{m}{n}
+                                Werden in dieser Schrift gehalten (Courier 8 Punkt)\normalfont \\
+\hline
+Platzhalter                   & Sehen so aus: \wancicode{$<$platzhalter$>$} und dienen
+                                dazu zu zeigen, dass hier ein Wert vom Leser eingesetzt
+                                werden soll \\
+\hline
+Slang der 1Ci                 & W\"orter, die dem Wortschatz der 1Ci entspringen sind
+                                \wancislang{in dieser Schrift kursiv} gehalten\\
+\hline
+\end{tabular*}

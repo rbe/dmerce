@@ -1,0 +1,1 @@
+create sequence t_customer_seq start with 1 increment by 1 nomaxvalue nocache nocycle order;

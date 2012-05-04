@@ -1,0 +1,2 @@
+#!/bin/sh
+java com.wanci.dmerce.cli.Whois $*

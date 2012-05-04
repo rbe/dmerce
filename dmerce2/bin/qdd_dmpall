@@ -1,0 +1,60 @@
+#!/bin/ksh
+
+. ${DMERCE_HOME}/lib/libsh
+. ${DMERCE_HOME}/lib/libdmerce
+. ${DMERCE_HOME}/lib/dmercerc
+
+
+
+usage() {
+    echo "ERROR: you must supply project
+
+$0 [arguments]
+arguments ::=
+              mysqlrootpwd                   password of mysql root user
+
+"
+}
+
+check_cfg() {
+    prj=$1
+    f=`grep FQHN ${prj}`
+    d=`grep DocRoot ${prj}`
+    projectfqhn=`cfg_get_standard "${f}"`
+    projectdestdir=`cfg_get_standard "${d}"`
+    if [ x"${projectfqhn}" = x"" ] ; then
+	echo "`date` : NO FQHN FOUND IN ${prj}"
+	echo "`date` : SKIPPING"
+    elif [ x"${projectdestdir}" = x"" ]; then
+	echo "`date` : NO projectdestdir FOUND IN ${prj}"
+	echo "`date` : SKIPPING"
+    else
+	dmp_prj $projectfqhn
+    fi
+}
+
+dmp_prj() {
+    projectfqhn=$1
+    #projectdestdir=$2
+    echo "dmerce dmp projectfqhn=${projectfqhn} data=1 mysqlrootpwd=${mysqlrootpwd}"
+}
+
+prj_dirs() {
+    prjs=`find $DMERCE_WEBSITES -name dmerce.cfg`
+    for i in ${prjs}
+      do
+      check_cfg $i
+    done
+}
+
+copyr
+discover_env
+system_init
+eval $*
+if [ x"${mysqlrootpwd}" = x"" ]; then
+    usage
+    exit 0
+fi
+echo "CREATE DUMP OF ALL DMERCE PROJECTS"
+echo
+prj_dirs

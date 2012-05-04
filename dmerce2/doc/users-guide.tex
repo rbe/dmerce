@@ -1,0 +1,919 @@
+%%%
+\part{Users Guide}
+
+%%
+\chapter{Der Ablauf}
+
+Dieses Kapitel beschreibt den Ablauf eines Requests und Reply von
+dmerce. Derzeit basiert dmerce auf dem Konzept des Common Gateway
+Interface. Dies bedeutet ...
+
+\newpage
+\section{Aufbau und Struktur eines Aufrufes}
+
+Ein dmerce Aufruf per Hyperlink sieht z. B. wie folgt aus:
+
+\wancicodeblock{/1Ci/dmerce?qTemplate=Hallo,dmerce,Welt\&a=1\&b=2\&c=3}
+
+Die Bedeutung der einzelnen Parameter:
+
+\begin{itemize}
+\item \wancicode{/1Ci/dmerce?} leitet die folgenden Parameter an
+  dmerce weiter, das Fragezeichen bezeichnet hierbei den Beginn der
+  \"ubergebenen Parameter. Achtung: das Fragezeichen darf nur einmal
+  benutzt werden!
+\item \wancicode{qTemplate=Hallo,dmerce,Welt} \"ubergibt dmerce den
+  Parameter qTemplate mit dem Wert Hallo,dmerce,Welt, was dmerce sagt,
+  dass das Template \wancicode{templates/Hallo/dmerce/Welt.html}
+  genutzt werden soll \wancisee{Templates}.
+\item \wancicode{\&} bezeichnet die Trennung zwischen verschiedenen
+  Parametern und sollte nur dann verwendet werden, wenn es noch
+  weitere Parameter gibt
+\item \wancicode{a=1} \"ubergibt dmerce den Parameter a mit dem Wert
+  1, hierbei handelt es sich um einen willk\"urlichen Parameter und
+  Wert, den Sie aus eigenem Antrieb heraus definiert haben
+\item \wancicode{b=2} \"ubergibt dmerce den Parameter b mit dem Wert
+  2, hierbei handelt es sich um einen willk\"urlichen Parameter und
+  Wert, den Sie aus eigenem Antrieb heraus definiert haben
+\item \wancicode{c=3} \"ubergibt dmerce den Parameter c mit dem Wert
+  3, hierbei handelt es sich um einen willk\"urlichen Parameter und
+  Wert, den Sie aus eigenem Antrieb heraus definiert haben
+\end{itemize}
+
+\medskip
+
+Das gleiche Beispiel per Formular:
+
+\wancicodeblock{
+  <form method=''post'' action=''/1Ci/dmerce''>\\
+  <input type=''hidden'' name=''qTemplate'' value=''Hallo,dmerce,Welt''>\\
+  <input type=''hidden'' name=''a'' value=''1''>\\
+  <input type=''hidden'' name=''b'' value=''2''>\\
+  <input type=''hidden'' name=''c'' value=''3''>\\
+  </form>
+}
+
+\section{Alles der Reihe nach}
+
+\begin{enumerate}
+\item Entgegennehmen, parsen und auswerten des Requests
+\item Auswerten der privaten Variablen
+\item Einlesen und Auswerten des Templates
+\item Ggf. pr\"ufen SAM und UXS den Request, sofern es keine
+  Beanstandungen gibt erfolgt die weitere Ausf\"uhrung
+\item Ausf\"uhren von Triggern (per \wancicode{qTrigger})
+\item Datenbankmanipulation
+\item Ausf\"uhren von Triggern (per \wancicode{qTriggerAfter})
+\item Ausgabe
+\end{enumerate}
+
+\chapter{Datenbanken und Tabellen}
+
+\section{Tabellen}
+
+Folgende Felder/Feldnamen gelten in einer dmerce-Umgebung als
+reserviert:
+
+\medskip
+
+\begin{tabular*}{128mm}{p{35mm} p{50mm} p{30mm}}
+\hline 
+\wancitableheader{Feldname} & \wancitableheader{Bedeutung} & \wancitableheader{Notwendig?}\\
+\hline
+ID & Eindeutige ID eines Datensatzes; wird zur Referenzierung verwendet & Ja\\
+\hline
+active & Ist ein Datensatz aktiv? Je nach Einstellung werden Datens\"atze mit active = 0 nicht angezeigt & Empfohlen, f\"ur Verwendung des Rechtesystems UXS erforderlich\\
+\hline
+CreatedBy & ID eines Users, der den Datensatz angelegt hat& Ja, wenn SAM/UXS benutzt wird\\
+\hline
+CreatedDateTime & Timestamp, bei dem der Datensatz angelegt wurde & Ja\\
+\hline
+ChangedBy & ID eines Users, der den Datensatz ge\"andert hat & Ja, wenn SAM/UXS benutzt wird\\
+\hline
+ChangedDateTime & Timestamp, bei dem der Datensatz ge\"andert wurde & Ja\\
+\hline
+public          & Ist dieser Datensatz f\"ur alle zu sehen? & Ja, wenn UXS benutzt wird\\
+\hline
+\end{tabular*}
+
+\medskip
+
+Die Bedeutung der einzelnen Felder wird f\"ur UXS \wancisee{UXS} und
+SAM \wancisee{SAM} an anderer Stelle erkl\"art.
+
+%%
+\chapter{Templates}
+\label{Templates}
+
+Dieses Kapitel beschreibt die dmerce Templates genauer. Templates
+(engl., zu deutsch Vorlagen) bestehen aus einer HTML-Seite, in die
+dmerce Makros und Konstrukte eingebettet werden.
+
+\newpage
+\section{Organisation von Templates auf dem Filesystem}
+
+Templates sind in Verzeichnissen organisiert. Um z. B. das Template
+\wancicode{templates/Hallo/dmerce/Welt.html} aufzurufen, lautet der
+Parameter \wancicode{qTemplate} f\"ur dmerce
+\wancicode{Hallo,dmerce,Welt}.
+\wancisee{AdminGuideOrganisationTemplates}
+
+\section{Aufbau und Struktur eines Templates}
+
+Ein dmerce Template hat quasi keinen bestimmten Aufbau. Lediglich
+Konstruke wie \wancicode{if/else/endif} \wancisee{BibMakroif} und
+\wancicode{repeat/endrepeat} \wancisee{BibMakrorepeat} stellen
+Bl\"ocke dar.
+
+\section{Einf\"ugen von Templates in Templates zur Laufzeit}
+
+\section{Das Fehlertemplate}
+
+Im Falle eines schwereren Fehlers, der nicht per Meldung innerhalb
+eines Templates angezeigt werden kann, wird das Template
+\wancicode{templates/error.html} aufgerufen. Dieses Template ist vom
+Templater erstellt worden, der z. B. pro Website die Anzeige solcher
+Fehler in einem bestimmten Design darstellen m\"ochte. Existiert
+dieses Template nicht, so wird eine HTML-Seite von dmerce automatisch
+generiert, die dann den Fehler genauer beschreibt.
+
+%%
+\chapter{Variablen}
+
+Dieses Kapitel beschreibt die Verwendung von Variablen in dmerce.
+Variablen sind Container, die einen Namen und einem ihr zugeordneten
+Wert besitzen.
+
+\newpage
+\section{Syntax}
+
+Die Syntax f\"ur private Variablen lautet: \wancicodeblock{(var x)}
+Die Syntax f\"ur Variablen lautet: \wancicodeblock{(form x)} wobei x
+jeweils den Namen einer Variable bezeichnet.
+
+\subsection{Geltungsbereich}
+
+Variablen k\"onnen an jeder beliebigen Stelle innerhalb von Makros
+angesprochen werden. Sie bilden die unterste Schicht der dmerce
+Makros.
+
+\subsection{Listen}
+
+Wird eine Variable doppelt \"ubergeben, so gibt es zwei
+M\"oglichkeiten: entweder dies ist ein Fehler vom Templater, der dazu
+f\"uhrt, dass dmerce einen Fehler auswirft oder aber es handelt sich
+um Absicht, da ein paar Funktionalit\"aten von dmerce mit Listen von
+Werten (mehrere Werte unter ein und derselben Bezeichnung einer
+Variable abgelegt sind eine Liste) umgehen k\"onnen. Solche Listen
+werden bei Funktionen angewandt, die z. B. mehrere
+Datenbankmanipulationen wie Insert \wancisee{MultipleInsert}, Update
+\wancisee{MultipleUpdate} und Delete \wancisee{MultipleDelete}
+ausf\"uhren.
+
+\section{Werte aus Hyperlinks und Formularen}
+\label{Variablen}
+
+Auf Variablen aus Hyperlinks oder Formularen lassen sich unter dmerce
+unter Verwendung des Makros \wancicode{(form)} zugreifen. Bitte
+beachten Sie, dass Variablen, die mit dem Buchstaben \wancicode{q}
+beginnen, immer als private Variable angesehen werden
+\wancisee{PrivateVariablen}.
+
+\wancidmerceqvardef{}{ignore\_}{ignore\_$<$feldname$>$=$<$wert$>$}{ab
+  1.2.6}{BASIS}{Um Variablen zu \"ubergeben, die nicht bei
+  automatischen Manipulationen der Datenbank ber\"ucksichtig werden
+  sollen und auf die man im folgenden Template per \wancicode{(form
+    $<$feldname$>$)} trotzdem zur\"uckgreifen m\"ochte, muss ein
+  \wancicode{ignore\_} vor die Variable gesetzt werden}
+
+\section{Private Variablen oder das heilige Q}
+\label{PrivateVariablen}
+
+dmerce hat private Variablen. Diese beginnen ausschliesslich mit dem
+Buchstaben \wancicode{q}, um zu verhindern mit bestehenden Systemen in
+Konflikt zu geraten. Variablen, die \"ubergeben werden und mit
+\wancicode{q} beginnen sind somit per \wancicode{(var)} zug\"anglich.
+
+Desweiteren werden alle Werte, die zur Steuerung von dmerce beitragen
+\"uber diesen Weg \"ubergeben.
+
+Es gibt eine Reihe von vordefinierten privaten Variablen, die Auskunft
+\"uber das aktuelle System/die aktuelle Website geben.
+
+\wancidmerceqvardef{qvarqTemplate}{qTemplate}{qTemplate={[}Verzeichnis{[},...{]}}{ab
+  1.0}{BASIS}{Gibt dmerce das Template an, dass angezeigt werden
+  soll}{}
+
+\wancidmerceqvardef{VarqSuperSearch}{qSuperSearch}
+{qSuperSearch=\wancicode{$<$Feld$>$$<$Operator$>$$<$Wert$>$
+    {[}$<$logischer Operator$>$...{]}}}{ab 1.2.6}{BASIS}{Private
+  Variable f\"ur einen Suchstring, der auf eine Datenbankabfrage
+  abgebildet wird; wird zus\"atzlich aus qSearch{*}
+  (\wancisee{qSearch}) zusammengesetzt. Da ab dmerce 2.0.0 die
+  letztendliche Abfrage nur \"uber das Makro \wancicode{(repeat)}
+  zusammengesetzt wird, wird \wancicode{qSuperSearch} nur noch
+  automatisch von dmerce im Hinblick auf \wancicode{qSearch}
+  (\wancisee{qSearch}) behandelt.  Wird aus Gr\"unden der
+  Abw\"artskompatibilit\"at und des besseren Verst\"andnisses auch
+  noch von Templatern benutzt.}
+
+\subsubsection{Syntax}
+\label{qSuperSearchOperatoren}
+
+Der qSuperSearch versteht folgende Syntax. Diese Symbole wurde so
+gew\"ahlt, dass sie immer leicht \"uber HTTP zu \"ubergeben sind.
+Klammerung kann wie gewohnt verwendet werden.
+
+\medskip
+
+\begin{tabular*}{128mm}{p{30mm} p{90mm}}
+\wancitableheader{Symbol} & \wancitableheader{\"Aquivalent in SQL}\\
+\hline
+{*} & gleich; =\\
+\hline
+\textasciitilde{} & LIKE '\%$<$Wert$>$\%'\\
+\hline
+: & und; AND\\
+\hline
+{|} & oder; OR\\
+\hline
+{!} & nicht; NOT\\
+\hline
+{!}{*} & ungleich; {!}=\\
+\hline
+{[} & kleiner; $<$\\
+\hline
+{]} & gr\"osser; $>$\\
+\hline
+{@} & begrenze; LIMIT\\
+\hline
+\{ & ordne nach Feld; ORDER BY\\
+\hline
+\} & gruppiere nach Feld; GROUP BY\\
+\hline
+\end{tabular*}
+
+\wancidmerceqvardef{}{qSearch{*}}{keine}{ab 1.2.6}{BASIS}{qSearch{*}
+  steht f\"ur eine Gruppierung von privaten Variablen, die alle mit
+  dem Prefix qSearch beginnen. Der Stern kennzeichnet diese als
+  Wildcard. Gemeint sind ferner \wancicode{qSearch\_},
+  \wancicode{qSearchName\_} und \wancicode{qSearchOp\_}.
+  
+  Im Hinblick auf Datenbankabfragen ist \wancicode{qSearch}* die
+  \wancicode{qSuperSearch}- Version aus HTML-Formularen heraus. Man
+  hat in Formularen nicht wie in Hyperlinks die M\"oglichkeit, viele
+  Werte zu einem Link zu formen und diesen dann an dmerce zu
+  \"ubergeben, damit dmerce exakt weiss, was es zu tun hat. Alle
+  \wancicode{qSearch}*-Variablen werden ausgewertet und dann (wie oben
+  beschrieben; \wancisee{VarqSuperSearch} in der privaten Variable
+  \wancicode{qSuperSearch} zusammengesetzt.}
+
+\subsubsection{qSearch\_, qSearchName\_ und qSearchFields\_}
+\label{qSearch}
+
+Syntax: \wancicode{qSearchFields\_$<$Bezeichnung$>$=$<$Feld{[},...{]}$>$}
+
+\medskip
+
+Beschreibe mit \wancicode{qSearchFields\_$<$Bezeichnung$>$} eine Liste
+von Datenbankfeldern, von denen \textit{eines} den in
+\wancicode{qSearchName\_$<$Bezeichnung$>$} genannten Wert enth\"alt.
+Bei der Suche wird der LIKE-Operator zur Suche verwendet, wenn nicht
+mit \wancicode{qSearchOp\_$<$Bezeichnung$>$} etwas anderes angegeben
+ist.  \wancicode{$<$Bezeichnung$>$} ist eine frei w\"ahlbare
+Bezeichnung, mit der diese Gruppierung der bei
+\wancicode{qSearchFields\_$<$Bezeichnung$>$} genannten Felder
+eindeutig benannt wird. Werden in einem Aufruf mehrere Aufrufe von
+diesem Typ verwendet, werden diese UND-verkettet!
+
+\subsection{qSearchOp\_}
+
+Enth\"alt den Operator \wancisee{qSuperSearchOperatoren}, der auf
+diesen Teil einer Abfrage angewendet werden soll.
+
+\wancidmerceqvardef{}{qs}{(var qs)}{ab 2.1.0}{SAM}{Enth\"alt die
+  aktuelle Session ID. Damit das Feature der automatischen Erkennung
+  von SAM, das auf IP-Adressen basiert, nicht von dmerce genutzt wird,
+  kann der Templater die Session ID manuell \"ubergeben. Empfiehlt
+  sich f\"ur Umgebungen, in denen Clients oft ihre IP-Adresse
+  wechseln. Dazu geh\"oren DialUp- Clients, deren Timeout zum Beenden
+  einer Verbindung kleiner ist, als das von SAM verwendete Timeout.
+  Sp\"ater z\"ahlt auch IPv6 dazu, indem es die M\"oglichkeit geben
+  wird, dass ein Client seine IP von Request zu Request \"andert, um
+  seine Herkunft zu verbergen.}
+
+\wancidmerceqvardef{}{qButton}{keine}{ab 1.0; seit dmerce 2.2.3
+  \"uberfl\"ussig.}{BASIS}{Man verwendet \wancicode{qButton} um
+  Datenbankmanipulationen wie INSERT, UPDATE oder DELETE ausf\"uhren
+  zu lassen. Wird dieser Parameter nicht mit irgendeinem Wert
+  \"ubergeben, so findet keine Manipulation von Daten statt.}
+
+\wancidmerceqvardef{}{qDelete}{qDelete={[}$<$Tabelle$>${[},...{]}}{ab
+  1.0}{BASIS}{}
+
+\wancidmerceqvardef{}{qInsert}{qInsert={[}$<$Tabelle$>${[},...{]}}{ab
+  1.0}{BASIS}{}
+
+\wancidmerceqvardef{}{qUpdate}{qUpdate={[}$<$Tabelle$>${[},...{]}}{ab
+  1.0}{BASIS}{}
+
+\wancidmerceqvardef{}{qTrigger}{qTrigger={[}$<$Paket.Modul.Funktion$>${[},...{]}}{ab
+  1.2.6}{BASIS}{}
+
+\wancidmerceqvardef{}{qTriggerAfter}{qTrigger={[}$<$Paket.Modul.Funktion$>${[},...{]}}{ab
+  1.2.6}{BASIS}{}
+
+\wancidmerceqvardef{}{qLogin*}{}{ab 1.2.0}{BASIS}{}
+
+\paragraph{qLogin}
+\paragraph{qLoginTable}
+\paragraph{qLoginField}
+\paragraph{qPasswdField}
+\paragraph{qPasswd}
+
+\wancidmerceqvardef{qvarVERSION}{VERSION}{(var VERSION)}{ab 1.2.4}{BASIS}{Gibt
+  die aktuelle Version von dmerce (z. B. \dmercever) aus.}
+
+\wancidmerceqvardef{qvarSSL}{SSL}{(var SSL)}{ab 1.2.6}{BASIS}{Gibt den
+  Status der HTTP-Verbindung im Bezug auf SSL zur\"uck. 0 = SSL wird
+  nicht verwendet (Port 80), 1 = SSL wird verwendet (Port 443), -1 =
+  Fehler, der Status der Verbindung konnte nicht erkannt werden}
+
+\section{Session-Variablen mit myvar}
+\label{myvar}
+
+Die Intention der \wancislang{myvar} ist es, dem Templater die
+M\"oglichkeit zu geben, pro Session und User einer Website eigens
+definierte Variablen sozusagen automatisch mitzuschleifen. Eine
+\wancislang{myvar} ist, einmal gesetzt, in jedem Template verf\"ugbar.
+Hierbei ist es nicht n\"otig, die Variable \"uber \wancicode{(form)}
+jedes Mal zu \"ubergeben. Ein Beispiel ist ein Online-Shop. Sie
+m\"ochten auf den Seiten der Registrierung oder den Seiten der
+Bestellung bestimmte Informationen vom User abfragen ohne diese gleich
+in der Datenbank zu speichern (reduziert Belastung der Datenbank!), da
+die Daten nur f\"ur den weiteren Ablauf der Seiten und nicht f\"ur Sie
+als Shop-Betreiber wichtig sind. Sie speichern also nach einer
+Abfrage, welche Lieferart der Kunde bevorzugt diese in einer
+\wancislang{myvar} und rufen diese Informationen Seiten sp\"ater
+wieder hervor.
+
+\bigskip
+
+Beispiel:
+
+\wancicodeblock{(set-myvar $<$name$>$ $<$wert$>$)}
+
+setzt die \wancislang{myvar} $<$name$>$ auf den Wert $<$wert$>$. Als
+Wert kann hier jedes andere dmerce Makro genutzt werden: z. B.
+
+\wancicodeblock{(set-myvar test (sql tabelle.feld))}
+
+setzt die \wancislang{myvar} $<$test$>$ auf den Wert von Tabelle.Feld
+aus der gerade laufenden Abfrage in einem \wancislang{repeat}
+\wancisee{repeat}. Siehe hierzu auch Kurz\"uberblick in der Bibliothek
+\vref{BibMakrosetmyvar} und \vref{BibMakrogetmyvar}
+
+%%
+\chapter{Kontrollstrukturen}
+
+Dieses Kapitel beschreibt die in dmerce zur Ver\"ugung stehenden
+Konstrollstrukturen.  Mit ihnen lassen sich Ausgaben per Template je
+nach verschiedensten Zust\"anden, die Sie als Templater sich
+ausdenken, reglementieren.
+
+\newpage
+\section{Fallabfragen}
+\label{Fallabfragen}
+
+Syntax: \wancicodeblock{(if $<$Ausdruck$>$)
+\\
+...\\
+weiterer HTML- und dmerce-Code\\
+...\\
+\\
+(endif)}
+
+Mit \wancicode{(if)} / \wancicode{(endif)} erzeugen Sie Abschnitte in
+einem Template, die nur dann ausgef\"uhrt werden, wenn der Ausdruck
+WAHR ist. \wancicode{(if)} / \wancicode{(endif)} darf geschachtelt
+werden.
+
+Eine kurze Definition und \"Ubersicht finden Sie in der Bibliothek
+\wancisee{BibMakroif}
+
+\subsection{Logische Bedingungen}
+
+Syntax: \wancicode{$<$Wert1$>$$<$Operator$>$$<$Wert2$>$}
+
+\medskip
+
+Eine Logische Bedingung ist der Vergleich von zwei oder mehreren
+Werten $<$Wert1$>$, $<$Wert2$>$ anhand eines Logischen Operators
+$<$Operator$>$ auf ein Ergebnis WAHR. Es k\"onnen nur gleichartige
+Werte verglichen werden. d.h. entweder vergleichen Sie Zahlenwerte
+oder Strings (Zeichenketten). Der Vergleich von Strings erfordert, das
+die zu vergleichenden Werte in Hochkomma (') eingefasst werden.
+
+\bigskip
+
+\begin{tabular*}{128mm}{p{30mm} p{90mm}}
+\wancitableheader{Operator} & \wancitableheader{Bedeutung}\\
+\hline
+$<$= & Kleiner gleich\\
+\hline 
+$>$= & Gr\"osser gleich\\
+\hline 
+== & gleich\\
+\hline 
+{!}= & ungleich\\
+\hline 
+\end{tabular*}
+
+\bigskip
+
+Beispiel 1: Vergleich von zwei Zahlenwerten
+
+\wancicodeblock{(if (who ID) != 20)}
+
+Wenn der Wert aus \wancicode{(who ID)} ungleich 20 ist, wird der
+Inhalt des Templates zwischen diesem if/endif-Block ausgewertet und
+ausgegeben.
+
+\medskip
+
+Beispiel 2: Vergleich von zwei Zeichenketten
+
+\wancicodeblock{(if '(who Name)' == 'Meier')}
+
+Wenn der String aus \wancicode{(who Name)} gleich Meier ist, wird der
+Inhalt zwischen dem if/endif-Block ausgef\"uhrt.
+
+\subsection{Logische Operatoren}
+
+Syntax: \wancicode{$<$Ausdruck1$>$$<$logischer Operator$>$$<$Ausdruck2$>$ ...}
+
+\medskip
+
+Logische Bedinungungen ($<$Statement$>$) k\"onnen durch Operatoren
+$<$Operator$>$ verkn\"upft werden. Das macht Sinn, wenn auf
+verschiedene Bedingungen gepr\"uft werden soll.
+
+\bigskip
+
+\begin{tabular*}{128mm}{p{30mm} p{90mm}}
+\wancitableheader{Operator} & \wancitableheader{Bedeutung}\\
+\hline
+and & UND-Verkn\"upfung. Beide Bedingungen m\"ussen WAHR ergeben, damit das if-Statement ausgef\"uhrt wird.\\
+\hline
+or & ODER-Verkn\"upfung. Eine der beiden Bedingungen muss WAHR ergeben, damit das if-Statement
+ausgef\"uhrt wird.\\
+\hline
+\end{tabular*}
+
+\bigskip
+
+Beispiel 1: Vergleich von zwei mal zwei Zahlenwerten UND-verkn\"upft
+
+\wancicodeblock{(if (who ID) != 20 and (who ID != 40)}
+
+Wenn der Wert aus (who ID) ungleich 20 UND ungleich 40 ist, wird der
+Inhalt des Templates zwischen diesem if/endif-Block ausgewertet und
+ausgegeben.
+
+\medskip
+
+Beispiel 2: Vergleich von zwei mal zwei Zeichenketten, oder verkn\"upft
+
+\wancicodeblock{(if '(who Name)' == 'Meier' or '(who Name)' ==
+  'Schulte')}
+
+Wenn der String aus (who Name) gleich Meier ODER Schulte ist, wird der
+Inhalt zwischen dem if/endif-Block ausgef\"uhrt.
+
+\medskip
+
+Beispiel 3: Vergleich von unterschiedlichen Datentypen
+
+\wancicodeblock{(if '(who Name)' == 'Meier' and (who ID) != 20)}
+
+Wenn der String aus (who Name) gleich Meier UND der Zahlenwert aus
+(who ID) ungleich 20 ist, wird der Inhalt zwischen dem if/endif-Block
+ausgegeben.
+
+%%
+\chapter{Datenbankabfragen}
+
+Ein Kernst\"uck und vor allem die Kernkompetenz von dmerce sind
+Datenbankabfragen. Dieses Kapitel beschreibt Ihnen die
+M\"oglichkeiten, die dmerce Ihnen in einem Projekt bietet.
+
+\newpage
+\section{Starten einer Datenbankabfrage mit \wancislang{repeat}}
+\label{repeat}
+
+Syntax: \wancicodeblock{(repeat ``$<$Bedingung$>$'')
+\\
+...\\
+weiterer HTML- und dmerce-Code\\
+...\\
+\\
+(endrepeat)}
+
+\medskip
+
+Der zwischen (repeat) und (endrepeat) stehende HTML- und dmerce-Code
+wird solange ausgef\"uhrt, wie das Query zutrifft und Datens\"atze
+zur\"uckgibt. Erst wenn alle Datens\"atze auszugeben sind, wird der
+Code hinter (endrepeat) ausgef\"uhrt.
+
+\subsection{Zugriff auf Ergebnisse einer Datenbankabfrage}
+
+Innerhalb eines Repeat werden die Felder der aktiven Datenbank-Tabelle
+in der Form (sql Tabelle.Feld) angesprochen.
+
+\medskip
+
+Beispiel:
+
+\wancicodeblock{(repeat ``Artikel.ID{]}0'')\\
+\\
+(sql Artikel.ArtNo) (sql Artikel.Bezeichnung)<br>\\
+\\
+(endrepeat)}
+
+\medskip
+
+Ausgabe:
+
+\bigskip
+
+\begin{tabular*}{128mm}{p{30mm} p{90mm}}
+12355 & 500 MHz Pentium II SECII\\
+32123 & 700 MHz Pentium III\\
+42121 & 800 MHz Athlon\\
+95331 & 400 MHz PowerPC\\
+\end{tabular*}
+
+\bigskip
+
+Alle Eintr\"age der Tabelle Artikel, auf die der verwendete Query
+zutrifft, werden mit der Artikelnummer (Feldname ArtNo) und der
+Bezeichnung (Feldname Bezeichnung) ausgegeben.
+
+\subsection{(sql Tabelle.Feld ``Bedingung'')}
+\label{sqltf}
+
+Innerhalb eines Repeat werden die Felder einer Datenbank-Tabelle, die
+nicht per qTemplate oder qTN angeprochen wurde, ausgegeben. Um
+anzugeben, welcher Eintrag dieser Tabelle angesprochen werden soll,
+ist eine eindeutige Bedingung anzugeben. Diese Cross-Referenzen sind
+sehr n\"utzlich, um z.B. in einer Tabelle die Bezeichnung von
+Produktgruppen zu speichern und in der Tabelle, in welcher die Artikel
+gespeichert sind, nur noch die ID der Produktgruppe vorhalten zu
+m\"ussen. Dadurch ist die Tabelle Artikel wesentlich schneller nach
+Produktgruppen zu indizieren (schnellere Suche bei geringerer Last auf
+dem System) und die Bezeichnungen der Produktgruppen k\"onnen an einer
+zentralen Stelle gewartet werden.
+
+\medskip
+
+Beispiel:
+
+\wancicodeblock{(repeat ``Artikel.ID{]}0'')\\
+  \\
+  (sql Artikel.ArtNo) (sql Produktgruppen.Name ``ID*(sql Artikel.prodgrp)'')
+  (sql Artikel.Bezeichnung)<br>\\
+  \\
+  (endrepeat)}
+
+\medskip
+
+Ausgabe:
+
+\bigskip
+
+\begin{tabular*}{128mm}{p{30mm} p{30mm} p{60mm}}
+12335 & Prozessor & 500 MHz Pentium II SECII\\
+32123 & Prozessor & 700 MHz Pentium III\\
+Z6352 & Festplatte & IBM SCSI 18,3 GB\\
+42121 & Prozessor & 800 MHz Athlon\\
+95331 & Prozessor & 400 MHz PowerPC\\
+A7564 & L\"ufter & L\"ufter CPU-Cooler\\
+\end{tabular*}
+
+\bigskip
+
+Alle Eintr\"age der Tabelle Artikel, auf die das verwendete Query
+zutrifft, werden mit der Artikelnummer (Feldname ArtNo), der
+Produktgruppe und der Bezeichnung (Feldname Bezeichnung) ausgegeben.
+
+\medskip
+
+Komplexes Beispiel:
+
+\wancicodeblock{(repeat ``Artikel.ID{]}0'')\\
+  \\
+  (sql Artikel.Bezeichnung) (sql Lieferant.Land ``ID*(sql Artikel.LieferantID)'')<br>\\
+  \\
+  (endrepeat)}
+
+\medskip
+
+Ausgabe:
+
+\medskip
+
+IBM SCSI 18,3 GB Slowakei
+
+\bigskip
+
+In der Tabelle Artikel enth\"alt das Feld Lieferant die ID des
+Lieferanten. Anhand dieser ID kann eindeutig auf die Tabelle Lieferant
+zugegriffen werden. In dieser findet sich im Feld Land die
+internationale Vorwahl des Lieferanten. Anhand dieser Vorwahl kann die
+Tabelle Land mit dem Feld Name eindeutig angesprochen werden.
+
+\subsection{Definition: Der \wancislang{inner-repeat}}
+
+Der zwischen (repeat $<$qSuperSearch$>$) HTML- und dmerce-Code, wird
+solange ausgef\"uhrt, wie der Query mit $<$qSuperSearch$>$ auf die
+Datens\"atze zur\"uckgibt. Erst wenn alle Datens\"atze auszugeben
+sind, wird der Code hinter (endrepeat) ausgef\"uhrt.
+
+\medskip
+
+Beispiel:
+
+\wancicodeblock{(repeat ``Artikel.ArtNo\textasciitilde{}12'')\\
+\\
+(sql Artikel,ArtNo) (sql Artikel.Bezeichnung)<br>\\
+\\
+(endrepeat)}
+
+\medskip
+
+Ausgabe:
+
+\bigskip
+
+~~~~~~~~~~~~~~~~~ 12355~~ 500 MHZ Pentium II SECII
+
+~~~~~~~~~~~~~~~~~ 32123~~ 700 MHZ Pentium III
+
+~~~~~~~~~~~~~~~~~ 42121~~ 800 MHZ Athlon
+
+\bigskip
+
+Alle Eintr\"age in der Tabelle Artikel, auf die der verwendete Query
+ArtNo\textasciitilde{}12 zutrifft, werden ausgegeben.
+
+\subsection{Datenbankabfragen optimieren: SQL Join}
+
+\section{Systematiken f\"ur Abfragen}
+
+\subsection{Abfragen aus Formularen}
+\subsubsection{Aus verschiedenen Werten eines Formulares}
+\paragraph{qSearch{*}}
+
+\subsubsection{Ignorieren von Variablen bei einer Datenbankoperation: ignore\_}
+
+\section{Operatoren f\"ur Datenbankabfragen}
+
+\subsection{Arithmetische Operatoren}
+\subsubsection{gleich}
+\subsubsection{ungleich}
+\subsubsection{gr\"osser als}
+\subsubsection{kleiner als}
+
+\subsection{Logische Operatoren: Verkn\"upfungen}
+\subsubsection{Wildcards}
+\subsubsection{AND}
+\subsubsection{OR}
+\subsubsection{NOT}
+\subsubsection{LIKE}
+
+\subsection{Klammerung}
+
+\subsection{Sortieren, Gruppieren und Einschr\"anken von Ergebnissen}
+\subsubsection{Ordnen: ORDER BY}
+\subsubsection{Gruppieren: GROUP BY}
+\subsubsection{Limitieren: LIMIT}
+
+%%
+\chapter{Datenbankmanipulation}
+
+\section{qInsert}
+\label{qInsert}
+\label{MultipleInsert}
+
+\section{qUpdate}
+\label{qUpdate}
+\label{MultipleUpdate}
+
+\section{qDelete}
+\label{qDelete}
+\label{MultipleDelete}
+
+%%
+\chapter{Bibliothek}
+
+Dieser Abschnitt gibt als Nachschlagewerk einen kompletten \"Uberblick
+\"uber alle Komponenten von dmerce.
+
+\newpage
+\section{Die Gesetze}
+
+dmerce ist ein System das sich strenge Gesetze zu nutze macht, um
+dadurch qualitative Anwendungen zu erstellen.
+
+\section{Die Namen}
+
+\section{Die Makros}
+
+Makros werden in folgender Reihenfolge nacheinander ausgewertet:
+
+\medskip
+
+\begin{enumerate}
+\item (form)
+\item (var)
+\item (who)
+\item (sql dboid)
+\item (sql)
+\item (sqlf)
+\item (sql) als Cross-Referenz
+\item (sqlf) als Cross-Referenz
+\item (sql count)
+\item (sql rowcount)
+\item (sql index)
+\item (sql index1)
+\item (sql SELECT)
+\item (get-myvar)
+\item (exec)
+\item (set-skin)
+\item (set-skin-stylesheet)
+\item (skin-img)
+\item (skin-imgtag)
+\item (set-myvar)
+\end{enumerate}
+
+\medskip
+
+Sie k\"onnen dabei in absteigender Reihenfolge verschachtelt werden.
+
+\bigskip
+
+\wancidmercemacrodef{BibMakroappendmyvar}{(append-myvar)}{(append-myvar
+  $<$name$>$ $<$wert$>$)}{ab 2.2.0}{BASIS}{H\"angt einen Wert
+  $<$wert$>$ an den Wert der bestehenden myvar $<$name$>$ an}{}
+
+\wancidmercemacrodef{BibMakroexec}{(exec)}{(exec Modul.Paket.Funktion
+  {[}$<$Argumente$>${]})}{ab 1.2.6}{BASIS}{Ruft eine Funktion
+  auf.}{\vref{Funktionen}}
+
+\wancidmercemacrodef{BibMakroform}{(form)}{(form $<$name$>$)}{ab
+  1.0.0}{BASIS}{Gibt einen Wert aus einer Variable $<$name$>$
+  zur\"uck, die per Hyperlink oder Formular \"ubergeben wurde.}{}
+
+\wancidmercemacrodef{BibMakrogetmyvar}{(get-myvar $<$name$>$)}{}{ab
+  2.2.0}{BASIS}{Liefert den Inhalt der myvar $<$name$>$ zur\"uck, die
+  vorher mit \wancicode{(set-myvar)} \wancisee{BibMakrosetmyvar}
+  gesetzt wurde.}{\vref{myvar}}
+
+\wancidmercemacrodef{BibMakrogettext}{(get-text)}{(get-text $<$name$>$
+  {[}$<$sprache$>${]})}{ab 2.2.5}{BASIS}{}{}
+
+\wancidmercemacrodef{BibMakroif}{(if) / (else) / (endif)}{}{ab
+  1.0.0}{BASIS}{Pr\"uft einen Ausdruck und f\"uhrt ggf. Code aus dem
+  Block zwischen if/else, else/endif oder if/endif
+  aus.}{\vref{Fallabfragen}}
+
+\wancidmercemacrodef{BibMakroinclude}{(include)}{}{ab
+  2.1.0}{BASIS}{}{}
+
+\wancidmercemacrodef{BibMakroq}{(q)}{}{ab 2.1.0}{BASIS}{}{}
+
+\wancidmercemacrodef{BibMakrosetmyvar}{(set-myvar)}{(set-myvar
+  $<$name$>$ $<$wert$>$)}{ab 2.2.0}{BASIS}{Setzt die myvar $<$name$>$
+  auf den Wert $<$wert$>$}{\vref{myvar}}
+
+\wancidmercemacrodef{BibMakrosetskin}{(set-skin)}{(set-skin
+  $<$verzeichnis$>$)}{ab 2.2.3}{BASIS}{Gibt das in den Makros
+  \wancicode{(skin-img)}, \wancicode{(skin-stylesheet)} zu verwendende
+  Verzeichnis an.}{}
+
+\wancidmercemacrodef{BibMakroskinimg}{(skin-img)}{(skin-img
+  $<$name$>$)}{ab 2.2.3}{BASIS}{Sucht aus dem durch
+  \wancicode{(set-skin)} festgelegten Verzeichnis das Bild
+  $<$name$>$.\{.jpeg,.jpg,.gif\} heraus und gibt denn vollen
+  Dateinamen zur\"uck.}{}
+
+\wancidmercemacrodef{BibMakroskinimgtag}{(skin-imgtag)}{(skin-imgtag
+  $<$name$>$)}{ab 2.2.3}{BASIS}{verh\"alt sich wie
+  \wancicode{(skin-img)}, liefert allerdings nicht nur den vollen
+  Dateinamen, sondern erzeugt ein komplettes $<$img$>$-Tag.}{}
+
+\wancidmercemacrodef{BibMakroskinstylesheet}{(skin-stylesheet)}{(skin-stylesheet)}{ab
+  2.2.3}{BASIS}{Liefert ein $<$link$>$-Tag zur\"uck, dass auf die
+  Stylesheet aus dem zuvor mit \wancicode{(set-skin)} gew\"ahlten
+  Verzeichnis verweist.}{}
+
+\wancidmercemacrodef{BibMakrorepeat}{(repeat) / (endrepeat)}{}{ab
+  1.2.6}{BASIS}{Der zwischen \wancicode{(repeat)} und
+  \wancicode{(endrepeat)} stehende HTML- und dmerce-Code, wird solange
+  ausgef\"uhrt, wie der Query zutrifft und Datens\"atze zur\"uckgibt.
+  Erst wenn alle Datens\"atze auszugeben sind, wird der Code hinter
+  \wancicode{(endrepeat)} ausgef\"uhrt.}{}
+
+\wancidmercesubmacrodef{BibMakrosql}{(sql)}{(sql
+  $<$tabelle$>$.$<$feld$>$
+  {[}$<$position-von$>${]}{[},$<$positon-bis$>${]})}{ab
+  1.2.6}{BASIS}{Innerhalb eines \wancislang{repeat} werden die Felder
+  eines Ergebnisses einer Datenbankabfrage in der Form Tabelle.Feld
+  angesprochen. $<$position-von$>$ und $<$position-bis$>$ dienen dazu,
+  die Ausgabe zu begrenzen. Wird $<$position-von$>$ weggelassen, so
+  wird daf\"ur 0 angenommen.}{}
+
+\wancidmercesubmacrodef{BibMakrosqlxref}{(sql) als
+  Cross-Referenz}{(sql $<$tabelle$>$.$<$feld$>$
+  ``$<$qSuperSearch$>$'')}{ab 1.2.6}{BASIS}{Innerhalb eines
+  \wancislang{repeat} werden Felder aus dem Ergebniss einer
+  Datenbankabfrage ausgegeben. Cross-Referenzen sind sehr n\"utzlich,
+  um z. B. in einer Tabelle die Bezeichnung von Produktgruppen zu
+  speichern und in der Tabelle, in welcher die Artikel gespeichert
+  sind, nur noch die ID der Produktgruppe vorhalten zu m\"ussen.
+  Dadurch ist die Tabelle Artikel wesentlich schneller nach
+  Produktgruppen zu indizieren (schnellere Suche bei geringerer Last
+  auf dem System) und die Bezeichnungen der Produktgruppen k\"onnen an
+  einer zentralen Stelle gewartet werden.}{\vref{sqltf}}
+
+\wancidmercesubmacrodef{BibMakrosqlrowcount}{(sql rowcount)}{(sql
+  rowcount)}{ab 1.2.6}{BASIS}{Liefert die Anzahl der Ergebnisszeilen
+  der aktuellen Abfrage/des aktuellen (repeat)}{\vref{repeat}}
+
+\wancidmercesubmacrodef{BibMakrosqlcount}{(sql count)}{(sql count
+  $<$bedingung$>$)}{ab 1.2.6}{BASIS}{Liefert die Anzahl der auf die
+  SQL-Abfrage passenden Ergebnisszeilen zur\"uck.}{\vref{repeat}}
+
+\wancidmercesubmacrodef{BibMakrosqldboid}{(sql dboid)}{(sql dboid
+  $<$tabelle$>$)}{ab 2.1.0}{BASIS}{Liefert die n\"achsth\"ohere ID
+  f\"ur die Tabelle $<$tabelle$>$ zur\"uck. Existiert noch keine DBOID
+  f\"ur die Tabelle so wird mit 1 begonnen. Wurde innerhalb eines
+  Templates bereits eine DBOID f\"ur eine Tabelle angefordert, so wird
+  die DBOID nicht nochmal erh\"ot, sondern die gleiche
+  zur\"uckgeben.}{}
+
+\wancidmercesubmacrodef{BibMakrosqlindex}{(sql index)}{(sql index)}{ab
+  2.1.0}{BASIS}{Liefert die aktuelle Zeile aus dem Ergebniss eines
+  (repeat) zur\"uck, der gerade abgearbeitet wird. Der Wert ist
+  0-indiziert, d. h. dass die erste Zeile hier als Zeile 0
+  zur\"uckgegeben wird.}{\vref{repeat}}
+
+\wancidmercesubmacrodef{BibMakrosqlindex1}{(sql index1)}{(sql
+  index1)}{ab 2.1.0}{BASIS}{wie \wancicode{(sql index)} allerdings
+  1-indiziert.}{\vref{repeat}}
+
+\wancidmercemacrodef{BibMakrovar}{(var)}{(var $<$name$>$)}{ab
+  1.0.0}{BASIS}{Gibt eine private Variable $<$name$>$ zur\"uck. Diese
+  kann eine voreingestelle private Variable sein oder per Hyperlink
+  oder Formular \"ubergeben worden sein.}{\vref{qvarVERSION},
+  \vref{qvarSSL}}
+
+\wancidmercemacrodef{BibMakrowho}{(who)}{(who $<$objekt$>$)}{ab
+  1.2.0}{BASIS}{}{\vref{SAM}}
+
+\newpage
+
+\section{Die Funktionen}
+\label{Funktionen}
+\input{users-guide-bib-func.tex}
+
+%%
+\chapter{Sicherheit}
+
+\newpage
+
+\section{1{[}SAM{]}: Secure Area Management}
+\label{SAM}
+
+SAM stellt folgende Daten \"uber den Client und den authentifizierten
+Benutzer zur Verf\"ugung \wancisee{BibMakrowho}:
+
+\begin{enumerate}
+\item Datensatz des eingeloggten Users \wancisee{BibExecLoginUserCheck};
+  Beispiel: \wancicode{(who $<$Feld$>$)}, wobei $<$Feld$>$ jedes Feld
+    aus der Tabelle sein kann, woraus der User authentifiziert wurde
+\item IP-Adresse
+\item Browser-Software/User-Agent
+\end{enumerate}
+
+\newpage
+
+\section{1{[}UXS{]}: Unified Access System}
+\label{UXS}
+\label{UXSI}
+
+\newpage
+
+\section{1{[}DGP{]}: Dawn Good Privacy}
+\input{modules-krypto-einfuehrung.tex}

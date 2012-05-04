@@ -1,0 +1,25 @@
+#!/bin/ksh
+
+# -----------------------------------------------------------------------
+# Filename:   oraprod.ksh
+# Purpose:    List all Installed Oracle Products
+# Note:	      This script works for all Oracle7 and 8i releases
+# Author:     Frank Naude (frank@ibi.co.za)
+# -----------------------------------------------------------------------
+
+PAGER=more
+
+if [ ! -d "${ORACLE_HOME}" ]; then
+   print "ERROR: Oracle home not set."
+   exit -1
+fi
+
+print "Oracle Installed Products for ORACLE_HOME ${ORACLE_HOME}:"
+
+if [ -f "${ORACLE_HOME}/orainst/inspdver" ]; then
+   cd ${ORACLE_HOME}/orainst
+   ./inspdver | ${PAGER}
+else
+   cat  ${ORACLE_HOME}/install/unix.rgs | ${PAGER}
+fi
+

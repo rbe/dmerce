@@ -1,0 +1,3 @@
+#!/bin/sh
+
+/usr/local/bin/ssh 81.2.128.2 "umask 007; export DMERCE_HOME=/opt/dmerce; export PATH=/opt/dmerce/bin:/usr/local/bin:/usr/bin:/usr/ccs/bin ;export LD_LIBRARY_PATH=/opt/dmerce/product/mysql/3.23.51/lib/mysql:/usr/local/lib;export PYTHONPATH=/opt/dmerce/product/dmerce/2.4.0:/opt/dmerce/product/dmerce/2.4.0/DMS; export DMERCE_HOME=/opt/dmerce; export DMERCE_WEBSITES=/opt/dmerce/websites;export MYSQL_HOME=/opt/dmerce/product/mysql/3.23.51; /usr/local/bin/python1.5 bin/dmercereg2.pyc >> /var/dmerce/log/cron.dmercereg2 2>&1"

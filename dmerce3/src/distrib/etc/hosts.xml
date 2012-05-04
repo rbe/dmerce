@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir=".." name="dmerce Application Properties">
+	
+	<!--
+		
+		Usage for deployments on remote hosts:
+		
+		deploy <appl> <remotehost>
+		
+	-->
+
+	<!-- Example for deploying on a remote host via SSH -->
+	<property name="remotehost.dummy" name="dummy"/>
+	<property name="remotehost.dummy.protocol" name="ssh"/>
+	<property name="remotehost.dummy.ssh.user" name="dummy"/>
+	<property name="remotehost.dummy.ssh.password" name="dummy"/>
+	<property name="remotehost.dummy.ssh.keyfile" name="dummy"/>
+	<property name="remotehost.dummy.ssh.deploydir"
+		name="product/jboss/server/default/deploy"/>
+
+	<!-- Example for deploying on a remote host via FTP -->
+	<property name="remotehost.dummy" name="dummy"/>
+	<property name="remotehost.dummy.protocol" name="ftp"/>
+	<property name="remotehost.dummy.ftp.user" name="dummy"/>
+	<property name="remotehost.dummy.ftp.password" name="dummy"/>
+	<property name="remotehost.dummy.ftp.deploydir"
+		name="/product/jboss/server/default/deploy"/>
+
+</project>

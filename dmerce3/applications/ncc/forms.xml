@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<forms xmlns="http://www.1ci.de"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.1ci.de ../../../etc/FORMS.xsd">
+
+        <form id="dnszonesns">
+        <name></name>
+                <description></description>
+                <formversion>0.1</formversion>
+
+                <field name="id" required="true">
+                        <description>id</description>
+                        <type>number</type>
+                </field>
+                <field name="position" required="true">
+                        <description>position</description>
+                        <type>number</type>
+                </field>
+                <field name="dnszonesid" required="true">
+                        <description>dnszonesid</description>
+                        <type>number</type>
+                </field>
+                <field name="dnsnsid" required="true">
+                        <description>dnsnsid</description>
+                        <type>number</type>
+                </field>
+        </form>
+
+        <form id="dnszones">
+        <name></name>
+                <description></description>
+                <formversion>0.1</formversion>
+
+                <field name="id" required="true">
+                        <description>id</description>
+                        <type>number</type>
+                </field>
+                <field name="active" required="true">
+                        <description>active</description>
+                        <type>number</type>
+                </field>
+                <field name="name" required="true">
+                        <description>name</description>
+                        <type>string</type>
+                </field>
+                <field name="soaserial" required="true">
+                        <description>soaserial</description>
+                        <type>date</type>
+                </field>
+                <field name="soasubserial" required="true">
+                        <description>soasubserial</description>
+                        <type>number</type>
+                </field>
+                <field name="soarefresh" required="true">
+                        <description>soarefresh</description>
+                        <type>number</type>
+                </field>
+                <field name="soaretry" required="true">
+                        <description>soaretry</description>
+                        <type>number</type>
+                </field>
+                <field name="soaexpire" required="true">
+                        <description>soaexpire</description>
+                        <type>number</type>
+                </field>
+                <field name="soamaximum" required="true">
+                        <description>soaserial</description>
+                        <type>number</type>
+                </field>
+                <field name="ttl" required="true">
+                        <description>ttl</description>
+                        <type>number</type>
+                </field>
+                <field name="legalpersonid" required="true">
+                        <description>legalpersonid</description>
+                        <type>number</type>
+                </field>
+                <field name="admincpersonid" required="true">
+                        <description>admincpersonid</description>
+                        <type>number</type>
+                </field>
+                <field name="zonecpersonid" required="true">
+                        <description>zonecpersonid</description>
+                        <type>number</type>
+                </field>
+                <field name="techcpersonid" required="true">
+                        <description>techcpersonid</description>
+                        <type>number</type>
+                </field>
+                <field name="validfrom" required="true">
+                        <description>validfrom</description>
+                        <type>date</type>
+                </field>
+                <field name="validuntil" required="true">
+                        <description>validfrom</description>
+                        <type>date</type>
+                </field>
+        </form>
+
+        <form id="dnsrrtypes">
+        <name></name>
+                <description></description>
+                <formversion>0.1</formversion>
+
+                <field name="id" required="true">
+                        <description>id</description>
+                        <type>number</type>
+                </field>
+                <field name="name" required="true">
+                        <description>name</description>
+                        <type>string</type>
+                </field>
+        </form>
+
+        <form id="dnsrecords">
+        <name></name>
+                <description></description>
+                <formversion>0.1</formversion>
+
+                <field name="id" required="true">
+                        <description>id</description>
+                        <type>number</type>
+                </field>
+                <field name="dnszoneid" required="true">
+                        <description>dnszoneid</description>
+                        <type>number</type>
+                </field>
+                <field name="active" required="true">
+                        <description>active</description>
+                        <type>number</type>
+                </field>
+                <field name="name" required="true">
+                        <description>name</description>
+                        <type>string</type>
+                </field>
+                <field name="type" required="true">
+                        <description>type</description>
+                        <type>number</type>
+                </field>
+                <field name="mxprio" required="true">
+                        <description>mxprio</description>
+                        <type>number</type>
+                </field>
+                <field name="value" required="true">
+                        <description>value</description>
+                        <type>string</type>
+                </field>
+                <field name="ptr" required="true">
+                        <description>ptr</description>
+                        <type>number</type>
+                </field>
+                <field name="validfrom" required="true">
+                        <description>validfrom</description>
+                        <type>date</type>
+                </field>
+                <field name="validuntil" required="true">
+                        <description>validuntil</description>
+                        <type>date</type>
+                </field>
+        </form>
+
+        <form id="dnsns">
+        <name></name>
+                <description></description>
+                <formversion>0.1</formversion>
+
+                <field name="id" required="true">
+                        <description>id</description>
+                        <type>number</type>
+                </field>
+                <field name="name" required="true">
+                        <description>name</description>
+                        <type>string</type>
+                </field>
+                <field name="ipaddress" required="true">
+                        <description>ipaddress</description>
+                        <type>string</type>
+                </field>
+        </form>
+
+        <form id="dnslistenon">
+        <name></name>
+                <description></description>
+                <formversion>0.1</formversion>
+
+                <field name="id" required="true">
+                        <description>id</description>
+                        <type>number</type>
+                </field>
+                <field name="dnsnsid" required="true">
+                        <description>dnsnsid</description>
+                        <type>number</type>
+                </field>
+                <field name="ipaddress" required="true">
+                        <description>ipaddress</description>
+                        <type>string</type>
+                </field>
+        </form>
+
+        <form id="dnshandles">
+        <name></name>
+                <description></description>
+                <formversion>0.1</formversion>
+
+                <field name="id" required="true">
+                        <description>id</description>
+                        <type>number</type>
+                </field>
+                <field name="dnsnsid" required="true">
+                        <description>dnsnsid</description>
+                        <type>number</type>
+                </field>
+                <field name="handle" required="true">
+                        <description>handle</description>
+                        <type>string</type>
+                </field>
+                <field name="comments" required="true">
+                        <description>comments</description>
+                        <type>string</type>
+                </field>
+        </form>
+
+        <form id="dnsforwarders">
+        <name></name>
+                <description></description>
+                <formversion>0.1</formversion>
+
+                <field name="id" required="true">
+                        <description>id</description>
+                        <type>number</type>
+                </field>
+                <field name="dnsnsid" required="true">
+                        <description>dnsnsid</description>
+                        <type>number</type>
+                </field>
+                <field name="ip" required="true">
+                        <description>ip</description>
+                        <type>string</type>
+                </field>
+        </form>
+
+</forms>

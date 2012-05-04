@@ -1,0 +1,339 @@
+%%
+\chapter{1{[}Operator{]}}
+
+\newpage
+
+Die grobe Zielvorstellung f\"ur die Projekte rund um
+\texttt{dmerce-op} ist es, Funktionalit\"aten f\"ur folgende Bereiche
+bereitzustellen:
+
+\begin{itemize}
+\item Transparentes Netzwerk
+\item Verteilte Anwendungen (v.a. \texttt{dmerce} und die
+  angeschlossenen DAtenbanken
+\item Workflow
+\item Systemfunktionalit\"at (z.B.  Prozesskommunikation und
+  \textit{threads}
+\end{itemize}
+
+Diese (und wom\"oglich weitere) Ziele sollen in m\"oglichst
+universeller, transparenter und weitreichender Weise verwirklicht
+werden. Teil eines solchen Konzepts ist auch ein leitungsf\"ahiges
+Protokoll mit einer zugeh\"origen Sprache.
+\\
+Zentraler Bestandteil einer solchen Konstruktion sind die
+\textbf{Operatoren}: Operatoren sind selbst\"andige Einheiten, die als
+Objekte realisiert sind. Sie besitzen als Attribute alle erdenklichen
+(zumindest alle ben\"otigten) Elemente, die mit obigen Programmpunkten
+in Zusammenhang stehen:
+\begin{itemize}
+\item Netzwerkobjekte und -funktionen, wie Server und Clients der
+  verschiedensten Funktionalit\"at, haupts\"chlich auf Basis von
+  Sockets
+\item Werkzeuge der Prozesskommunikation, wie Pipes, Fifos, Queues und
+  Messages
+\item Objekte der Prozessverwaltung, v.a. Threads und Forks
+\item ...
+\end{itemize}
+von allen Objekten oder Prozessen legt der Operator Listen an, so
+da\"s er eine Vielzahl von ihnen verwalten kann; dabei k\"onnen diese
+in mehr oder weniger kompliziertem Zusammenhang stehen.  Ein Beispiel
+w\"are dann, da"s ein Operator viele Server betreibt und zwar als
+Threads, so da"s steckengebliebene Server, oder solche, die f\"ur ihre
+Aufgabe zu lange brauchen, einfach get\"otet werden k\"onnen.
+Dasselbe gilt auch f\"ur alle anderen Arten von Prozessen. Diese
+k\"onnen z.B. \"uber Queues oder Fifos miteinander kommunizieren,
+wobei der Operator diese Kommunikationskan\"ale verwaltet.  Denkbar
+w\"are auch eine gr\"o"sere Schnittstelle zum Betriebssystem, v.a.
+der Uhr, so da"s der Operator eigene Cronjobs (z.B. das regelm\"a"sige
+Testen von Responses leerlaufender Server) erledigen k\"onnte.  Eine
+weitere interessante Option ist auch, Operatoren Operatoren verwalten
+zu
+lassen, was die Gesamtstruktur stark erweiterte. \\
+Die Operatoren kommunizieren untereinander \"uber das bereits
+erw\"ahnte Protokoll. Im extrem einfachen Fall kann ein Operator auch
+als eine uniforme H\"ulle f\"ur einzelne Prozesse betrachtet werden,
+die ihren Operator als universelle Schnittstelle f\"ur die
+Kommunikation mit anderen, vielleicht andersartigen Prozessen nutzen.
+
+\section{Lastenheft}
+
+\subsection{Zielbestimmung}
+
+Erstellung eines oder meherer Klassen bzw. Module in \texttt{Python},
+die im Sinne eines Protokolls auf hoher Ebene Kommunikation und
+weitere weitgefasste Aufgaben regelt. Grundlage daf\"ur ist eine
+leistungsf\"ahige und flexible Syntax (z.B. auf der Basis von
+\texttt{LISP}) Beispiele sind:
+\begin{itemize}
+\item \textit{requests} und \texttt{answers} in einer
+  \textit{Client-Server}-Konstellation (aber auch unabh\"angig davon),
+  z.B. Datenbankanfragen, Lizenz- und Rechtesysteme,
+  Schl\"usselzertifizierung usw.
+  
+\item \textit{workflow}-Kontrolle zwischen Modulen und Klassen
+
+\end{itemize}
+
+\subsection{Produkteinsatz}
+
+Das Produkt kann in folgenden Szenarien eingesetzt werden:
+
+\begin{itemize} 
+  
+\item Datenbankabfragen, v.a. auch in Netzwerken
+  
+\item im allgemeineren Sinne Daten- und Funktions\"ubertragung auch
+  zwischen unterschiedlichen Plattformen oder auf der Basis
+  verschiedener Programmiersprachen (z. B. \texttt{Python, Common
+    LISP})
+  
+\item Als Schnittstelle f\"ur Zertifizierungsinstanzen, bzw. -anfragen
+  (Kryptographie: \texttt{PKI, Kerberos}, etc.)
+
+\end{itemize}
+
+\subsection{Produkt\"ubersicht}
+
+% Graphik
+
+\subsection{Produktfunktionen}
+
+\begin{itemize}
+  
+\item Analyse und Verarbeitung der Informationseinheiten im Bezug der
+  jeweils zugrunde liegenden Sprache (\texttt{LISP} bietet hier
+  g\"o"sere M\"oglichkeiten als z.B. \texttt{Python}, da zwischen
+  generischen Ausdr\"ucken und Daten nicht grunds\"atzlich
+  unterschieden wird.)
+  
+\item Zugriff auf kryptographische Bibliothek(en)
+  
+\item Weitergabe von entsprechenden Statements an externe Prozesse
+  (z.B.  \texttt{SQL} und Zur\"uckwandlung etwaiger Ergebnisse
+  
+\item Verbindungsaufbau im Netzwerk in Form der g\"angigsten Konzepte
+  (\textit{Client-Server}
+  
+\item Metakontrolle \"uber die Menge der jeweiligen
+  Verbindungsaufbauten
+
+\end{itemize}
+
+\subsection{Produktdaten}
+
+\subsection{Produktleistungen}
+
+\begin{itemize}
+  
+\item An die Verschl\"usselungsbibliothek wird (neben den \"ublichen
+  Anforderungen an kryptographische Programme) v.a. die Anforderung
+  gro"ser Geschwindgkeit gestellt, da bei Netzwerkverbindungen im
+  Idealfall in Echtzeit (d.h., die Bandbreite der Verschl\"usselung
+  ist gr\"o"ser, als die der Netzwerkleitung) verschl\"usselt werden
+  sollte
+
+\item die Syntax der Statements sollte so flexibel und umfassend wie
+  m\"oglich gestaltet sein und die M\"oglichkeit zur Integration
+  anderer Sprachformen bieten. Denkbar ist auch sp\"atere
+  Erweiterbarkeit.
+
+\end{itemize} 
+
+\subsection{Qualit\"atsanforderungen}
+
+Effizienz und Flexibilit\"at hat Vorrang vor Benutzerfreundlichkeit.
+
+\subsection{\textit{Pipelining}-Konzept}
+
+Idee: Die Anfragen werden durch einzelne Durchgangsstationen auf einer
+Pipeline zum Server transportiert, und nach erhalt der Antwort des
+Servers wird diese zur\"uck durch andere Stationen bef\"ordert. Das
+ganze im Sinne eines Flie"sbandes, oder einer
+\textit{production-pipeline}.
+
+Denkbare Stationen w\"aren (in etwa in dieser Reihenfolge):
+
+\begin{itemize}
+\item Zusammenstellung des \textit{request}s (\"Okonomie!)
+\item Fehlerkontrolle am \textit{request}
+\item evtl. Verschl\"usselung des \textit{request}
+\item Versendung des \textit{request} durch einen \textit{client}
+\item ggf. Entschl\"usselung des \textit{request} im \textit{server}
+\item Verarbeitung des \textit{request} im \textit{server} (evtl. incl.
+Fehlerkontrolle)
+\item evtl. Verschl\"usselung der \textit{answer} im \textit{server}
+\item Versendung der \textit{answer} zum \textit{client}
+\item ggf. Entschl\"usselung der \textit{answer} im \textit{client}
+\item evtl. Fehlerkontrolle
+\item Weiterverarbeitung der \textit{answer}
+
+\end{itemize}
+
+Insbesondere die Frage der Form der \textit{requests} und
+\textit{answers} w\"are zu kl\"aren, auch ggf. die Ausstellung von
+Schl\"usselzertifikaten f\"ur die diversen Clients und Server. Dazu
+gen\"ugt allerdings eine symmetrische Schl\"usselverteilung (z.B.
+\texttt{Kerberos}), die durch eine (je Projekt) Zertifikatsinstanz
+vorgenommen wird.
+
+\section{Das Protokol}
+
+\subsection{Fehlerklassen}
+
+\begin{description}
+  
+\item \texttt{DtransError}: Fehler-Mutterklasse
+
+\item \texttt{DtransSyntaxError}: Tochterklasse
+
+\item \texttt{DtransCounterError}: Tochterklasse
+
+\item \texttt{NoGoError}: Tochterklasse
+
+\end{description}
+
+\subsection{Protokollklasse}
+
+\paragraph{Attribute} der Protokollklasse
+
+\begin{description}
+  
+\item \texttt{self.\_\_steps}: Die Liste der Protokollelemente
+  
+\item \texttt{self.\_\_count}: Z\"ahlervariable, Start bei \texttt{0}
+  
+\item \texttt{self.\_\_log}: Logstring, Start bei \texttt{''}
+
+\end{description}
+
+\paragraph{Methoden} der Protokollklasse
+
+\begin{description}
+
+\item \texttt{SetSteps}: Nachtr\"agliches Setzen der Liste
+der Protokollelemente
+
+\item \texttt{SetStep}: Nachtr\"agliches Setzen eines
+Protokollelementes
+
+\item \texttt{DelStep}: L\"oschen eines Protokollelementes
+
+\item \texttt{StepExec}: Ausf\"uhren des Protokollelementes
+an der Stelle \texttt{self.\_\_counter}, addieren von 1 zu
+\texttt{self.\_\_counter}
+
+\end{description}
+
+\subsection{API}
+
+Im Modul \texttt{op.py} sind z.Zt. folgende Klassen implementiert:
+
+\begin{itemize}
+\item \texttt{Operator}
+\item \texttt{GenericSocketServer}
+\item \texttt{SocketClient}
+\end{itemize}
+
+Derzeit sind die Server- und die Client-Klassen nur zu
+Demonstrationszwecken implementiert. Praxistaugliche Entw\"urfe
+m\"u"sten wesentlich spezifischer gestaltet werden, sofern sich f\"ur
+ganze Klassen von Serveraufgaben nicht uniforme L\"osungen finden
+lassen. (Das Angestrebte \textit{Protokoll} sollte dieses Problem
+vielleicht l\"osen.)  Der entscheidende Teil dieses dmerce-Moduls ist
+die \texttt{Operator}-Klasse:
+
+\subsection{\texttt{Operator}}
+
+Der Aufruf erfolgt durch \\
+
+\bigskip
+
+\texttt{o = op.Operator()} \\
+
+\bigskip
+
+\texttt{Operator} ist eine Unterklasse von \texttt{threading.Threads}.
+\texttt{Operator} ,,besitzt'' eine ganze Reihe von Objekten, bzw. es
+\textit{kann} sie besitzen. Diese Objekte sind gr\"o"stenteils
+Elemente von Listen, so da"s \texttt{Operator} jeweils eine ganze
+Reihe \"ahnlichen Objekten verwalten kann. Als da w\"aren:
+
+\begin{itemize}
+\item \texttt{self.\_\_protocol} ist eine \textit{Queue} mit
+  unbegrenzter Inhaltsgr\"o"se. Der Sinn ist, einmal in der
+  Protocol-Queue Protokollanweisungen ,,queuen'' zu k\"onnen, die dann
+  der Reihe nach von \texttt{Operator} und seinen angegliederten
+  Objekten bearbeitet werden k\"onnen.
+\item \texttt{self.\_\_operators} ist eine Liste, die -leer
+  initialisiert- mit anderen \texttt{Operator}-Objekten gef\"ullt
+  werden kann, die wiederum von dem \"ubergeordneten \texttt{Operator}
+  kontrolliert werden.
+\item \texttt{self.\_\_locks} ist eine Liste von Lock-Objekten
+\item \texttt{self.\_\_rlocks} ist eine Liste von RLock-Objekten
+\item \texttt{self.\_\_semaphores} ist eine Liste von
+  Semaphore-Objekten
+\item \texttt{self.\_\_queues} ist eine Liste von Queue-Objekten
+\item \texttt{self.\_\_fifos} ist eine Liste von Fifo-Objekten
+\item \texttt{self.\_\_fifopath} ist der Pfad des Verzeichnisses, in
+  dem Fifos abgelegt werden sollen.
+\item \texttt{self.\_\_sockets} ist eine Liste von Socket-Objekten
+\item \texttt{self.\_\_servers} ist eine Liste von Servern (die auf
+  verschiedene Weise implementiert sein k"onnen!)
+\item \texttt{self.\_\_clients} ist eine Liste von Clients
+\end{itemize}
+
+Diese Methoden stehen zur Verf\"ugung:
+
+\begin{itemize}
+\item \texttt{o.\_\_init\_\_()} initialisiert alle genannten
+  Attribute, au"ser \texttt{self.\_\_protocol} und
+  \texttt{self.\_\_fifopath}, zu leeren Listen.
+\item \texttt{o.SetProtocolQueue()} initialisiert
+  \texttt{self.\_\_protocol}.
+\item \texttt{o.WriteProtocol(item, b = 1)} Schreibt in die
+  Protokollqueue, der \textit{boolean}-Wert \texttt{b} lockt die
+  Queue, oder eben nicht.
+\item \texttt{o.ReadProtocol(b = 1)} Liest aus der Protokollqueue.
+  \texttt{b} wie oben.
+\item \texttt{o.NewOperator()} schreibt einen neuen Operator in
+  \texttt{self.\_\_operators}
+\item \texttt{run()} ist die \texttt{Thread.run()} Methode, die den
+  Thread, der ja jeder Operator ist, zum laufen bringt. Die Methode
+  enth\"alt z.Zt. nichts, kann aber entsprechend umgeschrieben werden,
+  um \texttt{Thread.run()} durch Overloading zu \"andern.
+\item \texttt{NewQueue(n = 0)} Schreibt eine neue Queue in
+  \texttt{self.\_\_queues}
+\item \texttt{ReadQueue(m, b)} Liest aus der $m$-ten Queue, \texttt{b}
+  wie oben
+\item \texttt{WriteQueue(item, m, b)} schreibt \texttt{item} in die
+  $m$-te Queue
+\item \texttt{NewSocket(self, family = socket.AF\_INET, type =
+    SOCK\_STREAM, proto = 0)} Schreibt ein neues Socket in
+  \texttt{self.\_\_sockets}
+\item \texttt{NewGenericSocketServer(self, host, port, backlog = 1)}
+  schreibt einen neuen Server des Typs \textit{GenericSocketServer} in
+  \texttt{self.\_\_servers}
+\item \texttt{StartServer(n)} startet Server $n$ aus
+  \texttt{self.\_\_servers}
+\item \texttt{NewSocketClient(host, port)} schreibt einen neuen
+  Socket-Client in \texttt{self.\_\_clients}
+\item \texttt{StartClient(n)} startet Client $n$ aus
+  \texttt{self.\_\_clients}
+\end{itemize}
+
+\section{Probleme und M\"oglichkeiten der Entwicklung}
+
+Da Operatoren auch andere Operatoren betreiben k\"onnen, w\"are als
+Design-Idee denkbar, da"s ein Operator immer nur eine ,,H"ulle'' f\"ur
+ein (oder einige) Objekt(e) ist und mit anderen Operatoren
+kommuniziert, die wiederum andere Objekte beherbergen. Beispiel: Ein
+Server k\"onnte von ,,seinem'' Operator \"uber eine Queue mit Befehlen
+versorgt werden, die wiederum das Verhalten des Servers beeinflussen.
+Der Server k\"onnte ggf. Anfragen des Clients, die Protokollelemente
+enthalten, and den Server weitergeben, usw. Das setzt nat\"urlich
+voraus, da"s der Server regelm\"a"ig seine Queue ,,queryt'', um zur
+Laufzeit
+auch etwas vom Operator mitzubekommen.\\
+usw. usw...
+

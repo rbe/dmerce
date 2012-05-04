@@ -1,0 +1,48 @@
+#!/bin/sh
+
+#################################################
+#
+# Copyright 2000-2003 1Ci GmbH, http://www.1ci.de
+#
+# $Id: qdd_chkfs,v 1.1 2003/04/19 18:25:38 rb Exp $
+# $Author: rb $
+# $Revision: 1.1 $
+#
+# Check dmerce filesystem and correct permissions
+# 
+#################################################
+
+[ -r ${DMERCE_HOME}/lib/libsh ] && . ${DMERCE_HOME}/lib/libsh || ( echo "dmerce libsh not found!"; exit 255 )
+[ -r ${DMERCE_HOME}/lib/libdmerce ] && . ${DMERCE_HOME}/lib/libdmerce || ( echo "dmerce libdmerce not found!"; exit 255 )
+[ $? -gt 0 ] && exit 2
+
+usage() {
+    echo "ERROR: wrong arguments
+
+arguments ::=
+              path     path to start with, standard = \$DMERCE_HOME
+              mode     normal or dmerce
+                       normal = files without x
+                                dirs with x
+                       dmerce = files 0660
+                                dirs 0770
+"
+}
+
+main() {
+    e "Setting permissions for ${path}, mode ${mode}"
+    find ${path} -exec ${DMERCE_HOME}/bin/dmercesetperms ${mode} {} \; > ${DMERCE_HOME}/log/chkfs-`set_date_once`.log
+    find ${path} -type f -name "*~" -exec rm {} \;
+}
+
+libdmerce_copyr
+echo "CHECK DMERCE FILESYSTEM / SET PERMISSIONS / CLEANUP"
+echo
+eval $*
+if [ x"$path" = x"" ]; then
+    path=${DMERCE_HOME}
+fi
+if [ x"$mode" = x"" ]; then
+    mode="dmerce"
+fi
+main

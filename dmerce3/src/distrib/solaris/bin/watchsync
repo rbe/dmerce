@@ -1,0 +1,21 @@
+#!/bin/ksh
+
+#################################################
+#
+# Copyright 2000-2003 1Ci GmbH, http://www.1ci.de
+#
+# $Id: qdsol_svm_syncwatch,v 1.1 2003/04/19 18:25:38 rb Exp $
+# $Author: rb $
+# $Revision: 1.1 $
+#
+# Sun Solaris(TM) Volume Manager
+# Watch resync of mirrors
+# 
+#################################################
+
+i=1;
+while [ $i -gt 0 ]; do
+    i=`metastat|grep -c %`
+    echo "`date`: resync in progress ($i)"
+    sleep 60
+done

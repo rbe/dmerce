@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<workflows xmlns='http://www.1ci.de'
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+  xsi:schemaLocation='http://www.1ci.de ../../../etc/WORKFLOWS.xsd'
+  version="2.0"
+>
+
+    <workflow id="listbox">
+    
+        <page
+        	id="listboxformular"
+			template="form_listbox.jsp"
+			formid="listboxform"
+			editable="true">
+			
+            <formmap table="vkunde" primarykey="kundennr">
+                <fieldmap formfield="name" dbfield="name"/>
+                <fieldmap formfield="vorname" dbfield="vorname"/>
+                <fieldmap formfield="email" dbfield="email"/>
+                <fieldmap formfield="plz" dbfield="plz"/>
+                <fieldmap formfield="strasse" dbfield="strasse"/>
+                <fieldmap formfield="ort" dbfield="ort"/>
+                <fieldmap formfield="hobby" dbfield="hobby"/>
+            </formmap>
+            
+            <transition name="save_to_db" target="list">
+            	<condition type="buttonpressed" value="Ok"/>
+            	<action type="maintain">
+                    <formfield formid="listboxform" name="name"/>
+                    <formfield formid="listboxform" name="vorname"/>
+                    <formfield formid="listboxform" name="email"/>
+                    <formfield formid="listboxform" name="plz"/>
+                    <formfield formid="listboxform" name="strasse"/>
+                    <formfield formid="listboxform" name="ort"/>
+                    <formfield formid="listboxform" name="hobby"/>
+				</action>
+            </transition>
+            
+            <transition name="abort" target="list" validation="false">
+            	<condition type="buttonpressed" value="Cancel"/>
+            </transition>
+            
+        </page>
+        
+        <page id="list" template="list.jsp"/>
+        
+    </workflow>
+
+</workflows>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<datasources>
+	
+	<local-tx-datasource>
+    	<jndi-name>fooDS</jndi-name>
+	    <connection-url>jdbc:oracle:thin:dmerce/dmerce@localhost:1521:dmerce</connection-url>
+	    <driver-class>oracle.jdbc.driver.OracleDriver</driver-class>
+    	<user-name>dmerce</user-name>
+	    <password>dmerce</password>
+    	<exception-sorter-class-name>
+    		org.jboss.resource.adapter.jdbc.vendor.OracleExceptionSorter
+    	</exception-sorter-class-name>
+	</local-tx-datasource>
+	
+</datasources>
+

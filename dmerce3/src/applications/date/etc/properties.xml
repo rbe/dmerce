@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding="UTF-8"?>
+
+<!DOCTYPE properties [
+  <!ELEMENT properties (property)+>
+  <!ELEMENT property EMPTY>
+  
+  <!ATTLIST property
+  		name CDATA #REQUIRED
+  		value CDATA #REQUIRED
+  >
+]>
+
+<properties>
+
+	<!-- ENDPOINT FOR WEBSERVICE -->
+	<property name="endpointaddress" value="http://10.48.35.3:8080/dmercews/sqlservice"/>
+
+</properties>

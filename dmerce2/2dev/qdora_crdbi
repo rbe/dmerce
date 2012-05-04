@@ -1,0 +1,1092 @@
+#!/bin/sh
+#***************************************************************************
+#
+#   Script:     $DBA/crdb
+#
+#       Generate a crdb<SID>.sql 'CREATE DATABASE' script for any running
+#       instance, including CREATE statements for all tablespaces and rollback
+#       segments.  The objective is to simplify a DBA's job for creating or
+#       migrating databases based on current configurations.  In conjunction
+#       with a full export, this script can be used to backup and recreate the
+#       full database fairly automatically.
+#
+#       Note:   The outputs of this script can be used to restructure your
+#               databases.  Please use these outputs only after careful review
+#               since they have not been tested under all possible conditions.
+#
+#   Usage:      crdb [oracle_sid] <userid/password>
+#               where:
+#                       oracle_sid is optional.  If specified, it is the SID for
+#                         which this script is being run (Default of the current
+#                         ORACLE_SID).
+#                       <userid/password> is optional.  If specified, it is the
+#                         username and password used to access the DBA_ and V$_
+#                         tables in order to create the script file.  (Default
+#                         of "/").
+#  Restrictions:
+#               1) This script has been tested for Oracle 7, 8.0.3, and 8.0.4.
+#               2) ORACLE_BASE must be set.  (The init.ora file for the STARTUP
+#                  command is assumed to be in
+#                  $ORACLE_BASE/admin/$ORACLE_SID/init$ORACLE_SID_0.ora).  A
+#                  warning will be displayed if the PFILE clause on the STARTUP
+#                  command needs to be manually changed.
+#               3) oraenv must be found in the PATH.
+#               4) The DBMS_SQL package must be executable by the current
+#                  username; see restriction #6 below.
+#               5) If the current Oracle version is before Oracle 7.3, you must
+#                  comment out the below two "set trimspool on" lines.
+#               6) If the current Oracle version is before Oracle 7.2.2.3, you
+#                  must modify the script to remove all references to the
+#                  DBMS_SQL package, since this script uses this package (and
+#                  PL/SQL 2.2+ supports dynamic SQL).
+#               7) If the current Oracle version is before Oracle 7.1, you must
+#                  comment out the reference to "sys.v_\$option".
+#               8) The OPTIMAL value is not calculated for private rollback
+#                  segments that are allocated to a remote Parallel Server
+#                  instance.
+#               9) The script must be executed from an account which has DBA
+#                  privileges or equivalent.
+#
+#   Example:     crdb PROD 'system/manager'
+#
+#   Script :     gendb.sql  (v1.1)
+#                (c) 1995-1997 Sunrise Systems, Inc.  All Rights Reserved
+#
+#   Written By : Noorali Sonawalla
+#                Sunrise Systems, Inc.   (1/28/95)
+#                Tel : (732) 603-2200
+#                Fax : (732) 603-2208
+#                email :  noorali@sunrisesys.com
+#
+#   Modified by: Brian Lomasky - 08/24/98 - Added error debugging info.
+#                                             Automatically support autoextend
+#                                             for Oracle7/8.  Fix owner_name
+#                                             typo for public rollback segments.
+#   Modified by: Brian Lomasky - 07/27/98 - Support autoextend, support Oracle8,
+#                                           Use DBA_TABLESPACES instead of
+#                                           SYS.TS$ for Oracle8 (since SYS.TS$
+#                                           changed in Oracle8), add set
+#                                           trimspool lines, skip optimal value
+#                                           if null, enhance restriction
+#                                           comments, use svrmgrl if it exists
+#                                           (even if sqldba also exists), remove
+#                                           utlmontr.sql.  Enable redo log
+#                                           threads for Parallel Server.
+#   Modified by: Brian Lomasky - 06/09/98 - To handle maxextents unlimited.
+#   Modified by: Brian Lomasky - 11/24/97 - Fix user_dump_dest beginning with ?.
+#   Modified by: Brian Lomasky - 10/01/97 - Use SYS.TS$ instead of
+#                                           DBA_TABLESPACES so I can access
+#                                           TEMPORARY and READ ONLY status.
+#   Modified by: Brian Lomasky - 08/04/97 - Use ORACLE_SID instead of DB_NAME
+#                                           so it matches for use with Oracle
+#                                           Parallel Server.  Create all redo
+#                                           logs threads for Parallel Server.
+#                                           Create spool log file.  Use the
+#                                           init<SID>_0.ora file located in
+#                                           $ORACLE_BASE/admin/$ORACLE_SID for
+#                                           the initial database startup.
+#   Modified by: Brian Lomasky - 04/18/97 - Combine gendbcon and gendb.sql into
+#                                           this file.  Remove control file.
+#                                           Rename to crdb.  Call oraenv to
+#                                           set the proper ORACLE_HOME.  Use
+#                                           svrmgrl instead of sqldba, if reqd.
+#                                           Allow optional ORACLE_SID.  Use nawk
+#                                           instead of awk, if available.  Use
+#                                           PL/SQL scripts to intelligently
+#                                           calculate size divisor and better
+#                                           placement of output data.
+#   Modified by: Brian Lomasky - 02/20/97 - Pass gendbcon parameters as $1 $2
+#                                           via "set" statement.
+#   Modified By  Brian Lomasky - 11/22/96 - Skip rollback segment alter offline
+#                                           if it is already offline.
+#   Modified By  Brian Lomasky - 07/31/96 - Fix comments.  Calculate default
+#                                           temporary and default tablespaces
+#                                           for SYSTEM and SYS accounts.
+#   Modified By  Brian Lomasky - 06/13/96 - Also run dbmspool.sql, prvtpool.sql,
+#                                           and utlmontr.sql.
+#   Modified By  Brian Lomasky - 04/04/96 - Renamed output file from
+#                                           cr<SID>.sql to crdb<SID>.sql,
+#                                           Reformat lines for ease of analysis.
+#   Modified by: Brian Lomasky - 04/03/96 - Renamed from gendb.sh,  Renamed
+#                                           gencf.sh to gendbcon, Renamed
+#                                           cr<SID>.sql to crdb<SID>.sql
+#
+#***************************************************************************
+#
+# Check number of input arguments
+#
+
+if [ $# -gt 2 ]
+then
+        echo "Invalid # arguments ... Usage $0 [ORACLE_SID] [userid/password]"
+        echo "please try again ..."
+        exit 1
+fi
+#
+#  set ORACLE_SID, ORACLE_HOME, and login password (must have DBA privileges)
+#
+if [ $# -eq 2 ]
+then
+        USERPW=$2; export USERPW
+else
+        USERPW=/; export USERPW
+fi
+if [ $# -ge 1 ]
+then
+        ORACLE_SID=$1; export ORACLE_SID
+fi
+ORAENV_ASK=NO
+. oraenv
+ORAENV_ASK=
+#
+#       Verify ORACLE_BASE and the init_0.ora file
+#
+if [ "$ORACLE_BASE" = "" ]
+then
+        echo "Error:  The ORACLE_BASE environment variable is not set."
+        echo "please try again ..."
+        exit 1
+fi
+if [ ! -r ${ORACLE_BASE}/admin/${ORACLE_SID}/pfile/init${ORACLE_SID}_0.ora ]
+then
+        echo " "
+        echo "Warning:  The" \
+            "${ORACLE_BASE}/admin/${ORACLE_SID}/pfile/init${ORACLE_SID}_0.ora"
+        echo "          file does not exist."
+        echo "          You must manually change the PFILE parameter to the"
+        echo "          STARTUP command in the created script to refer to your"
+        echo "          init${ORACLE_SID}_0.ora file.\007"
+        echo " "
+        echo "          Continuing..."
+        echo " "
+fi
+bkup_ctrl=crdb$ORACLE_SID.tmp; export bkup_ctrl
+temp_out=crdb2$ORACLE_SID.tmp; export temp_out
+prev_dump_dest=crdb3$ORACLE_SID.tmp; export prev_dump_dest
+curr_dump_dest=crdb4$ORACLE_SID.tmp; export curr_dump_dest
+ctrl_file_parms=crdb5$ORACLE_SID.tmp; export ctrl_file_parms
+before_ctrl_params=crdb6$ORACLE_SID.tmp; export before_ctrl_params
+after_ctrl_params=crdb7$ORACLE_SID.tmp; export after_ctrl_params
+backup_ctrl_file=crcf$ORACLE_SID.sql; export backup_ctrl_file
+if [ -r $ORACLE_HOME/bin/svrmgrl ]
+then
+        prg=svrmgrl
+else
+        prg='sqldba lmode=y'
+fi
+#
+# See if nawk should be used instead of awk
+#
+(nawk '{ print ; exit }' /etc/passwd) > /dev/null 2>&1
+if [ ${?} -eq 0 ]
+then
+        cmd=nawk
+else
+        cmd=awk
+fi
+
+#
+# First generate the DDL for control file
+#
+# get user_dump_destination using sqlplus into a file
+#
+#echo ".... creating a backup of control file ... please wait ..."
+sqlplus -s $USERPW >/dev/null<<!EOD
+set echo on
+select * from dual;
+set echo off
+set feedback off
+set embedded off
+set heading off
+set pagesize 0
+set recsep off
+set termout off
+set time off
+set timing off
+set verify off
+col value format a68
+spool $temp_out
+select 'USRDMPDEST', replace(value, '?', '$ORACLE_HOME') value
+from sys.v_\$parameter where name = 'user_dump_dest';
+spool off
+exit
+!EOD
+if [ ! -s $temp_out ]
+then
+        cat $temp_out
+        if [ -r $temp_out ]
+        then
+                rm -f $temp_out
+        fi
+        echo "oops ...    SQL*Plus error ..."
+        echo "            invalid userid/password ..."
+        echo "            or insufficient Oracle access ..."
+        echo "            or Oracle is not available ..."
+        echo "            or check for some other SQL*Plus errors ..."
+        echo "aborting..."
+        exit 1
+fi
+#set `egrep -v ">" $temp_out`
+set `grep "USRDMPDEST " $temp_out`
+DUMPDIR=$2; export DUMPDIR
+rm -f $temp_out
+#echo ".... oracle dump directory for $ORACLE_SID = $DUMPDIR  ..."
+#
+# list all files in this user dump destination directory prior to the backup
+# of the control file
+ls -1t $DUMPDIR | head -20 >$prev_dump_dest
+if [ $? != 0 ]
+then
+        echo "oops ... no access to user dump dest directory $DUMPDIR ..."
+        echo "aborting..."
+        exit 1
+fi
+if [ ! -s $prev_dump_dest ]       # file empty or does not exist
+then
+        echo "empty file" >$prev_dump_dest
+fi
+#
+# use sqldba/svrmgrl to backup controlfile
+#
+$prg 1>/dev/null <<!EOD > $bkup_ctrl
+connect internal
+alter database backup controlfile to trace;
+exit
+!EOD
+grep "ORA-" $bkup_ctrl >$temp_out
+if [ -s $temp_out ]       # file empty or does not exist
+then
+        cat $temp_out
+        if [ -r $temp_out ]
+        then
+                rm -f $temp_out
+        fi
+        echo "oops ... error in executing $prg ..."
+        echo "aborting..."
+        echo "======================  $prg output is:"
+        cat $bkup_ctrl
+        exit 1
+fi
+if [ -r $temp_out ]
+then
+        rm -f $temp_out
+fi
+rm -f $bkup_ctrl
+#
+# check the list of all files in the dump destination, excluding files
+# which existed prior to running sqldba/svrmgrl.
+#
+ls -1t $DUMPDIR | head -20 | egrep -v -f $prev_dump_dest >$curr_dump_dest
+rm -f $prev_dump_dest
+#
+# get the file name of the newly created file;  note that Oracle does not
+# allow us to specify a file name in the 'backup controlfile' command.
+#
+cat $curr_dump_dest | while read line
+do
+        x=`grep "CREATE CONTROLFILE REUSE" $DUMPDIR/$line`
+        if [ "$x" != "" ]
+        then
+                #
+                # copy the file
+                #
+                cp $DUMPDIR/$line $backup_ctrl_file
+                rm $DUMPDIR/$line
+        else
+                echo "oops ... no access to user dump dest file" \
+                        "$DUMPDIR/$line ..."
+                echo "aborting..."
+                exit 1
+        fi
+done
+rm -f $curr_dump_dest
+#
+# extract parameter values from it
+#
+cat $backup_ctrl_file | $cmd '
+/MAXLOGFILES /          { print "    " substr($1 "            ",1,20) $2 }
+/MAXLOGMEMBERS /        { print "    " substr($1 "            ",1,20) $2 }
+/MAXDATAFILES /         { print "    " substr($1 "            ",1,20) $2 }
+/MAXINSTANCES /         { print "    " substr($1 "            ",1,20) $2 }
+/MAXLOGHISTORY /        { print "    " substr($1 "            ",1,20) $2 }
+' >$ctrl_file_parms
+rm $backup_ctrl_file
+#
+# Next, create the temp file which will contain the DDL to create the database
+#
+# Note:  To diagnose problems in the following PL/SQL script, change the
+# following sqlplus invocation line to:  sqlplus $USERPW <<!EOD
+# in order to display any error messages to the screen.  Note that you will
+# also see a log of line continuation counters - This is normal when running
+# SQL*Plus via a Unix "here document".
+#
+sqlplus -s $USERPW >/dev/null<<!EOD
+set echo off
+set embedded off
+set feedback off
+set heading off
+set linesize 80
+set pagesize 0
+set recsep off
+set sqlprompt ""
+set termout off
+set time off
+set timing off
+set verify off
+clear columns
+clear breaks
+set termout on
+create table crdb_temp (code VARCHAR2(1), lineno NUMBER, text VARCHAR2(80));
+def q=chr(39)
+column maxmem1 new_value maxmem_len
+select max(length(member) + 2) maxmem1 from sys.v_\$logfile;
+declare
+        cursor ora8_cursor is select
+                table_name
+                from sys.dba_tables
+                where owner = 'SYS' and table_name = 'TABPART$';
+        cursor filext_cursor is select
+                table_name
+                from sys.dba_tables
+                where owner = 'SYS' and table_name = 'FILEXT$';
+        cursor mode_cursor is select
+                log_mode
+                from sys.v_\$database;
+        cursor param_cursor is select
+                to_number(value)
+                from sys.v_\$parameter
+                where name = 'db_block_size';
+        cursor datafile_cursor (my_tablespace in varchar2) is select
+                file_id,
+                file_name,
+                bytes
+                from sys.dba_data_files
+                where tablespace_name = my_tablespace
+                order by file_id;
+        cursor log_cursor is select
+                group#,
+                members,
+                bytes
+                from sys.v_\$log
+                where thread# = 1
+                order by 1;
+        cursor thread_cursor is select
+                thread#,
+                group#,
+                members,
+                bytes
+                from sys.v_\$log
+                where thread# > 1
+                order by 1, 2;
+        cursor logfile_cursor (my_group in number) is select
+                member
+                from sys.v_\$logfile
+                where group# = my_group;
+        cursor tablespace_cursor is select
+                ts.name,
+                ts.blocksize * ts.dflinit,
+                ts.blocksize * ts.dflincr,
+                ts.dflminext,
+                ts.dflmaxext,
+                ts.dflextpct,
+                decode(mod(ts.online$, 65536),1,'ONLINE',2,'OFFLINE',
+                        4,'READ ONLY','UNDEFINED'),
+                decode(floor(ts.online$/65536),0,'PERMANENT',1,'TEMPORARY')
+                from sys.ts$ ts
+                where ts.name <> 'SYSTEM' and mod(ts.online$, 65536) != 3
+                order by 1;
+        cursor rollback_cursor is select
+                owner,
+                segment_name,
+                tablespace_name,
+                initial_extent,
+                next_extent,
+                min_extents,
+                max_extents,
+                pct_increase
+                from sys.dba_rollback_segs
+                where segment_name not in ('SYSTEM', 'R000')
+                order by segment_name;
+        cursor optimal_cursor (my_segment_name in varchar2) is select
+                c.optsize
+                from    sys.dba_rollback_segs a,
+                        sys.v_\$rollname b,
+                        sys.v_\$rollstat c
+                where my_segment_name not in ('SYSTEM', 'R000')
+                and a.segment_name = my_segment_name
+                and a.segment_name = b.name
+                and b.usn = c.usn;
+
+        ora8                    boolean;
+        filext                  boolean;
+        cursor1                 integer;
+        cursor2                 integer;
+        stmnt                   varchar2(2000);
+        rows_processed          number;
+        lv_table_name           sys.dba_tables.table_name%TYPE;
+        lv_log_mode             sys.v_\$database.log_mode%TYPE;
+        lv_db_block_size        number;
+        lv_file_id              sys.dba_data_files.file_id%TYPE;
+        lv_file_name            sys.dba_data_files.file_name%TYPE;
+        lv_bytes                number;
+        lv_maxbytes             number;
+        lv_increment_by         number;
+        prev_thread#            sys.v_\$log.thread#%TYPE;
+        lv_thread#              sys.v_\$log.thread#%TYPE;
+        prev_group#             sys.v_\$log.group#%TYPE;
+        lv_group#               sys.v_\$log.group#%TYPE;
+        lv_members              sys.v_\$log.members%TYPE;
+        lv_member               sys.v_\$logfile.member%TYPE;
+        lv_tablespace_name      sys.dba_tablespaces.tablespace_name%TYPE;
+        lv_initial_extent       sys.dba_tablespaces.initial_extent%TYPE;
+        lv_next_extent          sys.dba_tablespaces.next_extent%TYPE;
+        lv_min_extents          sys.dba_tablespaces.min_extents%TYPE;
+        lv_max_extents          sys.dba_tablespaces.max_extents%TYPE;
+        lv_pct_increase         sys.dba_tablespaces.pct_increase%TYPE;
+        lv_tablesp_status       varchar2(30);
+        lv_tablesp_contents     varchar2(30);
+        lv_min_extlen           number;
+        lv_logging              varchar2(9);
+        lv_owner                sys.dba_rollback_segs.owner%TYPE;
+        lv_segment_name         sys.dba_rollback_segs.segment_name%TYPE;
+        lv_optimal              number;
+        owner_name              varchar2(8);
+        lv_lineno               number := 0;
+        a_lin                   varchar2(80);
+        n                       number;
+        r                       number;
+        error_desc              varchar2(132);
+
+        function wri(x_cod in varchar2, x_lin in varchar2, x_str in varchar2,
+                x_force in number) return varchar2 is
+        begin
+                error_desc := 'wri ' || x_str;
+                if length(x_lin) + length(x_str) > 80 then
+                        lv_lineno := lv_lineno + 1;
+                        insert into crdb_temp values (x_cod, lv_lineno,
+                                x_lin);
+                        if x_force = 0 then
+                                return '    ' || x_str;
+                        else
+                                lv_lineno := lv_lineno + 1;
+                                insert into crdb_temp values (x_cod,
+                                        lv_lineno, '    ' || x_str);
+                                return '';
+                        end if;
+                else
+                        if x_force = 0 then
+                                return x_lin||x_str;
+                        else
+                                lv_lineno := lv_lineno + 1;
+                                insert into crdb_temp values (
+                                        x_cod, lv_lineno, x_lin||x_str);
+                                return '';
+                        end if;
+                end if;
+        end wri;
+
+        function km(b in number) return varchar2 is
+        begin
+                /* Calculate sizes in Mbytes or Kbytes, if possible */
+                if mod(b, 1048576) = 0 then
+                        return to_char(b / 1048576) || 'M';
+                elsif mod(b, 1024) = 0 then
+                        return to_char(b / 1024) || 'K';
+                else
+                        return to_char(b);
+                end if;
+        end km;
+
+        procedure fetch_autoextend(my_file in number) is
+        begin
+                if ora8 then
+                        cursor2 := dbms_sql.open_cursor;
+                        stmnt := 'select inc,maxextend' ||
+                                ' from sys.file$ where file#=' ||
+                                to_char(my_file);
+                        dbms_sql.parse(cursor2, stmnt, dbms_sql.native);
+                        dbms_sql.define_column(cursor2, 1, lv_increment_by);
+                        dbms_sql.define_column(cursor2, 2, lv_maxbytes);
+                        rows_processed := dbms_sql.execute(cursor2);
+                        if dbms_sql.fetch_rows(cursor2) = 0 then
+                                lv_increment_by := 0;
+                                lv_maxbytes := 0;
+                        else
+                                dbms_sql.column_value(cursor2, 1,
+                                        lv_increment_by);
+                                dbms_sql.column_value(cursor2, 2, lv_maxbytes);
+                                lv_maxbytes := lv_maxbytes * lv_db_block_size;
+                        end if;
+                        dbms_sql.close_cursor(cursor2);
+                else
+                        if filext then
+                                cursor2 := dbms_sql.open_cursor;
+                                stmnt := 'select inc,maxextend' ||
+                                        ' from sys.filext$ where file#=' ||
+                                        to_char(my_file);
+                                dbms_sql.parse(cursor2, stmnt, dbms_sql.native);
+                                dbms_sql.define_column(cursor2, 1,
+                                        lv_increment_by);
+                                dbms_sql.define_column(cursor2, 2,
+                                        lv_maxbytes);
+                                rows_processed := dbms_sql.execute(cursor2);
+                                if dbms_sql.fetch_rows(cursor2) = 0 then
+                                        lv_increment_by := 0;
+                                        lv_maxbytes := 0;
+                                else
+                                        dbms_sql.column_value(cursor2, 1,
+                                                lv_increment_by);
+                                        dbms_sql.column_value(cursor2, 2,
+                                                lv_maxbytes);
+                                        lv_maxbytes := lv_maxbytes *
+                                                lv_db_block_size;
+                                end if;
+                                dbms_sql.close_cursor(cursor2);
+                        else
+                                lv_increment_by := 0;
+                                lv_maxbytes := 0;
+                        end if;
+                end if;
+        end fetch_autoextend;
+
+        procedure print_tablespace_lines is
+        begin
+                error_desc := 'tablespace ' || lv_tablespace_name;
+                a_lin := wri('2', a_lin, 'rem', 1);
+                a_lin := wri('2', a_lin,
+                        'rem ----------------------------------------', 1);
+                a_lin := wri('2', a_lin, 'rem', 1);
+                a_lin := wri('2', a_lin, 'CREATE TABLESPACE ' ||
+                        lv_tablespace_name || ' DATAFILE', 1);
+                r := 0;
+                open datafile_cursor (lv_tablespace_name);
+                loop
+                        fetch datafile_cursor into
+                                lv_file_id,
+                                lv_file_name,
+                                lv_bytes;
+                        exit when datafile_cursor%notfound;
+                        error_desc := 'datafile ' || substr(lv_file_name,1,100);
+                        fetch_autoextend(lv_file_id);
+                        r := r + 1;
+                        if r != 1 then
+                                a_lin := wri('2', a_lin, ',', 1);
+                        end if;
+                        a_lin := wri('2', a_lin, '    ' || &q || lv_file_name ||
+                                &q || ' SIZE ' || km(lv_bytes), 0);
+                        if lv_increment_by <> 0 then
+                                a_lin := wri('2', a_lin, ' autoextend on', 0);
+                                a_lin := wri('2', a_lin, ' next ' ||
+                                        km(lv_increment_by), 0);
+                                if lv_maxbytes > 2097152 * lv_db_block_size then
+                                        a_lin := wri('2', a_lin,
+                                                ' maxsize unlimited', 0);
+                                else
+                                        a_lin := wri('2', a_lin, ' maxsize ' ||
+                                                km(lv_maxbytes), 0);
+                                end if;
+                        end if;
+                end loop;
+                close datafile_cursor;
+                error_desc := 'tablespace storage ' || lv_tablespace_name;
+                a_lin := wri('2', a_lin, ' ', 0);
+                a_lin := wri('2', a_lin, 'default storage', 1);
+                a_lin := wri('2', a_lin, '    (initial ' ||
+                        km(lv_initial_extent), 0);
+                a_lin := wri('2', a_lin, ' next ' || km(lv_next_extent), 0);
+                a_lin := wri('2', a_lin, ' pctincrease ' || lv_pct_increase, 0);
+                a_lin := wri('2', a_lin, ' minextents ' || lv_min_extents, 0);
+                if lv_max_extents > 999999 then
+                        a_lin := wri('2', a_lin, ' maxextents unlimited', 0);
+                else
+                        a_lin := wri('2', a_lin, ' maxextents ' ||
+                                lv_max_extents, 0);
+                end if;
+                a_lin := wri('2', a_lin, ')', 0);
+                if lv_min_extlen <> 0 then
+                        a_lin := wri('2', a_lin, ' MINIMUM EXTENT ' ||
+                                km(lv_min_extlen), 0);
+                end if;
+                if lv_logging = 'NOLOGGING' then
+                        a_lin := wri('2', a_lin, ' NOLOGGING', 0);
+                end if;
+                if lv_tablesp_contents = 'TEMPORARY' then
+                        a_lin := wri('2', a_lin, ' TEMPORARY', 0);
+                end if;
+                a_lin := wri('2', a_lin, ';', 1);
+                if lv_tablesp_status = 'READ ONLY' then
+                        a_lin := wri('2', a_lin, 'ALTER TABLESPACE ' ||
+                                lv_tablespace_name || ' READ ONLY;', 1);
+                end if;
+        end print_tablespace_lines;
+begin
+        error_desc := 'init';
+        --
+        -- See if Oracle8
+        --
+        open ora8_cursor;
+        fetch ora8_cursor into lv_table_name;
+        if ora8_cursor%found then
+                ora8 := TRUE;
+        else
+                ora8 := FALSE;
+        end if;
+        close ora8_cursor;
+        --
+        -- See if FILEXT$ table exists (to support autoextend)
+        --
+        open filext_cursor;
+        fetch filext_cursor into lv_table_name;
+        if filext_cursor%found then
+                filext := TRUE;
+        else
+                filext := FALSE;
+        end if;
+        close filext_cursor;
+        a_lin := '';
+        --
+        -- Get db_block_size value
+        --
+        open param_cursor;
+        fetch param_cursor into lv_db_block_size;
+        close param_cursor;
+        --
+        -- Get log mode
+        --
+        open mode_cursor;
+        fetch mode_cursor into lv_log_mode;
+        if mode_cursor%found then
+                a_lin := wri('A', a_lin, '    ' || lv_log_mode, 1);
+        end if;
+        close mode_cursor;
+        a_lin := wri('0', a_lin, '    DATAFILE ', 0);
+        r := 0;
+        open datafile_cursor ('SYSTEM');
+        loop
+                fetch datafile_cursor into
+                        lv_file_id,
+                        lv_file_name,
+                        lv_bytes;
+                exit when datafile_cursor%notfound;
+                error_desc := 'SYSTEM datafile ' || substr(lv_file_name,1,100);
+                fetch_autoextend(lv_file_id);
+                r := r + 1;
+                if r != 1 then
+                        a_lin := wri('0', a_lin, ',', 1);
+                end if;
+                a_lin := wri('0', a_lin, &q || lv_file_name || &q || ' SIZE ' ||
+                        km(lv_bytes), 0);
+                if lv_increment_by <> 0 then
+                        a_lin := wri('0', a_lin, ' autoextend on', 0);
+                        a_lin := wri('0', a_lin, ' next ' ||
+                                km(lv_increment_by), 0);
+                        if lv_maxbytes > 2097152 * lv_db_block_size then
+                                a_lin := wri('2', a_lin, ' maxsize unlimited',
+                                        0);
+                        else
+                                a_lin := wri('2', a_lin, ' maxsize ' ||
+                                        km(lv_maxbytes), 0);
+                        end if;
+                end if;
+        end loop;
+        close datafile_cursor;
+        a_lin := wri('0', a_lin, '', 1);
+        prev_group# := 99999;
+        open log_cursor;
+        loop
+                fetch log_cursor into
+                        lv_group#,
+                        lv_members,
+                        lv_bytes;
+                exit when log_cursor%notfound;
+                error_desc := 'log ' || to_char(lv_group#);
+                if prev_group# != 99999 then
+                        a_lin := wri('1', a_lin, ',', 1);
+                end if;
+                a_lin := wri('1', a_lin, '    GROUP' ||
+                        to_char(lv_group#, 'B99') || ' (', 0);
+                prev_group# := lv_group#;
+                r := 0;
+                open logfile_cursor (lv_group#);
+                loop
+                        fetch logfile_cursor into lv_member;
+                        exit when logfile_cursor%notfound;
+                        error_desc := 'logfile ' || substr(lv_member,1,100);
+                        r := r + 1;
+                        if r != 1 then
+                                a_lin := wri('1', a_lin, '', 1);
+                                a_lin := wri('1', a_lin, '    ', 0);
+                        end if;
+                        if r = lv_members then
+                                a_lin := wri('1', a_lin, &q ||
+                                        rpad(lv_member || &q, &maxmem_len, ' '),
+                                        0);
+                        else
+                                a_lin := wri('1', a_lin, &q ||
+                                        rpad(lv_member || &q, &maxmem_len, ' ')
+                                        || ',', 0);
+                        end if;
+                end loop;
+                close logfile_cursor;
+                a_lin := wri('1', a_lin, ') SIZE ' || km(lv_bytes), 0);
+        end loop;
+        close log_cursor;
+        if prev_group# != 99999 then
+                a_lin := wri('1', a_lin, ';', 1);
+        end if;
+        prev_thread# := 99999;
+        open thread_cursor;
+        loop
+                fetch thread_cursor into
+                        lv_thread#,
+                        lv_group#,
+                        lv_members,
+                        lv_bytes;
+                exit when thread_cursor%notfound;
+                error_desc := 'thread ' || to_char(lv_thread#);
+                if prev_thread# <> lv_thread# then
+                        if prev_thread# <> 99999 then
+                                a_lin := wri('1', a_lin, ';', 1);
+                                a_lin := wri('1', a_lin,
+                                        'ALTER DATABASE ENABLE THREAD ' ||
+                                        to_char(lv_thread#) || ';', 1);
+                        end if;
+                        a_lin := wri('1', a_lin,
+                                'ALTER DATABASE ADD LOGFILE THREAD ' ||
+                                to_char(lv_thread#), 1);
+                        prev_thread# := lv_thread#;
+                        prev_group# := 99999;
+                end if;
+                if prev_group# != 99999 then
+                        a_lin := wri('1', a_lin, ',', 1);
+                end if;
+                a_lin := wri('1', a_lin, '    GROUP' ||
+                        to_char(lv_group#, 'B99') || ' (', 0);
+                prev_group# := lv_group#;
+                r := 0;
+                open logfile_cursor (lv_group#);
+                loop
+                        fetch logfile_cursor into lv_member;
+                        exit when logfile_cursor%notfound;
+                        error_desc := 'logfile ' || substr(lv_member,1,100);
+                        r := r + 1;
+                        if r != 1 then
+                                a_lin := wri('1', a_lin, '', 1);
+                                a_lin := wri('1', a_lin, '    ', 0);
+                        end if;
+                        if r = lv_members then
+                                a_lin := wri('1', a_lin, &q ||
+                                        rpad(lv_member || &q, &maxmem_len, ' '),
+                                        0);
+                        else
+                                a_lin := wri('1', a_lin, &q ||
+                                        rpad(lv_member || &q, &maxmem_len, ' ')
+                                        || ',', 0);
+                        end if;
+                end loop;
+                close logfile_cursor;
+                a_lin := wri('1', a_lin, ') SIZE ' || km(lv_bytes), 0);
+        end loop;
+        close thread_cursor;
+        if prev_thread# <> 99999 then
+                a_lin := wri('1', a_lin, ';', 1);
+                a_lin := wri('1', a_lin,
+                        'ALTER DATABASE ENABLE THREAD ' ||
+                        to_char(lv_thread#) || ';', 1);
+                a_lin := wri('1', a_lin, 'rem', 1);
+        end if;
+        error_desc := 'tablespace_cursor';
+        if ora8 then
+                cursor1 := dbms_sql.open_cursor;
+                stmnt := 'select tablespace_name,initial_extent,' ||
+                        'next_extent,min_extents,max_extents,pct_increase,' ||
+                        'status,contents,min_extlen,logging' ||
+                        ' from sys.dba_tablespaces' ||
+                        ' where tablespace_name <> ' || &q || 'SYSTEM' || &q ||
+                        ' order by 1';
+                dbms_sql.parse(cursor1, stmnt, dbms_sql.native);
+                dbms_sql.define_column(cursor1, 1, lv_tablespace_name, 30);
+                dbms_sql.define_column(cursor1, 2, lv_initial_extent);
+                dbms_sql.define_column(cursor1, 3, lv_next_extent);
+                dbms_sql.define_column(cursor1, 4, lv_min_extents);
+                dbms_sql.define_column(cursor1, 5, lv_max_extents);
+                dbms_sql.define_column(cursor1, 6, lv_pct_increase);
+                dbms_sql.define_column(cursor1, 7, lv_tablesp_status, 30);
+                dbms_sql.define_column(cursor1, 8, lv_tablesp_contents, 30);
+                dbms_sql.define_column(cursor1, 9, lv_min_extlen);
+                dbms_sql.define_column(cursor1, 10, lv_logging, 9);
+                rows_processed := dbms_sql.execute(cursor1);
+                loop
+                        if dbms_sql.fetch_rows(cursor1) = 0 then
+                                exit;
+                        end if;
+                        dbms_sql.column_value(cursor1, 1, lv_tablespace_name);
+                        dbms_sql.column_value(cursor1, 2, lv_initial_extent);
+                        dbms_sql.column_value(cursor1, 3, lv_next_extent);
+                        dbms_sql.column_value(cursor1, 4, lv_min_extents);
+                        dbms_sql.column_value(cursor1, 5, lv_max_extents);
+                        dbms_sql.column_value(cursor1, 6, lv_pct_increase);
+                        dbms_sql.column_value(cursor1, 7, lv_tablesp_status);
+                        dbms_sql.column_value(cursor1, 8, lv_tablesp_contents);
+                        dbms_sql.column_value(cursor1, 9, lv_min_extlen);
+                        dbms_sql.column_value(cursor1, 10, lv_logging);
+                        print_tablespace_lines;
+                end loop;
+                dbms_sql.close_cursor(cursor1);
+        else
+                lv_min_extlen := 0;
+                lv_logging := 'LOGGING';
+                open tablespace_cursor;
+                loop
+                        fetch tablespace_cursor into
+                                lv_tablespace_name,
+                                lv_initial_extent,
+                                lv_next_extent,
+                                lv_min_extents,
+                                lv_max_extents,
+                                lv_pct_increase,
+                                lv_tablesp_status,
+                                lv_tablesp_contents;
+                        exit when tablespace_cursor%notfound;
+                        print_tablespace_lines;
+                end loop;
+                close tablespace_cursor;
+        end if;
+        error_desc := 'addtl roll';
+        a_lin := wri('2', a_lin, 'rem', 1);
+        a_lin := wri('2', a_lin,
+                'rem ----------------------------------------', 1);
+        a_lin := wri('2', a_lin, 'rem', 1);
+        a_lin := wri('2', a_lin, 'rem  Create additional rollback segments' ||
+                ' in the rollback tablespace', 1);
+        a_lin := wri('2', a_lin, 'rem', 1);
+        a_lin := wri('2', a_lin,
+                'rem ----------------------------------------', 1);
+        a_lin := wri('2', a_lin, 'rem', 1);
+        open rollback_cursor;
+        loop
+                fetch rollback_cursor into
+                        lv_owner,
+                        lv_segment_name,
+                        lv_tablespace_name,
+                        lv_initial_extent,
+                        lv_next_extent,
+                        lv_min_extents,
+                        lv_max_extents,
+                        lv_pct_increase;
+                exit when rollback_cursor%notfound;
+                error_desc := 'rollback ' || substr(lv_segment_name,1,100);
+                if lv_owner = 'PUBLIC' then
+                        owner_name := ' PUBLIC ';
+                else
+                        owner_name := ' ';
+                end if;
+                a_lin := wri('2', a_lin, 'CREATE' || owner_name ||
+                        'ROLLBACK SEGMENT ' || lv_segment_name, 0);
+                a_lin := wri('2', a_lin, ' TABLESPACE ' || lv_tablespace_name
+                        || ' STORAGE', 1);
+                a_lin := wri('2', a_lin, '    (initial ' ||
+                        km(lv_initial_extent), 0);
+                a_lin := wri('2', a_lin, ' next ' || km(lv_next_extent), 0);
+                a_lin := wri('2', a_lin, ' minextents ' || lv_min_extents, 0);
+                if lv_max_extents > 999999 then
+                        a_lin := wri('2', a_lin, ' maxextents unlimited', 0);
+                else
+                        a_lin := wri('2', a_lin, ' maxextents ' ||
+                                lv_max_extents, 0);
+                end if;
+                error_desc := 'optimal ' || substr(lv_segment_name,1,100);
+                open optimal_cursor (lv_segment_name);
+                fetch optimal_cursor into lv_optimal;
+                if optimal_cursor%found then
+                        if lv_optimal is not null then
+                                a_lin := wri('2', a_lin, ' optimal ' ||
+                                        km(lv_optimal), 0);
+                        end if;
+                end if;
+                close optimal_cursor;
+                a_lin := wri('2', a_lin, ');', 1);
+        end loop;
+        close rollback_cursor;
+        error_desc := 'commit';
+        commit;
+exception
+        when others then
+                rollback;
+                raise_application_error(-20000,
+                        'Unexpected error ' || to_char(SQLCODE) || chr(10) ||
+                        sqlerrm || chr(10) ||
+                        'After ' || error_desc || chr(10) || 'Aborting...');
+end;
+/
+!EOD
+#
+# Next, generate the actual DDL to create the database
+#
+sqlplus -s $USERPW >/dev/null <<!EOD
+set echo off
+set embedded off
+set feedback off
+set heading off
+set linesize 80
+set pagesize 0
+set recsep off
+set sqlprompt ""
+set termout off
+set time off
+set timing off
+set trimspool on
+set verify off
+spool crdb$ORACLE_SID.sql
+col parameter format a17
+col value format a30
+col val format a40
+col newval format a10 newline
+select 'rem  ************************************************' from dual;
+select 'rem  *  Script     : crdb$ORACLE_SID.sql to Create Database' from dual;
+select 'rem  *  Date       :',
+       to_char(sysdate,'MM/DD/YY   HH24:MM:SS') "value" from dual;
+select 'rem  *  Notes :' from dual;
+select 'rem  *  -  This script includes CREATE DATABASE,' from dual;
+select 'rem  *     CREATE other TABLESPACES, CREATE ROLLBACK' from dual;
+select 'rem  *     SEGMENT, statements.' from dual;
+select 'rem  *     It also runs catalog.sql, catproc.sql,' from dual;
+select 'rem  *     dbmspool.sql, and prvtpool.sql under SYS' from dual;
+select 'rem  *     and catdbsyn.sql and pupbld.sql under SYSTEM' from dual;
+select 'rem  *' from dual;
+select 'rem  *  -  You should (if needed) :' from dual;
+select 'rem  *     point to the correct init.ora file,' from dual;
+select 'rem  *     and ensure that the rollback segments are' from dual;
+select 'rem  *     enabled in the init.ora file after the' from dual;
+select 'rem  *     database is created.' from dual;
+select 'rem  *' from dual;
+select 'rem  ************************************************' from dual;
+select 'rem' from dual;
+select 'rem  Database name        :', value from sys.v_\$parameter
+        where name = 'db_name';
+select 'rem  Database created     :', created  from sys.v_\$database;
+select 'rem  Database log_mode    :', log_mode from sys.v_\$database;
+select 'rem  Database blocksize   :', value from sys.v_\$parameter
+        where name = 'db_block_size';
+select 'rem  Database buffers     :', value || ' blocks' "VAL"
+        from sys.v_\$parameter where name = 'db_block_buffers';
+select 'rem  Database log_buffers :', value || ' blocks' "VAL"
+        from sys.v_\$parameter where name = 'log_buffer';
+col value format a50
+select 'rem  Database ifile       :', 'rem       ' "NEWVAL", value
+        from sys.v_\$parameter where name = 'ifile';
+select 'rem' from dual;
+select 'rem  Database Options     :' from dual;
+col parameter format a50
+col value format a10
+select 'rem ', parameter, '   :', value from sys.v_\$option;
+col value format a50
+select 'rem' from dual;
+select 'rem  Note:  Use ALTER SYSTEM BACKUP CONTROLFILE TO TRACE;' from dual;
+select 'rem         to generate a script to create controlfile' from dual;
+select 'rem         and compare it with the output of this script.' from dual;
+select 'rem         Add MAXLOGFILES, MAXDATAFILES, etc. if reqd.' from dual;
+select 'rem' from dual;
+col GROUP format a14
+col MEMBER format a64
+break on GROUP
+select 'set trimspool on' from dual;
+select 'spool crdb$ORACLE_SID.lst' from dual;
+select 'connect internal' from dual;
+select 'startup nomount pfile=${ORACLE_BASE}/admin/${ORACLE_SID}/pfile' ||
+        '/init${ORACLE_SID}_0.ora'
+        from dual;
+select '/* please verify/change the following parameters as needed */'
+        from dual;
+select 'CREATE DATABASE "' || value || '"' from sys.v_\$parameter
+        where name = 'db_name';
+select text from crdb_temp where code = 'A' order by lineno;
+select '   /*option start:use control file*/' from dual;
+select '   MAXLOGFILES    ' || max(group#)*max(members)*4 "MEMBER"
+        from sys.v_\$log;
+select '   MAXLOGMEMBERS  ' || max(members) * 2 "MEMBER" from sys.v_\$log;
+select '   /* MAXDATAFILES  255 */' from dual;
+select '   /* MAXINSTANCES    1 */' from dual;
+select '   /* MAXLOGHISTORY 100 */' from dual;
+select '   /*option end  :use control file*/' from dual;
+select text from crdb_temp where code = '0' order by lineno;
+select '    LOGFILE' from dual;
+select text from crdb_temp where code = '1' order by lineno;
+select 'rem ----------------------------------------' from dual;
+select 'rem' from dual;
+select 'rem  Need a basic rollback segment before proceeding' from dual;
+select 'rem' from dual;
+select 'CREATE ROLLBACK SEGMENT r000 TABLESPACE SYSTEM '  from dual;
+select '    storage (initial 500K next 500K minextents 2);' from dual;
+select 'ALTER ROLLBACK SEGMENT r000 ONLINE;' from dual;
+select 'commit;' from dual;
+select 'rem ----------------------------------------' from dual;
+select 'rem' from dual;
+select 'rem Create DBA views' from dual;
+select 'rem' from dual;
+select '@\$ORACLE_HOME/rdbms/admin/catalog.sql' from dual;
+select 'commit;' from dual;
+select 'rem ----------------------------------------' from dual;
+select 'rem' from dual;
+select 'rem  Additional Tablespaces' from dual;
+select text from crdb_temp where code = '2' order by lineno;
+select 'ALTER ROLLBACK SEGMENT ' || segment_name || ' ' || status || ';'
+        from sys.dba_rollback_segs
+        where segment_name not in ('SYSTEM', 'R000') and status = 'ONLINE'
+        order by 1;
+select 'rem' from dual;
+select 'rem  Take the initial rollback segment (r000) offline' from dual;
+select 'rem' from dual;
+select 'ALTER ROLLBACK SEGMENT r000 OFFLINE;' from dual;
+select 'rem' from dual;
+select 'rem ----------------------------------------' from dual;
+select 'rem' from dual;
+select 'ALTER USER SYS TEMPORARY TABLESPACE ' || temporary_tablespace || ';'
+        from sys.dba_users where username = 'SYS';
+select 'ALTER USER SYSTEM TEMPORARY TABLESPACE ' || temporary_tablespace ||
+        ' DEFAULT TABLESPACE ' || default_tablespace || ';'
+        from sys.dba_users where username = 'SYSTEM';
+select 'rem' from dual;
+select 'rem ----------------------------------------' from dual;
+select 'rem' from dual;
+select 'rem  Run other @\$ORACLE_HOME/rdbms/admin required scripts' from dual;
+select 'rem' from dual;
+select 'commit;' from dual;
+select 'rem' from dual;
+select '@\$ORACLE_HOME/rdbms/admin/catproc.sql' from dual;
+select 'rem @\$ORACLE_HOME/rdbms/admin/catparr.sql' from dual;
+select '@\$ORACLE_HOME/rdbms/admin/dbmspool.sql' from dual;
+select '@\$ORACLE_HOME/rdbms/admin/prvtpool.sql' from dual;
+select 'rem' from dual;
+select 'commit;' from dual;
+select 'rem' from dual;
+select 'connect system/manager' from dual;
+select '@\$ORACLE_HOME/sqlplus/admin/pupbld.sql' from dual;
+select '@\$ORACLE_HOME/rdbms/admin/catdbsyn.sql' from dual;
+select 'commit;' from dual;
+select 'spool off' from dual;
+select 'exit' from dual;
+spool off
+drop table crdb_temp;
+exit
+!EOD
+#
+# Now, merge the 'Create Database' DDL with some of the parameters found
+#      only in the DDL for control file.
+#      This step depends on /option start:/ and /option end  :/ markers
+#      placed within the 'Create Database' file.
+#
+cat crdb$ORACLE_SID.sql | $cmd '
+        /option start:/ { print "    /* using actual control file values */"
+                          exit }
+                        { print $0 }
+        ' >$before_ctrl_params
+cat crdb$ORACLE_SID.sql | $cmd '
+        /option end  :/ { startpr = NR }
+                        { if ( NR > startpr && startpr > 0 ) { print $0 } }
+        ' >$after_ctrl_params
+cat $before_ctrl_params $ctrl_file_parms $after_ctrl_params >crdb$ORACLE_SID.sql
+rm -f $ctrl_file_parms
+rm -f $before_ctrl_params
+rm -f $after_ctrl_params
+echo ".... crdb$ORACLE_SID.sql contains the CREATE DATABASE script ... "

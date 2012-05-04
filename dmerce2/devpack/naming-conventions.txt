@@ -1,0 +1,50 @@
+				1Ci - Naming-Conventions
+				Changed: 2002-04-21 - rb
+				Created: 2001-11-12 - rb
+
+UNIX-Env:
+=================================================================================
+Typ				Schreibweise
+---------------------------------------------------------------------------------
+Skript				xxxx[_yyyy[_zzzz,....]]
+
+Programmierung:
+=================================================================================
+Typ				Schreibweise
+---------------------------------------------------------------------------------
+Verzeichnisse f. Module		Xxxx[Yyyy[Zzzz,...]]
+Module				Xxxx[Yyyy[Zzzz,...]]
+Klassen				Xxxx[Yyyy[Zzzz,...]]
+Methoden/Funktionen		Xxxx[Yyyy[Zzzz,...]]
+Instanzen			xxxx[Yyyy[Zzzz,...]]
+Variablen/Konstanten		xxxx[Yyyy[Zzzz,...]]
+Abkuerzungen         		XXXX[_YYY[_ZZZ,...]]
+---------------------------------------------------------------------------------
+
+Datenbanken
+=================================================================================
+Typ				Schreibweise			Datenbank
+---------------------------------------------------------------------------------
+Datenbank    			xxxx[_yyyy[_zzzz,...]]		alle
+Tabelle				T_Xxxx[Yyyy[Zzzz,...]]		alle * UNUSED *
+Feld				F_Xxxx[Yyyy[Zzzz,...]]		alle * UNUSED *
+View				V_Xxxx[Yyyy[Zzzz,...]]		pgsql, Oracle
+Constraint			C_Xxxx[Yyyy[Zzzz,...]]		pgsql, Oracle
+Funktion			F_Xxxx[Yyyy[Zzzz,...]]		pgsql, Oracle
+Prozedur			P_Xxxx[Yyyy[Zzzz,...]]		pgsql, Oracle
+Pakket				P_Xxxx[Yyyy[Zzzz,...]]		pgsql, Oracle
+Trigger				TR_Xxxx[Yyyy[Zzzz,...]]		pgsql, Oracle
+Sequenz				S_Xxxx[Yyyy[Zzzz,...]]		pgsql, Oracle
+Role				R_XXXX....			pgsql, Oracle
+---------------------------------------------------------------------------------
+Anm.: Bei Oracle spielt die Schreibweise keine Rolle, da alles in Grossbuchstaben
+      gehalten wird!
+
+dmerce-Projekte, intern
+=================================================================================
+Typ				Schreibweise
+---------------------------------------------------------------------------------
+Datenbank    			dmerce_<siehe datenbanken>
+Webserver			www.<projekt-name>.1ci.de    - public web
+         			dmerce.<projekt-name>.1ci.de - admin web
+---------------------------------------------------------------------------------

@@ -1,0 +1,100 @@
+body {
+  background-color:#ffffff;
+  font-family:Verdana,Arial,Helvetica,sans-serif;
+  font-size:10pt;
+  color:#000000;
+  SCROLLBAR-FACE-COLOR:#ffffff;
+  SCROLLBAR-HIGHLIGHT-COLOR:#ffffff;
+  SCROLLBAR-SHADOW-COLOR:#ffffff;
+  SCROLLBAR-3DLIGHT-COLOR:#000055;
+  SCROLLBAR-ARROW-COLOR:#000055;
+  SCROLLBAR-TRACK-COLOR:#dddddd;
+  SCROLLBAR-DARKSHADOW-COLOR:#000055;
+}
+
+.error {
+	color:#ff0000;
+	font-size:10pt;
+	font-weight:bold;
+	font-family:Verdana,Arial,Helvetica,sans-serif;
+}
+
+.radiotable {
+	font-weight:normal;
+}
+
+.tdbg2 {
+    background-color:#eeeeee;
+}
+.tdbg3 {
+    background-color:#dddddd;
+} 
+
+p, th, td, h1, h2, h3, h4, ul, li, .forms {
+  color:#000055;
+  font-family:Tahoma,Helvetica,sans-serif;
+  font-size:10pt;
+}
+
+th {
+  font-weight:bold;
+}
+
+td.alt {
+  background-color:#66aaff;
+  color:#771111;
+}
+
+h1 {
+  color:#66aaff;
+  font-weight:normal;
+  font-size:15pt;
+  text-decoration:none;
+}
+
+h2 {
+  font-weight:normal;
+  font-size:13pt;
+}
+
+h3 {
+  font-size:10pt;
+  font-weight:bold;
+}
+
+h4 {
+  font-size:10pt;
+  font-weight:normal;
+}
+
+pre {
+  color:#000000;
+  font-weight:normal;
+  font-size:9pt;
+}
+
+a, a.menu {
+  color:#333333;
+  text-decoration:none;
+}
+
+a:hover {
+  color:#e4d81b;
+}
+
+a.menu:hover {
+  color:#dd5555;
+}
+
+a.alt:hover {
+    color:#ff2222;
+}
+
+ul {
+  list-style-type:square;
+}
+
+input, textarea {
+  font-family:Arial,Helvetica,sans-serif;
+
+}

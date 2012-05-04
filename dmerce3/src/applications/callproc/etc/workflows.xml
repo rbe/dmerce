@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<workflows xmlns='http://www.1ci.de'
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+  xsi:schemaLocation='http://www.1ci.de ../../../etc/WORKFLOWS.xsd'
+  version="2.0"
+>
+
+    <workflow id="register">
+    
+        <page id="registerpage" template="form_register.jsp" formid="form1" editable="false">
+            <transition name="call_proc" target="list">
+            	<condition type="buttonpressed" value="Ok"/>
+            	<action type="callproc">
+            		<parameter name="name" value="NEW_KUNDE"/>
+					<formfield formid="form1" name="name"/>
+					<formfield formid="form1" name="vorname"/>
+					<formfield formid="form1" name="email"/>
+            	</action>
+            </transition>
+            <transition name="abort" target="list" validation="false">
+            	<condition type="buttonpressed" value="Cancel"/>
+            </transition>
+        </page>
+        
+        <page id="list" template="list.jsp"/>
+        
+    </workflow>
+
+</workflows>

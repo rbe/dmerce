@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<forms xmlns="http://www.1ci.de"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.1ci.de ../FORMS.xsd">
+
+<!-- Formular für eine Beispielanwendung -->
+
+  <form id="einladung">
+    <name>Rückmeldung</name>
+    <description>Formular für die Rückmeldung zur Party</description>
+    <formversion>1.0</formversion>
+
+    <field name="name" required="true">
+      <description>Name</description>
+      <type>string</type>
+    </field>
+    <field name="telefon">
+      <description>Telefon</description>
+      <type>string</type>
+    </field>
+    
+    <field name="teilnahme">
+      <description>Rückmeldung</description>
+      <type>string</type>
+      <options keytype="string">
+      	<option key="komme">Ich komme.</option>
+      	<option key="kann nicht">Ich kann nicht kommen.</option>
+      	<option key="komme mit begleitung">Ich komme mit Begleitung.</option>
+      </options>
+      <constraints>
+      	<constraint type="minselected">1</constraint>
+      	<constraint type="maxselected">1</constraint>
+      </constraints>
+    </field>
+    
+    <field name="trinken">
+      <description>Autofahrer?</description>
+      <type>number</type>
+      <options>
+      	<option key="1">Ich muss nicht fahren (und kann daher trinken).</option>
+      	<option key="2">Ich muss fahren und kann deswegen nicht trinken.</option>
+      	<option key="3">Ich muss zwar nicht fahren, will aber trotzdem nicht trinken.</option>
+      	<option key="4">Ich muss fahren, will aber trotzdem trinken.</option>
+      </options>
+      <constraints>
+      	<constraint type="minselected">1</constraint>
+      	<constraint type="maxselected">1</constraint>
+      </constraints>
+    </field>
+    
+    <field name="trinken2">
+      <description>Autofahrer?</description>
+      <type>number</type>
+      <options>
+      	<option key="1">Sie/Er muss nicht fahren (und kann daher trinken).</option>
+      	<option key="2">Sie/Er muss fahren und kann deswegen nicht trinken.</option>
+      	<option key="3">Sie/Er muss zwar nicht fahren, will aber trotzdem nicht trinken.</option>
+      	<option key="4">Sie/Er muss fahren, will aber trotzdem trinken.</option>
+      </options>
+      <constraints>
+      	<constraint type="minselected">1</constraint>
+      	<constraint type="maxselected">1</constraint>
+      </constraints>
+    </field>
+    
+    <field name="bier">
+      <description>Bier</description>
+      <type>boolean</type>
+    </field>
+    
+    <field name="wein">
+      <description>Wein</description>
+      <type>boolean</type>
+    </field>
+    
+    <field name="hartes">
+      <description>Hartes Gesöff</description>
+      <type>boolean</type>
+    </field>
+    
+    <field name="soft">
+      <description>Alkoholfreie Getränke</description>
+      <type>boolean</type>
+    </field>
+    
+  </form>
+
+
+
+<!-- WEITERE BEISPIELE
+  <form id="login">
+    <name>loginform</name>
+    <description>Formular zum einloggen</description>
+    <formversion>0.1</formversion>
+
+    <field name="name" required="true">
+      <description>Name</description>
+      <type>string</type>
+    </field>
+    <field name="passwort">
+      <description>Passwort</description>
+      <type>string</type>
+    </field>
+  </form>
+
+  <form id="form1">
+    <name>registerform</name>
+    <description>Formular zum registrieren</description>
+    <formversion>0.1</formversion>
+
+    <field name="name" required="true">
+      <description>Name</description>
+      <type>string</type>
+    </field>
+    <field name="vorname" required="true">
+      <description>Vorname</description>
+      <type>string</type>
+    </field>
+    <field name="email" required="true">
+      <description>Email</description>
+      <type>string</type>
+      <constraints>
+         <constraint type="format">.+@.+\..+</constraint>
+      </constraints>
+    </field>
+    <field name="strasse">
+      <description>Strasse</description>
+      <type>string</type>
+    </field>
+    <field name="plz">
+      <description>PLZ</description>
+      <type>string</type>
+      <constraints>
+         <constraint type="format" description="xxxxx">\d{5}</constraint>
+      </constraints>
+    </field>
+    <field name="ort">
+      <description>Ort</description>
+      <type>string</type>
+    </field>
+    <field name="telefon">
+      <description>Telefon</description>
+      <type>string</type>
+    </field>
+    <field name="comment">
+      <description>Kommentar</description>
+      <type>string</type>
+    </field>
+
+   
+    <field name="agb">
+      <description>agb</description>
+      <type>boolean</type>
+      <displaytype>radio</displaytype>
+    </field>
+
+    <field name="gender">
+      <description>Anrede</description>
+      <type>string</type>
+      <options>
+      	<option key="m">Herr</option>
+      	<option key="w">Frau</option>
+      </options>
+    </field>
+    
+    <field name="country">
+      <description>Land</description>
+      <type>string</type>
+      <constraints>
+      	<constraint type="minselected">0</constraint>
+      	<constraint type="maxselected">1</constraint>
+      </constraints>
+    </field>
+    
+    <field name="hobby">
+      <description>Hobbys (max 2 von 4 auswählen)</description>
+      <type>string</type>
+      <options>
+      	<option key="surfen">Surfen</option>
+      	<option key="reiten">Reiten</option>
+      	<option key="fussball">Fußball</option>
+      	<option key="tennis">Tennis</option>
+      </options>
+      <constraints>
+      	<constraint type="minselected">0</constraint>
+      	<constraint type="maxselected">2</constraint>
+      </constraints>
+    </field>
+    
+    <field name="kunden">
+      <description>Kunden</description>
+      <type>list</type>
+      <options sql="select * from vkunde" sqlkey="kundennr" sqlvalue="name"/>
+    </field>
+    
+  </form>
+-->
+
+</forms>

@@ -1,0 +1,12 @@
+DROP TABLE configuration;
+DROP TABLE samsessions;
+DROP TABLE templates;
+DROP TABLE sendemail;
+DROP TABLE uxsgroups;
+DROP TABLE log;
+DROP TABLE availprojects;
+DROP TABLE manageprojects;
+DROP TABLE projectnames;
+DROP TABLE ippool;
+DROP TABLE mclg;
+DROP TABLE grants;

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<workflows xmlns='http://www.1ci.de'
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+  xsi:schemaLocation='http://www.1ci.de ../WORKFLOWS.xsd'
+  version="2.0"
+>
+
+          <workflow id="dummy">
+                    <page id="dummy" template="dummy.jsp"/>
+          </workflow>
+
+</workflows>

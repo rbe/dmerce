@@ -1,0 +1,142 @@
+#!/bin/ksh
+
+#################################################
+#
+# Copyright 2000-2002 1Ci GmbH, http://www.1ci.de
+#
+# $Id: qdsol_svc,v 1.1 2003/04/19 18:25:38 rb Exp $
+# $Author: rb $
+# $Revision: 1.1 $
+#
+# Sun Solaris Enable/Disable Service
+# 
+#################################################
+
+. ${DMERCE_HOME}/lib/libsh
+. ${DMERCE_HOME}/lib/libdmerce
+
+get_svc_initd() {
+    echo `ls /etc/init.d/*$1* 2> /dev/null`
+}
+
+stop_service() {
+    e "Stopping service '$1'"
+    $1 stop > /dev/null 2>&1
+}
+
+deactivate_service() {
+    service=$1
+    e "Deactivating service '${service}'"
+    for rc in ${RC}
+      do
+      rcf=`ls /etc/rc${rc}.d/S*${service}* 2> /dev/null; ls /etc/rc${rc}.d/K*${service}* 2> /dev/null`
+      if [ x"${rcf}" = x"" ]; then
+	  e "  CANNOT FIND FILE IN /etc/rc${rc}.d - NO DEACTIVATION!"
+      fi
+      for rcfile in ${rcf}
+	do
+	if [ -r ${rcfile} ]; then
+	    two="`echo ${rcfile} | ${SED} '
+s#d/S#d/_S#g
+s#d/K#d/_K#g
+'`"
+	    ${MV} ${rcfile} ${two} > /dev/null 2>&1
+	fi
+      done
+    done
+}
+
+start_service() {
+    e "Starting service '$1'"
+    $1 start > /dev/null 2>&1
+}
+
+activate_service() {
+    service=$1
+    e "Activating service '${service}'"
+    for rc in ${RC}
+      do
+      rcf=`ls /etc/rc${rc}.d/_S*${service}* 2> /dev/null; ls /etc/rc${rc}.d/_K*${service}* 2> /dev/null`
+      if [ x"${rcf}" = x"" ]; then
+	  e "  CANNOT FIND FILE IN /etc/rc${rc}.d - NO (RE)ACTIVATION!"
+      fi
+      for rcfile in ${rcf}
+	do
+	if [ -r ${rcfile} ]; then
+	    two="`echo ${rcfile} | sed '
+s#d/_S#d/S#g
+s#d/_K#d/K#g
+'`"
+	    ${MV} ${rcfile} ${two} > /dev/null 2>&1
+	fi
+      done
+    done
+}
+
+go() {
+    e "Processing services: ${SERVICES}"
+    for service in ${SERVICES}
+      do
+      svcs=`get_svc_initd ${service}`
+      for svc in ${svcs}
+	do
+	if [ x"${ACT}" = x"stop" ]; then
+	    e "STOPPING/DEACTIVATING SERVICE '${service}'"
+	    #stop_service ${svc}
+	    deactivate_service ${service}
+	elif [ x"${ACT}" = x"start" ]; then
+	    e "STARTING/ACTIVATING SERVICE '${service}'"
+	    #start_service ${svc}
+	    activate_service ${service}
+	fi
+      done
+    done
+}
+
+usage() {
+    echo "usage:
+
+	mode		start|stop
+	rc		runlevel, default = 0 1 2 3
+	services	services, names from /etc/init.d
+			default = lp snmpdx wbem nfs rpc dmi autofs dtlogin
+"
+}
+
+check_params() {
+    if [ x"${mode}" = x"" ]; then
+	usage
+	exit 255
+    elif [ x"${mode}" = x"stop" ]; then
+	ACT="stop"
+    elif [ x"${mode}" = x"start" ]; then
+	ACT="start"
+    fi
+    if [ x"${rc}" = x"" ]; then
+	RC="0 1 2 3"
+    else
+	RC=${rc}
+    fi
+    if [ x"${services}" = x"" ]; then
+        SERVICES="lp snmpdx wbem nfs rpc dmi autofs dtlogin uucp"
+    else
+	SERVICES=${services}
+    fi
+    export ACT RC SERVICES
+}
+
+trap '' INT
+libdmerce_copyr
+echo "(DE)ACTIVATION OF SERVICES FROM STARTUP SEQUENCE"
+echo
+[ `libsh_amiroot` -eq 0 ] && ( e "ERROR: I AM NOT ROOT!"; exit 255 )
+eval $*
+check_params
+libsh_discover_env
+e "START"
+e "MODE=${ACT}"
+e "RC=${RC}"
+e "SERVICES=${SERVICES}"
+go
+e "STOP"
+exit 0

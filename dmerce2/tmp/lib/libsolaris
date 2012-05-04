@@ -1,0 +1,751 @@
+#################################################
+#
+# Copyright 2001-2002 1Ci GmbH, http://www.1ci.de
+#
+# $Id: libsolaris,v 1.23 2003/04/19 18:25:38 rb Exp $
+# $Author: rb $
+# $Revision: 1.23 $
+#
+# libsolaris - dmerce Solaris(TM) Library
+#
+#################################################
+
+DMERCE_LIBSOLARIS=1
+export DMERCE_LIBSOLARIS
+
+mypr="/usr/bin/pr -r -t -o5"
+
+p() {
+    msg=$1
+    type=$2
+    if [ x"$msg" = x"" -o x"$type" = x"" ]; then
+	echo "Uh-oh"
+	return
+    fi
+    echo
+    if [ $type = 2 ]; then
+	echo "^--------------------------------------^-----------------------------------------^"
+    fi
+    echo "*"
+    if [ $type = 1 ]; then
+	echo "* `date`: $msg * START"
+    elif [ $type = 2 ]; then
+	echo "* `date`: $msg * STOP"
+    fi
+    echo "*"
+    if [ $type = 1 ]; then
+	echo "v--------------------------------------v-----------------------------------------v"
+    fi
+    echo
+}
+
+sol_platform_prtdiag() {
+    a=`arch -k`
+    t=`/usr/platform/$a/sbin/prtdiag | grep "$*"`
+    echo $t
+}
+
+sol_systemtype() {
+    sol_platform_prtdiag System Configuration | awk '{print $5,$6,$7,$8,$9;}'
+}
+
+#sol_systemtype2() {
+#    sol_platform_prtdiag System Configuration | awk '{print "SUNW,"$6"-"$7"-"$8;}'
+#}
+
+sol_systemtype2() {
+    echo `/usr/bin/uname -i`
+}
+
+sol_systemmemory() {
+    sol_platform_prtdiag Memory size | awk '{print $3;}'
+}
+
+sol_systemmemory2() {
+    sol_platform_prtdiag Memory size | awk '{print $4;}'
+}
+
+sol_diskspace() {
+    DMERCE_TMP=/tmp/.dmerce.$$
+    integer KTOTL=0
+    integer KUSED=0
+    integer KAVAIL=0
+    /usr/bin/df -kl >> $DMERCE_TMP
+    while read -r FS TOTL USED AVAIL CAP MNT
+      do
+      if [ "$TOTL" != "kbytes" ]; then
+	  ((KTOTL = KTOTL + TOTL))
+      fi
+      if [ "$USED" != "used" ]; then
+	  ((KUSED = KUSED + USED))
+      fi
+      if [ "$AVAIL" != "avail" ]; then
+	  ((KAVAIL = KAVAIL + AVAIL))
+      fi
+    done < $DMERCE_TMP
+    rm $DMERCE_TMP
+    echo $KTOTL $KUSED $KAVAIL
+}
+
+sol_rev() {
+    if [ x"${DMERCE_SOLARIS_REV}" = x"" ]; then
+	DMERCE_SOLARIS_REV=$((`/usr/bin/uname -r | /usr/bin/sed 's#\.##g'`*10))
+	export DMERCE_SOLARIS_REV
+    fi
+    echo ${DMERCE_SOLARIS_REV}
+}
+
+sol_dmerceinit() {
+    echo
+}
+
+sol_checkpkginst() { # Check for installed package, $1 = name, $2 = version (opt.)
+    i=0
+    pkgname=$1
+    pkgver=$2
+    if [ -n "${pkgver}" ]; then
+	i=`/usr/bin/pkginfo -v ${pkgver} ${pkgname} 2>&1 | grep -v -c ERROR`
+    else
+	i=`/usr/bin/pkginfo ${pkgname} 2>&1 | grep -v -c ERROR`
+    fi
+    echo $i
+}
+
+sol_installpkg() { # Install a package $1 = name, $2 = filename
+    e "Installing $1"
+    f="${DMERCE_INSTALL}/solaris/$2"
+    if [ -r $f ]; then
+	/usr/sbin/pkgadd -n -d $f
+    else
+	e "Cannot install package $1, file $f not readable"
+    fi
+}
+
+sol_getdmercereppkgver() {
+    echo `ls ${DMERCE_INSTALL}/solaris/$1* | cut -d - -f 2`
+}
+
+solstat_metastat() {
+    p "Solaris DiskSuite - metastat" 1
+    if [ -x /usr/sbin/metastat ]; then
+	/usr/sbin/metastat -t | $mypr
+	echo
+	echo "md.tab" | $mypr
+	echo "------" | $mypr
+	echo
+	/usr/sbin/metastat -p | $mypr
+    else
+	echo "No Solstice DiskSuite / Solaris Volume Manager installed!" | $mypr
+    fi
+    p "Solaris DiskSuite - metastat" 2
+}
+
+sol_query_ndd_params() {
+    d=$1
+    shift
+    w="$*"
+    /usr/sbin/ndd $d "?" | grep -v "?" | grep "$w" | sed "s#$w##g" > .tmp.$$ 2>&1
+    echo .tmp.$$
+}
+
+sol_query_ndd() {
+    f=$1
+    d=$2
+    for value in `cat $f`
+    do
+      echo "$value = `/usr/sbin/ndd -get $d $value`" | $mypr
+    done
+}
+
+solstat_show_ndd_rw() {
+    title="$1 settings"
+    p "$title" 1
+    f=`sol_query_ndd_params $1 "(read and write)"`
+    sol_query_ndd $f $1
+    rm $f
+    p "$title" 2
+}
+
+solstat_show_ndd_all() {
+    title="$1 settings"
+    p "$title" 1
+    f=`sol_query_ndd_params $1 "("`
+    sol_query_ndd $f $1
+    rm $f
+    p "$title" 2
+}
+
+solstat_ifcolrate() {
+    int=$1
+    /usr/sbin/ifconfig -a | /usr/bin/grep $int > /dev/null
+    if [ $? != 0 ]; then
+	rate=-1
+    else
+	set -A net `/usr/bin/netstat -i | /usr/bin/grep $int`
+	if [ ${net[9]} = 0 ]; then
+	    rate=0
+	else
+	    rate=`expr ${net[7]} / ${net[9]}`
+	fi
+    fi
+    echo "$rate"
+}
+
+solstat_sarf() {
+    p "$1" 1
+    [ -x /bin/sar ] && /bin/sar $2 | $mypr || echo "/bin/sar not found or not executable" | $mypr
+    p "$1" 2
+}
+
+solstat_sar_a() {
+    solstat_sarf "File Access Statistic" -a
+}
+
+solstat_sar_b() {
+    solstat_sarf "Buffer Activity" -b
+}
+
+solstat_sar_c() {
+    solstat_sarf "System Call Statistic" -c
+}
+
+solstat_sar_d() {
+    solstat_sarf "Disk Activity" -d
+}
+
+solstat_sar_g() {
+    solstat_sarf "Page Out and Memory" -g
+}
+
+solstat_sar_k() {
+    solstat_sarf "Kernel Memory Allocation" -k
+}
+
+solstat_sar_m() {
+    solstat_sarf "Interprocess Communication" -m
+}
+
+solstat_sar_p() {
+    solstat_sarf "Page-In Activity" -p
+}
+
+solstat_sar_q() {
+    solstat_sarf "Queue Activity" -q
+}
+
+solstat_sar_r() {
+    solstat_sarf "Unused Memory" -r
+}
+
+solstat_sar_u() {
+    solstat_sarf "CPU Utilization" -u
+}
+
+solstat_sar_v() {
+    solstat_sarf "System Table Status" -v
+}
+
+solstat_sar_w() {
+    solstat_sarf "Swap Activity" -w
+}
+
+solstat_sar_y() {
+    solstat_sarf "Terminal Activity" -y
+}
+
+solstat_sysinfo() {
+    title="System Information"
+    p "$title" 1
+    echo
+    echo "Uptime:                  `uptime | sed 's#^ *##g'`" | $mypr
+    echo "Systemtype:              `sol_systemtype` (`sol_systemtype2`)" | $mypr
+    echo "Machtype:                `determine_machtype vendor` `determine_machtype arch` `determine_machtype system`" | $mypr
+    echo "Machine:                 $UNAME_MACHINE" | $mypr
+    determine_uname
+    echo "Operating System:        $UNAME_OS" | $mypr
+    echo "Release:                 $UNAME_RELEASE" | $mypr
+    echo "Version:                 $UNAME_VERSION" | $mypr
+    echo "Processor:               $UNAME_PROC" | $mypr
+    if [ -x /usr/sbin/psrinfo ]; then
+	echo
+	echo "Processor Information" | $mypr
+	echo "---------------------" | $mypr
+	/usr/sbin/psrinfo -v | $mypr
+    fi
+    echo
+    /usr/platform/`arch -k`/sbin/prtdiag -v | $mypr
+    if [ x"$DMERCE_SOLSTAT_REPTYPE" = x"full" -a -x /usr/sbin/sysdef ]; then
+	echo
+	echo "sysdef" | $mypr
+	echo "------" | $mypr
+	/usr/sbin/sysdef | $mypr
+    fi
+    if [ x"$DMERCE_SOLSTAT_REPTYPE" = x"full" -a -x /usr/sbin/prtpicl ]; then
+	echo
+	echo "PICL Information" | $mypr
+	echo "----------------" | $mypr
+	/usr/sbin/prtpicl | $mypr
+    fi
+    p "$title" 2
+}
+
+solstat_modinfo() {
+    title="Solaris Modules Information"
+    p "$title" 1
+    /usr/sbin/modinfo | $mypr
+    p "$title" 2
+}
+
+solstat_meminfo() {
+    title="Memory Information"
+    p "$title" 1
+    echo "Memory:                  `sol_systemmemory` `sol_systemmemory2`" | $mypr
+    if [ -x /usr/bin/prtmem ]; then
+	/usr/bin/prtmem | $mypr
+    fi
+    p "$title" 2
+}
+
+solstat_disk_usageinfo() {
+    title="Disk/Filesystem Information"
+    p "$title" 1
+    set -A ds `sol_diskspace`
+    ((GTOTL = ${ds[0]} / 1048576))
+    ((GUSED = ${ds[1]} / 1048576))
+    ((GAVAIL = GTOTL - GUSED))
+    echo "Local disks usage:       TOTAL=$GTOTL GB, USED=$GUSED GB, AVAIL=$GAVAIL GB" | $mypr
+    sum_mntpts=`/sbin/mount | wc -l | sed 's# ##g'`
+    mntpts_nfs=`/sbin/mount | grep ":/" | wc -l | sed 's# ##g'`
+    ((mntpts_local = $sum_mntpts - $mntpts_nfs))
+    echo "Mount points:            $sum_mntpts: LOCAL=$mntpts_local NFS=$mntpts_nfs" | $mypr
+    p "$title" 2
+}
+
+solstat_disk_status() {
+    title="Filesystem Status"
+    p "$title" 1
+    ${DMERCE_HOME}/bin/dfh | $mypr
+    p "$title" 2
+}
+
+solstat_disk_coreinfo() {
+    title="Disk - Core Information"
+    p "$title" 1
+    for dev in `ls /dev/dsk/*s2`
+      do
+      if [ -r ${dev} ]; then
+	  echo "VTOC of ${dev}" | $mypr
+	  echo "--------------------------" | $mypr
+	  /usr/sbin/prtvtoc ${dev} | $mypr
+	  echo
+	  echo "Super Blocks of ${dev}" | $mypr
+	  echo "----------------------------------" | $mypr
+	  /usr/sbin/newfs -N ${dev} | $mypr
+	  echo
+	  echo
+      fi
+    done
+    p "$title" 2
+}
+
+solstat_swapstatus() {
+    title="Swap Status"
+    p "$title" 1
+    echo "Swap Devices:" | $mypr
+    echo "-------------" | $mypr
+    /usr/sbin/swap -l | $mypr
+    echo
+    echo "Swap Usage:" | $mypr
+    echo "-----------" | $mypr
+    /usr/sbin/swap -s | $mypr
+    if [ -x /usr/bin/prtswap ]; then
+	echo
+	/usr/bin/prtswap | $mypr
+    fi
+    p "$title" 2
+}
+
+solstat_iostat() {
+    title="I/O Statistics"
+    p "$title" 1
+    /usr/bin/iostat -xnC
+    p "$title" 2
+}
+
+solstat_pkginfo() {
+    title="Package Information"
+    p "$title" 1
+    /usr/bin/pkginfo -l | $mypr
+    p "$title" 2
+}
+
+solstat_patches() {
+    title="System Patch Status Information"
+    p "$title" 1
+    if [ -x ${DMERCE_HOME}/bin/sollspt -a x"`amiroot`" = x"1" ]; then
+	${DMERCE_HOME}/bin/sollspt | $mypr
+	if [ x"$DMERCE_SOLSTAT_REPTYPE" = x"full" ]; then
+	    echo
+	    echo "showrev -p" | $mypr
+	    echo
+	    /usr/bin/showrev -p | $mypr
+	fi
+    else
+	echo "Must be root ($DMERCE_HOME/bin/sollspt)" | $mypr
+    fi
+    p "$title" 2
+}
+
+solstat_info() {
+    title="Solaris Release Information"
+    p "$title" 1
+    cat /etc/release | $mypr
+    p "$title" 2
+}
+
+solstat_etcsystem() {
+    title="/etc/system"
+    p "$title" 1
+    if [ x"$DMERCE_SOLSTAT_REPTYPE" = x"full" ]; then
+	cat /etc/system | $mypr
+    fi
+    echo
+    echo "short" | $mypr
+    echo "-----" | $mypr
+    echo
+    cat /etc/system | ${EGREP} -v "^\*|^$" | $mypr
+    echo
+    p "$title" 2
+}
+
+solstat_etcvfstab() {
+    title="Filesystem Overview: /etc/vfstab"
+    p "$title" 1
+    cat /etc/vfstab | $mypr
+    p "$title" 2
+}
+
+solstat_dfs() {
+    title="Filesystem Overview: NFS / DFS"
+    p "$title" 1
+    if [ -r /etc/dfs/sharetab ]; then
+	echo "/etc/dfs/sharetab" | $mypr
+	echo "-----------------" | $mypr
+	echo
+	cat /etc/dfs/sharetab | $mypr
+	echo
+	echo "/usr/sbin/dfshares" | $mypr
+	echo "------------------" | $mypr
+	echo
+	if [ -x /usr/sbin/dfshares ]; then
+	    /usr/sbin/dfshares | $mypr
+	else
+	    echo "Must be root" | $mypr
+	fi
+    else
+	echo "No NFS/DFS configured." | $mypr
+    fi
+    p "$title" 2
+}
+
+solstat_eeprom_info() {
+    title="OpenBoot PROM - EEPROM Information"
+    p "$title" 1
+    /usr/sbin/eeprom | $mypr
+    p "$title" 2
+}
+
+solstat_rsc_info() {
+    title="RSC - Remote System Console - Information"
+    p "$title" 1
+    prg="/usr/platform/`sol_systemtype2`/rsc/rscadm"
+    if [ -x $prg ]; then
+	echo "version" | $mypr
+	echo "-------" | $mypr
+	$prg version | $mypr
+	echo
+	echo "show" | $mypr
+	echo "----" | $mypr
+	$prg show | $mypr
+	echo
+	echo "shownetwork" | $mypr
+	echo "-----------" | $mypr
+	$prg shownetwork | $mypr
+	echo
+	echo "usershow" | $mypr
+	echo "--------" | $mypr
+	$prg usershow | $mypr
+	echo
+	echo "loghistory" | $mypr
+	echo "----------" | $mypr
+	$prg loghistory | $mypr
+    else
+	echo "RSC software ($prg) not found" | $mypr
+    fi
+    prg="/usr/sbin/lom"
+    if [ -x $prg ]; then
+	echo
+	echo "LOM" | $mypr
+	echo "---" | $mypr
+	echo
+	$prg -a | $mypr
+    fi
+    p "$title" 2
+}
+
+solstat_net_stat() {
+    title="Network interface statistics"
+    p "$title" 1
+    /bin/netstat -ni | $mypr
+    p "$title" 2
+
+    title="Kernel routing table"
+    p "$title" 1
+    /bin/netstat -rn | $mypr
+    p "$title" 2
+
+    title="netstat Statistics"
+    p "$title" 1
+    /bin/netstat -s | $mypr
+    p "$title" 2
+}
+
+solstat_procview() {
+    title="Process view - $1"
+    shift
+    p "$title" 1
+    for proc in $*
+      do
+      nprocs=`/usr/bin/ps -ef | ${GREP} -v grep | ${GREP} -c "${proc}"`
+      echo "${nprocs} ${proc} running:" | $mypr
+      echo
+      /usr/bin/ps -ef | ${GREP} -v grep | ${GREP} "${proc}" | ${SORT} | $mypr
+      echo
+    done
+    p "$title" 2
+}
+
+solstat_etchostnames() {
+    title="Interfaces - /etc/hostname.*"
+    p "$title" 1
+    for hfile in /etc/hostname.*
+      do
+      hname=`cat $hfile`
+      ip=`get_ip_from_etchosts $hname`
+      echo "$hfile: $hname -> $ip" | $mypr
+      echo
+    done
+    p "$title" 2
+}
+
+solstat_if_status() {
+    title="Interfaces"
+    p "$title" 1
+    echo "Information" | $mypr
+    echo "-----------" | $mypr
+    echo
+    f=`sol_query_ndd_params /dev/eri "(read only)"`
+    sol_query_ndd $f /dev/eri | $mypr
+    rm $f
+    f=`sol_query_ndd_params /dev/eri "(read and write)"`
+    sol_query_ndd $f /dev/eri | $mypr
+    rm $f
+    echo
+    echo "Interfaces marked down by ifconfig" | $mypr
+    echo "----------------------------------" | $mypr
+    echo
+    /sbin/ifconfig -a | ${GREP} flags | ${GREP} -v UP | $mypr
+    echo
+    echo "/usr/sbin/ifconfig -a" | $mypr
+    echo "---------------------" | $mypr
+    echo
+    /usr/sbin/ifconfig -a | $mypr
+    p "$title" 2
+}
+
+solstat_user_group() {
+    title="Users and Groups"
+    p "$title" 1
+    echo
+    echo "/etc/passwd" | $mypr
+    echo "-----------" | $mypr
+    echo
+    cat /etc/passwd | $mypr
+    if [ x"$DMERCE_SOLSTAT_REPTYPE" = x"full" -a -x ${DMERCE_HOME}/bin/showusr ]; then
+	echo
+	echo "Existing Users" | $mypr
+	echo "--------------" | $mypr
+	${DMERCE_HOME}/bin/showusr | $mypr
+    fi
+    if [ x"$DMERCE_SOLSTAT_REPTYPE" = x"full" -a `amiroot` -eq 1 ]; then
+	echo
+	echo "System Logins" | $mypr
+	echo "-------------" | $mypr
+	echo
+	/usr/bin/logins -s | $mypr
+	echo
+	echo "User Logins" | $mypr
+	echo "-----------" | $mypr
+	echo
+	/usr/bin/logins -u | $mypr
+	echo
+	echo "Logins without Passwords" | $mypr
+	echo "------------------------" | $mypr
+	echo
+	/usr/bin/logins -p | $mypr
+    fi
+    echo
+    echo "/etc/group" | $mypr
+    echo "----------" | $mypr
+    echo
+    cat /etc/group | $mypr
+    if [ x"$DMERCE_SOLSTAT_REPTYPE" = x"full" -a `amiroot` -eq 1 ]; then
+	echo
+	echo "Group Membership Information" | $mypr
+	echo "----------------------------" | $mypr
+	echo
+	/usr/bin/logins -m | $mypr
+    fi
+    p "$title" 2
+}
+
+solstat_user_status() {
+    title="User Activity Report"
+    p "$title" 1
+    if [ -r /var/adm/sulog ]; then
+	echo
+	echo 'Switched Users' | $mypr
+	echo '--------------' | $mypr
+	cat /var/adm/sulog | ${GREP} `date +%m/%d` | $mypr
+    else
+	echo 'Cannot open /var/adm/sulog for reading' | $mypr
+    fi
+    echo
+    echo 'Last Logins' | $mypr
+    echo '-----------' | $mypr
+    last | head -20 | $mypr
+    echo
+    echo 'Currently Logged on' | $mypr
+    echo '-------------------' | $mypr
+    who -a | $mypr
+    p "$title" 2
+}
+
+solstat_ufsdump_show_dumpdates() {
+    title="Backups - ufsdump"
+    p "$title" 1
+    cat /etc/dumpdates | $mypr
+    p "$title" 2
+}
+
+solstat_errorlogs() {
+    title="Logs"
+    p "$title" 1
+
+    echo
+    echo "AUTH" | $mypr
+    echo "====" | $mypr
+    echo
+
+    echo "critical" | $mypr
+    echo "--------" | $mypr
+    [ -r /var/adm/messages ] && ${GREP} -i auth.crit /var/adm/messages | $mypr
+    echo
+
+    echo
+    echo "DAEMON" | $mypr
+    echo "======" | $mypr
+    echo
+
+    echo "error" | $mypr
+    echo "-----" | $mypr
+    [ -r /var/adm/messages ] && ${GREP} -i daemon.error /var/adm/messages | $mypr
+    echo
+    echo "warning" | $mypr
+    echo "-------" | $mypr
+    [ -r /var/adm/messages ] && ${GREP} -i daemon.warning /var/adm/messages | $mypr
+    echo
+    echo "notice" | $mypr
+    echo "------" | $mypr
+    [ -r /var/adm/messages ] && ${GREP} -i daemon.notice /var/adm/messages | $mypr
+    echo
+
+    echo
+    echo "KERNEL" | $mypr
+    echo "======" | $mypr
+    echo
+
+    [ -r /var/adm/messages ] && ${GREP} -i kern. /var/adm/messages | $mypr
+    p "$title" 2
+}
+
+solstat_check_aset() {
+    title="ASET Check"
+    p "$title" 1
+    if [ `amiroot` -eq 1 -a -d /usr/aset ]; then
+	/usr/aset/aset > /dev/null 2>&1 | $mypr
+	echo
+	echo "ASET Reports" | $mypr
+	echo "------------" | $mypr
+	echo
+	while [ x"`/usr/aset/util/taskstat | ${GREP} -c completed`" = x"0" ]; do
+	    sleep 1
+	done
+	cat /usr/aset/reports/latest/*.rpt | $mypr
+    else
+	echo "Must be root and ASET must be installed!" | $mypr
+    fi
+    p "$title" 2
+}
+
+solstat_pr_inetd() {
+    typeset -L12 svcname
+    typeset -R6 svctype
+    typeset -R15 svcproto
+    typeset -R7 svcwait
+    typeset -R9 svcuser
+    typeset -L20 svcprg
+    typeset -L20 svcprg2
+    svcname="$1"
+    svctype="$2"
+    svcproto="$3"
+    svcwait="$4"
+    svcuser="$5"
+    svcprg="$6"
+    svcprg2="$7"
+    echo "$svcname $svctype $svcproto $svcwait $svcuser $svcprg $svcprg2" | $mypr
+}
+
+solstat_check_inetd() {
+    title="inetd - Service-Check"
+    p "$title" 1
+    f=".dmerce.check-inetd.$$"
+    if [ -r /etc/inetd.conf ]; then
+	cat /etc/inetd.conf | ${GREP} ^[^#] > $f
+	typeset -R3 lines
+	lines=`cat $f | wc -l`
+	echo "Active services: $lines" | $mypr
+	echo
+	while read -r svcname svctype svcproto svcwait svcuser svcprg svcprg2
+	  do
+	  solstat_pr_inetd $svcname $svctype $svcproto $svcwait $svcuser $svcprg $svcprg2
+	  done < $f
+	rm $f
+    fi
+    p "$title" 2
+}
+
+solstat_show_ssadm() {
+    title="SunScreen(TM)"
+    s="${DMERCE_HOME}/bin/solssdmp"
+    p "$title" 1
+    [ -x $s ] && $s show=1 | $mypr || echo "No \$DMERCE_HOME/bin/solssdmp found!" | $mypr
+    p "$title" 2
+}
+
+solstat_check_ora_insts() {
+    title="ORACLE Instance Check"
+    p "$title" 1
+    [ `liboracle_check_oratab_exists` -eq 1 ] && liboracle_show_check_all_insts | $mypr
+    p "$title" 2
+}

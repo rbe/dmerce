@@ -1,0 +1,62 @@
+============================================================================================================
+                                                Oracle 8i 8.1.7
+============================================================================================================
+
+------------------------------------------------------------------------------------------------------------
+Aktion						Commands
+------------------------------------------------------------------------------------------------------------
+start database					$ dbstart
+						or:
+						$ sqlplus internal
+						SQL> startup
+
+stop database					$ dbshut
+						or:
+						$ sqlplus internal
+						SQL> shutdown
+						(oder shutdown immediate
+						falls noch verbindungen
+						offen)
+------------------------------------------------------------------------------------------------------------
+start TNS listener				$ lsnrctl start
+stop TNS listener				$ lsnrctl stop
+------------------------------------------------------------------------------------------------------------
+start SNMP					$ lsnrctl dbsnmp_start
+stop SNMP					$ lsnrctl dbsnmp_stop
+------------------------------------------------------------------------------------------------------------
+installation of OEM/OMS				start EMCA (enterprise manager configuration assistant)
+						$ emca
+						connect as user sys and create user for oem with installation
+
+start enterprise management server (OMS)	$ oemctrl start oms
+stop enterprise management server (OMS)		$ oemctrl stop oms user/pwd for OEM
+------------------------------------------------------------------------------------------------------------
+start oracle OEM console			$ oemapp console
+start oracle dbastudio				$ oemapp dbastudio
+------------------------------------------------------------------------------------------------------------
+drop tablespaces:				$ svrmgrl
+						SQL> connect internal
+						SQL> drop tablespace <tablespace> including contents;
+						SQL> alter database datafile '/path/to/oradata/<dbname>/<datafile>.dbf' offline drop;
+------------------------------------------------------------------------------------------------------------
+corrupte rollback segmente beim			- edit init.ora
+starten ignorieren				- insert:
+						  _corrupted_rollback_segments = ( <aufzaehlen der korrupten segs> )
+
+anlegen eines rollback segments			SQL> create rollback segment <name> tablespace <tablespace>;
+rollback segmente anzeigen			SQL> select segment_name, tablespace_name, status from
+						     sys.dba_rollback_segs;
+------------------------------------------------------------------------------------------------------------
+
+
+============================================================================================================
+                                                Oracle 9i 9.0.1
+============================================================================================================
+
+Statistiken
+----------
+1. utlxplan.sql ausfuehren
+2. ALTER SESSION SET SQL_TRACE = TRUE
+3. sql abfragen ausfuehren
+4. $ tkprof <tracefile.trc> <prffile.prf> explain=user/pwd
+5. $ view <prffile.prf>

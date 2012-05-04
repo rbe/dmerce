@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding="UTF-8"?>
+
+<!DOCTYPE serverliste SYSTEM "serverliste.dtd">
+
+<serverliste>
+
+	<server name="www.host.sk">
+		<url value="http://www.magni.host.sk/pics/magni_main_bg.jpg"/>
+		<protocol value="http"/>
+		<host value="www.magni.host.sk"/>		
+		<path value="pics"/>
+		<file value="magni_main_bg.jpg"/>
+		<port value="80"/>
+	</server>
+	
+	<server name="ftp.host.sk">
+		<url value="ftp://ftp.host.sk/"/>
+		<protocol value="ftp"/>
+		<host value="ftp.host.sk"/>
+		<path value="pics"/>		
+		<file value="matrix2.jpg"/>
+		<port value="21"/>
+		<username value="magni"/>
+		<password value="********"/>
+	</server>
+	
+</serverliste>

@@ -1,0 +1,184 @@
+CREATE OR REPLACE PACKAGE dmerce
+    AS
+	PROCEDURE p_copyright;
+	PROCEDURE p_drop_dboid; -- deprecated since 2.4.0
+	PROCEDURE p_grant_dboid(u IN VARCHAR2); -- deprecated since 2.4.0
+        PROCEDURE p_create_dboid4table(t IN VARCHAR2);
+	PROCEDURE p_create_dboid;
+	PROCEDURE p_print_dboid(n IN VARCHAR2);
+	PROCEDURE p_disable_all_triggers;
+	PROCEDURE p_enable_all_triggers;
+	PROCEDURE p_compile_all_views;
+	PROCEDURE p_create_viewdep_table;
+	PROCEDURE p_create_viewdep_tables;
+END dmerce;
+/
+
+CREATE OR REPLACE PACKAGE BODY dmerce
+    AS
+
+	PROCEDURE p_copyright
+	AS
+	BEGIN
+		DBMS_OUTPUT.PUT_LINE('--');
+		DBMS_OUTPUT.PUT_LINE('-- 1Ci(R) GmbH - dmerce(R) - ORACLE MANAGEMENT OPTION PACKAGE');
+		DBMS_OUTPUT.PUT_LINE('--');
+	END;
+
+	-- deprecated since 2.4.0
+	PROCEDURE p_drop_dboid
+	AS
+	BEGIN
+		p_copyright();
+		FOR rc1 IN (SELECT sequence_name FROM user_sequences WHERE sequence_name LIKE 'S_DBOID%') LOOP
+			EXECUTE IMMEDIATE 'DROP SEQUENCE ' || rc1.sequence_name;
+		END LOOP;
+	END;
+
+	-- deprecated since 2.4.0
+	PROCEDURE p_grant_dboid(u IN VARCHAR2)
+	AS
+		s	VARCHAR2(100);
+	BEGIN
+		p_copyright();
+		DBMS_OUTPUT.PUT_LINE('*');
+		DBMS_OUTPUT.PUT_LINE('*** START * GRANTING SELECT ON DBOID-SEQUENCES TO ' || u);
+		DBMS_OUTPUT.PUT_LINE('*');
+		FOR rc1 IN (SELECT sequence_name FROM user_sequences WHERE sequence_name LIKE 'S_DBOID%') LOOP
+			s := 'GRANT SELECT ON ' || LOWER(rc1.sequence_name) || ' TO ' || LOWER(u);
+			DBMS_OUTPUT.PUT_LINE('* EXECUTING: ' || s);
+			EXECUTE IMMEDIATE s;
+		END LOOP;
+		DBMS_OUTPUT.PUT_LINE('*');
+		DBMS_OUTPUT.PUT_LINE('*** STOP * GRANTING SELECT ON DBOID-SEQUENCES TO ' || u);
+		DBMS_OUTPUT.PUT_LINE('*');
+	END;
+
+        PROCEDURE p_create_dboid4table(t IN VARCHAR2)
+        AS
+        	c	NUMBER;
+        	s	VARCHAR2(500);
+		sn	VARCHAR2(30);
+        BEGIN
+        	s := 'SELECT MAX(ID) FROM ' || t;
+        	EXECUTE IMMEDIATE s INTO c;
+		IF c IS NULL THEN
+			c := 0;
+		END IF;
+        	c := c + 1;
+		sn := SUBSTR('s_' || LOWER(t), 1, 30);
+	        s := 'CREATE SEQUENCE ' || sn || ' START WITH ' || c || ' INCREMENT BY 1 NOCYCLE NOMAXVALUE NOCACHE ORDER';
+        	DBMS_OUTPUT.PUT_LINE(s || ';');
+		--EXECUTE IMMEDIATE s;
+		EXCEPTION
+			WHEN OTHERS THEN
+				--ROLLBACK;
+				DBMS_OUTPUT.PUT_LINE('! EXCEPTION: CODE=' || SQLCODE || ' MESSAGE=' || SQLERRM);
+        END;
+
+        PROCEDURE p_create_dboid
+        AS
+        BEGIN
+		p_copyright();
+        	FOR rc1 IN (SELECT table_name FROM user_tables) LOOP
+        		p_create_dboid4table(rc1.table_name);
+        	END LOOP;
+        END;
+
+	PROCEDURE p_revoke_dboid(u IN VARCHAR2)
+	AS
+		s	VARCHAR2(100);
+	BEGIN
+		p_copyright();
+		DBMS_OUTPUT.PUT_LINE('*');
+		DBMS_OUTPUT.PUT_LINE('*** START * REVOKING SELECT ON DBOID-SEQUENCES TO ' || u);
+		DBMS_OUTPUT.PUT_LINE('*');
+		FOR rc1 IN (SELECT sequence_name FROM user_sequences WHERE sequence_name LIKE '%DBOID%') LOOP
+			s := 'REVOKE SELECT ON ' || LOWER(rc1.sequence_name) || ' FROM ' || LOWER(u);
+			DBMS_OUTPUT.PUT_LINE('* EXECUTING: ' || s);
+			EXECUTE IMMEDIATE s;
+		END LOOP;
+		DBMS_OUTPUT.PUT_LINE('*');
+		DBMS_OUTPUT.PUT_LINE('*** STOP * REVOKING SELECT ON DBOID-SEQUENCES TO ' || u);
+		DBMS_OUTPUT.PUT_LINE('*');
+	END;
+
+	PROCEDURE p_print_dboid(n IN VARCHAR2)
+	AS
+	BEGIN
+		p_copyright();
+		DBMS_OUTPUT.PUT_LINE('*** Sequence List * START');
+		FOR rc1 IN (SELECT sequence_name, last_number
+			      FROM user_sequences
+			     WHERE sequence_name LIKE '%' || UPPER(n) || '%') LOOP
+			DBMS_OUTPUT.PUT_LINE('* SEQUENCE ' || rc1.sequence_name || ' LAST NUMBER=' || rc1.last_number);
+		DBMS_OUTPUT.PUT_LINE('*** Sequence List * STOP');
+		END LOOP;
+	END;
+
+	PROCEDURE p_disable_all_triggers
+	AS
+	BEGIN
+		p_copyright();
+		FOR rc1 IN (SELECT trigger_name FROM user_triggers) LOOP
+			DBMS_OUTPUT.PUT_LINE('* Disabling trigger ' || rc1.trigger_name);
+			EXECUTE IMMEDIATE 'ALTER TRIGGER ' || rc1.trigger_name || ' DISABLE';
+		END LOOP;
+	END;
+
+	PROCEDURE p_enable_all_triggers
+	AS
+	BEGIN
+		p_copyright();
+		FOR rc1 IN (SELECT trigger_name FROM user_triggers) LOOP
+			DBMS_OUTPUT.PUT_LINE('* Enabling trigger ' || rc1.trigger_name);
+			EXECUTE IMMEDIATE 'ALTER TRIGGER ' || rc1.trigger_name || ' ENABLE';
+		END LOOP;
+	END;
+
+	PROCEDURE p_compile_all_views
+	AS
+	BEGIN
+		p_copyright();
+		FOR rc1 IN (SELECT view_name FROM user_views) LOOP
+			DBMS_OUTPUT.PUT_LINE('* Compiling view ' || rc1.view_name);
+			EXECUTE IMMEDIATE 'ALTER VIEW ' || rc1.view_name || ' COMPILE';
+		END LOOP;
+	END;
+
+	PROCEDURE p_create_viewdep_table
+	AS
+	BEGIN
+		p_copyright();
+                DBMS_OUTPUT.PUT_LINE('DROP TABLE viewdep;');
+		DBMS_OUTPUT.PUT_LINE('CREATE TABLE viewdep ('
+		|| ' viewname VARCHAR2(30),'
+		|| ' referenced_type VARCHAR2(12),'
+		|| ' referenced_owner VARCHAR2(30),'
+		|| ' referenced_name VARCHAR2(64));');
+                DBMS_OUTPUT.PUT_LINE('INSERT INTO viewdep'
+		|| ' SELECT name, referenced_type, referenced_owner, referenced_name'
+		|| '   FROM user_dependencies'
+		|| '  WHERE type = ''VIEW'''
+		|| '    AND referenced_type = ''TABLE'''
+		|| '     OR referenced_type = ''VIEW'';');
+	END;
+
+	PROCEDURE p_create_viewdep_tables
+	AS
+	BEGIN
+		p_copyright();
+        	FOR rc1 IN (SELECT table_name FROM user_tables) LOOP
+	                DBMS_OUTPUT.PUT_LINE('DROP TABLE viewdep_' || LOWER(rc1.table_name) || ';');
+        	        DBMS_OUTPUT.PUT_LINE('CREATE TABLE viewdep_' || LOWER(rc1.table_name) || ' AS'
+                	|| ' SELECT referenced_name, name'
+			|| '   FROM dba_dependencies'
+	                || '  WHERE owner = ''' || UPPER(user) || ''''
+        	        || '    AND type = ''VIEW'
+                	|| '    AND referenced_type = ''TABLE'''
+			|| '     OR referenced_type = ''VIEW'';');
+        	END LOOP;
+	END;
+
+END dmerce;
+/

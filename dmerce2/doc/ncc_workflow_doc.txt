@@ -1,0 +1,80 @@
+Ablauf des NCC Firewall Moduls: firewall.py
+       Ueber link"Firewall list" werden zuerst alle Firewalls aus SrvFirewall aufgelistet, deren active
+       Flag 1 ist.
+       Ueber weitern link "Description" werden alle Regeln der Firewall (SrvFirewallRule) aufgelistet.
+       Mit "Create" kann man neue Regeln hinzufuegen.
+       
+       <Todo>
+       Ist eine neue Regel hinzugefuegt, so muss per SNMP das firewall.py Script angestossen werden,
+       damit es die neuen Regeln verarbeitet.
+       </Todo>
+       
+       Das firewall.py Script holt sich zuerst alle Regeln, bei denen das active Flag 1 und das Todo Flag 1
+       ist.
+       Danach erzeugt es aus den gewonnen Daten ipfw Befehle. Hierbei ist zu beachten, wenn Netmask und
+       Cidr in der Datenbank vorhanden sind, werden die beiden miteinander verglichen und bei 
+       nichtuebereinstimmen word der Cidr Eintrag benutzt.
+       
+       <Todo>
+       Im Moment wird bei Ungleichheit noch print an stdout ausgegeben, sollte aber in ein Logfile aus-
+       gegeben werden.
+       </Todo>
+       
+       Sind die ipfw Befehle gebildet, werden die Regeln ausgefuehrt und es wird danach das Todo Flag auf 0
+       gesetzt.
+
+       <Todo>
+       Im Moment nur geprintet, da keine Testumgebung vorhanden.
+       </Todo>
+
+       Wurden die Regeln abgearbeitet, wird ein Logeintrag in ein Logfile vorgenommen.
+
+       <Todo>
+       Im Moment werden nur die Befehlszeilen in eine Datei geschrieben, die noch in /home/sb/ipfw.log 
+       liegt. Der Ort des Logfiles und das genaue Log Schema muss noch vereinbart werden.
+       </Todo>
+       
+       <Todo>
+       Im Moment kann die Firewall nur Regeln hinzufuegen, aber nicht loeschen. Der Loeschvorgang muss also
+       noch konzeptioniert weden. Das loeschen kann ueber das active Flag geschehen, wie genau zusammen
+       ueberlegen.
+       </Todo>
+
+
+Ablauf des Scriptes zum erkennen neuer Netzwerkkarten: proofmac.py
+       Zuerst werden alle Mac Adressen und die Namen des zugehoerigen Interface ausgelesen.
+       
+       Dann wird SrvServerInterfaces abgeglichen, ob dort die MacAdresse eingetragen ist.
+       Wenn ja ist alles in Butter.
+       Sollte kein Eintrag vorhanden sein, wird ueberprueft, ob der Server schon in SrvServer
+       eingetragen ist. Dies passiert ueber das Description Feld in SrvServer, in dem der 
+       hostname stehen muss.
+       Ist dies nicht der Fall, wird ein Server neu eingetragen.
+       Danach werden die fehlenden Mac Addresssen in SrvServerInterfaces eingetragen.
+
+       <Todo>
+       Arbeitsweise innerhalb vom NCC ist noch unbestimmt.
+       Das loggen von Fehlermeldungen muss noch implementiert werden.
+       </Todo>
+
+
+Ablauf des Scriptes zum loggen von ServerDaten: serverdb.py
+       Zuerst werden alle zu ueberwachenden Server aus der NCC Datenbank geholt und zu jedem 
+       Rechner eine SNMP Verbindung aufgebaut. Dies geschieht fuer den Bereich Disk,Proc und
+       Interfaces getrennt, da verschiedene Informationen benoetigt werden.
+
+       <Todo>
+       Das Konzept koennte nochmal ueberdacht werden, da so bei einem Lauf des Scriptes
+       drei mal eine SQL-Abfrage gestartet wird und auch drei mal eine SNMP-Verbindung auf-
+       gebaut wird. Allerdings laeuft es erst einmal so und man koennte bei Performance 
+       Problemen eingreifen. Also eher unwichtig!
+       </Todo>
+
+       Als naechstes werden die Informationen zu dem jeweils benoetigten Bereich gesammelt 
+       und in die MySQL DAtenbank eingetragen.
+       Aufgrund des unterschiedlich Verhaltens des net-snmpd auf Linux und FreeBSD werden ausser 
+       bei den Prozessen unterschiedliche Daten gesamelt.
+
+       <Todo>
+       Einbindung ins NCC und Darstellung der gesammelten Daten, wie auch immer die aussehen mag.
+       </Todo>

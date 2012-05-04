@@ -1,0 +1,122 @@
+#!/bin/ksh
+
+#################################################
+#
+# Copyright 2002 1Ci GmbH, http://www.1ci.de
+#
+# $Id: qddev_make,v 1.8 2003/05/07 09:18:27 rb Exp $
+# $Author: rb $
+# $Revision: 1.8 $
+#
+# Compile and install dmerce
+#
+#################################################
+
+. $DMERCE_HOME/lib/libsh
+[ $? -gt 0 ] && exit 2
+. $DMERCE_HOME/lib/libdmerce
+[ $? -gt 0 ] && exit 2
+
+VER=`cat ${DMERCE_HOME}/vars.py | grep "^VERSION" | awk '{FS=" = "; print $3}' | sed "s#'##g"`
+DMERCEDIRS="Core Cronjobs DTL DMS DMS/DGP DMS/SDV DMS/PySNMP Guardian Prod Prod/NCC"
+DESTPATH=${DESTPATH:-/opt/dmerce/product/dmerce/}
+
+patchlevel() {
+    rm dmerce.patchlevel
+    cvs update dmerce.patchlevel > /dev/null
+    if [ -r dmerce.patchlevel ]; then
+	pl=`cat dmerce.patchlevel`
+    else
+	pl=1
+    fi
+    if [ x"$pl" = x"" ]; then
+	pl=1
+    fi
+    pln=`expr $pl + 1`
+    e "NEW PATCHLEVEL: ${pln}"
+    echo $pln > dmerce.patchlevel
+    cvscomment="--- `date`: DMERCE SOFTWARE BUILD - VERSION: $VER, NEW PATCHLEVEL: $pln ---"
+    export cvscomment
+}
+
+backup() {
+    e "Backing up dmerce ${VER} to ${DESTPATH}/${VER}-`date`"
+    cd ${DESTPATH}
+    ${CPR} ${VER} ${VER}-`date`
+}
+
+perms() {
+    e "Setting permissions..."
+    chgrp -R dmerce ${DESTPATH}/${VER}
+    chmod -R g=u,o=u-w ${DESTPATH}/${VER}
+    find ${DESTPATH}/${VER} -type f -name "*.py*" -exec chmod 755 {} \;
+}
+
+fslinks() {
+    e "Linking vars.pyc..."
+    cd ${DESTPATH}/${VER}
+    cd Cronjobs
+    #ln -s ../vars.py vars.py
+    ln -s ../vars.pyc vars.pyc
+    cd ../Core
+    #ln -s ../vars.py vars.py
+    ln -s ../vars.pyc vars.pyc
+    cd ../DMS
+    #ln -s ../vars.py vars.py
+    ln -s ../vars.pyc vars.pyc
+    cd ../DTL
+    #ln -s ../vars.py vars.py
+    ln -s ../vars.pyc vars.pyc
+}
+
+remove_and_create_dirs() {
+    e "Removing and creating destination directories..."
+    ${RM} -rf ${DESTPATH}/${VER}
+    ${MKDIR} ${DESTPATH}/${VER}
+    for i in ${DMERCEDIRS}; do
+	${MKDIR} -p ${DESTPATH}/${VER}/${i}
+    done
+}
+
+remove_pyc() {
+    e "Removing .pyc from source tree ${SRCPWD}..."
+    cd ${SRCPWD}
+    ${FIND} * -type f -name "*.pyc" -print | xargs ${RM}
+}
+
+compile() {
+    e "Compiling pyc-files..."
+    python -c "import compileall; compileall.compile_dir('.')" > /dev/null
+}
+
+copy() {
+    e "Copying pyc-files to ${DESTPATH}/${VER}..."
+    ${CP} *.pyc ${DESTPATH}/${VER}
+    for i in ${DMERCEDIRS}; do
+	#echo "${CP} ${i}/*.pyc ${DESTPATH}/${VER}/${i}"
+	${CP} ${i}/*.pyc ${DESTPATH}/${VER}/${i}
+    done
+}
+
+cvscheckin() {
+    e "Committing to CVS"
+    cvs commit -m"$cvscomment" > /dev/null 2> /dev/null
+}
+
+SRCPWD=`pwd`
+libsh_discover_env
+libsh_system_init
+libdmerce_copyr
+echo "COMPILING AND INSTALLING DMERCE"
+echo
+
+[ -n "${BACKUP}" ] && backup
+patchlevel
+compile
+remove_and_create_dirs
+copy
+fslinks
+perms
+remove_pyc
+cvscheckin
+libsh_deinit_discover_env

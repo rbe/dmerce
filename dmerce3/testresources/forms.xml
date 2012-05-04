@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE forms SYSTEM "dmerce-forms.dtd">
+<forms>
+
+  <form id="formular">
+
+    <page number="1">
+
+      <name>formular</name>
+
+      <description>Standartformular das ausgefuellt und abgeschickt werden soll</description>
+
+      <target></target>
+
+	  <formversion>0.1</formversion>
+
+  	  <field name="name" required='true'>
+
+        <description>Name des Absenders</description>
+
+        <type>string</type>
+    
+      </field>
+
+  	  <field name="address" required='true'>
+
+        <description>Anschrift des Absenders</description>
+
+        <type>string</type>
+
+      </field>
+
+      <field name="plz" required='true'>
+
+        <type>string</type>
+
+        <format>[0-9][0-9][0-9][0-9][0-9]</format>
+
+      </field>
+
+      <field name="ort" required='true'>
+
+        <description>Wohnort des Absenders</description>
+
+        <type>string</type>
+
+      </field>
+
+      <field name="date" required='true'>
+  
+        <type>string</type>
+
+        <format>[0-9][0-9]\.[0-9][0-9]\.200[0-9]</format>
+
+      </field>
+
+      <field name="email" required='true'>
+
+        <description>Email Adresse des Absenders</description>
+
+        <type>string</type>
+
+      </field>
+  
+    </page>
+  
+  </form>
+  
+</forms>

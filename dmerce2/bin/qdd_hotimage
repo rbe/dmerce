@@ -1,0 +1,44 @@
+#!/bin/ksh
+
+#################################################
+#
+# Copyright 2000-2003 1Ci GmbH, http://www.1ci.com
+#
+# $Id$
+# $Author$
+# $Revision$
+#
+#################################################
+
+. ${DMERCE_LIB}/libdmerce
+[ $? -gt 0 ] && exit 2
+. ${DMERCE_LIB}/libsh
+[ $? -gt 0 ] && exit 2
+
+# qd distrib
+dmerce_distrib() {
+}
+
+# websites
+dmerce_websites() {
+}
+
+# product
+dmerce_product() {
+}
+
+# MySQL dumpall
+mysql_dumpall() {
+}
+
+# PgSQL dumpall
+pgsql_dumpall() {
+}
+
+main() {
+}
+
+libdmerce_copyr
+echo "CREATE DMERCE HOT IMAGE"
+echo
+main

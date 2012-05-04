@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<forms xmlns="http://www.1ci.de"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.1ci.de ../../../etc/FORMS.xsd">
+
+		<!--
+
+			A customer
+
+		-->
+		<form id="1ncc_customer">
+
+			<name>Customers</name>
+			<description>Manage customers</description>
+			<formversion>1.0</formversion>
+
+			<field name="company">
+				<description>Company</description>
+				<type>string</type>
+			</field>
+
+			<field name="lastname" required="true">
+				<description>Lastname</description>
+				<type>string</type>
+			</field>
+
+			<field name="firstname" required="true">
+				<description>Firstname</description>
+				<type>string</type>
+			</field>
+
+			<field name="street" required="true">
+				<description>Street</description>
+				<type>string</type>
+			</field>
+
+			<field name="zipcode" required="true">
+				<description>ZIP Code</description>
+				<type>string</type>
+				<constraints>
+					<constraint type="format">\d{5}</constraint>
+				</constraints>
+			</field>
+
+			<field name="city" required="true">
+				<description>City</description>
+				<type>string</type>
+			</field>
+
+			<field name="phone" required="true">
+				<description>Phone number</description>
+				<type>string</type>
+				<constraints>
+					<constraint type="format">\+\d{2} \d{2,4} \d{3,10}</constraint>
+				</constraints>
+			</field>
+
+			<field name="fax">
+				<description>Fax number</description>
+				<type>string</type>
+				<constraints>
+					<constraint type="format">\+\d{2} \d{2,4} \d{3,10}</constraint>
+				</constraints>
+			</field>
+
+			<field name="mobilephone">
+				<description>Mobile phone number</description>
+				<type>string</type>
+				<constraints>
+					<constraint type="format">\+\d{2} \d{2,4} \d{3,10}</constraint>
+				</constraints>
+			</field>
+
+			<field name="email" required="true">
+				<description>Email</description>
+				<type>string</type>
+				<constraints>
+					<constraint type="format">\w+@\w+\.\w{2,4}</constraint>
+				</constraints>
+			</field>
+
+			<field name="bank">
+				<description>Bank</description>
+				<type>string</type>
+			</field>
+
+			<field name="bankcode">
+				<description>Bankcode</description>
+				<type>number</type>
+				<constraints>
+					<constraint type="format">\d{8}</constraint>
+				</constraints>
+			</field>
+
+			<field name="bankaccount">
+				<description>Account number</description>
+				<type>number</type>
+				<constraints>
+					<constraint type="format">\d{3,10}</constraint>
+				</constraints>
+			</field>
+
+			<field name="bankaccountowner">
+				<description>Account owner</description>
+				<type>string</type>
+			</field>
+
+		</form>
+
+		<!--
+
+			Forwarders for DNS servers
+
+		-->
+        <form id="dnsforwarders">
+
+        		<name></name>
+                <description></description>
+                <formversion>0.1</formversion>
+
+                <field name="dnsnsid" required="true">
+                        <description>dnsnsid</description>
+                        <type>number</type>
+                </field>
+                <field name="ip" required="true">
+                        <description>ip</description>
+                        <type>string</type>
+                </field>
+
+        </form>
+
+		<!--
+
+			Handles for DNS servers
+
+		-->
+        <form id="dnshandles">
+
+		        <name></name>
+                <description></description>
+                <formversion>0.1</formversion>
+
+                <field name="dnsnsid" required="true">
+                        <description>dnsnsid</description>
+                        <type>number</type>
+                </field>
+                <field name="handle" required="true">
+                        <description>handle</description>
+                        <type>string</type>
+                </field>
+                <field name="comments" required="true">
+                        <description>comments</description>
+                        <type>string</type>
+                </field>
+
+        </form>
+
+		<!--
+
+			IPs that DNS servers sould bind
+
+		-->
+        <form id="dnslistenon">
+
+        		<name></name>
+                <description></description>
+                <formversion>0.1</formversion>
+
+                <field name="dnsnsid" required="true">
+                        <description>dnsnsid</description>
+                        <type>number</type>
+                </field>
+                <field name="ipaddress" required="true">
+                        <description>ipaddress</description>
+                        <type>string</type>
+                        <constraints>
+                        	<constraint type="format" description="IPv4: xxx.xxx.xxx.xxx">\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}</constraint>
+                        </constraints>
+                </field>
+        </form>
+
+		<!--
+
+			Nameservers
+
+		-->
+        <form id="dnsns">
+
+        		<name></name>
+                <description></description>
+                <formversion>0.1</formversion>
+
+                <field name="name" required="true">
+                        <description>name</description>
+                        <type>string</type>
+                </field>
+                <field name="ipaddress" required="true">
+                        <description>ipaddress</description>
+                        <type>string</type>
+                </field>
+
+        </form>
+
+		<!--
+
+			Maintain resource records
+
+		-->
+        <form id="dnsrecords">
+
+		        <name></name>
+                <description></description>
+                <formversion>0.1</formversion>
+
+                <field name="dnszoneid" required="true">
+                        <description>dnszoneid</description>
+                        <type>number</type>
+                </field>
+                <!--
+                <field name="active" required="true">
+                        <description>active</description>
+                        <type>number</type>
+                </field>
+                -->
+                <field name="name">
+                        <description>name</description>
+                        <type>string</type>
+                </field>
+                <field name="type" required="true">
+                        <description>type</description>
+                        <type>number</type>
+                </field>
+                <field name="mxprio">
+                        <description>mxprio</description>
+                        <type>number</type>
+                </field>
+                <field name="value" required="true">
+                        <description>value</description>
+                        <type>string</type>
+                </field>
+                <field name="ptr">
+                        <description>ptr</description>
+                        <type>number</type>
+                </field>
+                <field name="validfrom">
+                        <description>validfrom</description>
+                        <type>date</type>
+                        <displayformat>dd.MM.yyyy</displayformat>
+                </field>
+                <field name="validuntil">
+                        <description>validuntil</description>
+                        <type>date</type>
+                        <displayformat>dd.MM.yyyy</displayformat>
+                </field>
+
+        </form>
+
+		<!--
+
+			Maintain types for resource records
+			(A, CNAME, ...)
+
+		-->
+        <form id="dnsrrtypes">
+
+		        <name></name>
+                <description></description>
+                <formversion>0.1</formversion>
+
+                <field name="name" required="true">
+                        <description>name</description>
+                        <type>string</type>
+                </field>
+
+        </form>
+
+		<!--
+
+			A zone/domain
+
+		-->
+        <form id="1ncc_dnszones">
+
+        		<name></name>
+                <description></description>
+                <formversion>0.1</formversion>
+
+                <field name="name" required="true">
+                        <description>name</description>
+                        <type>string</type>
+                </field>
+                <field name="soaserial" required="true">
+                        <description>soaserial</description>
+                        <type>date</type>
+                        <displayformat>yyyyMMdd</displayformat>
+                </field>
+                <!--
+                <field name="soasubserial" required="true">
+                        <description>soasubserial</description>
+                        <type>number</type>
+                        <constraints>
+                        	<contraint type="format">\d{2}</constraint>
+                        </constraints>
+                </field>
+                -->
+                <field name="soarefresh" required="true">
+                        <description>soarefresh</description>
+                        <type>number</type>
+                </field>
+                <field name="soaretry" required="true">
+                        <description>soaretry</description>
+                        <type>number</type>
+                </field>
+                <field name="soaexpire" required="true">
+                        <description>soaexpire</description>
+                        <type>number</type>
+                </field>
+                <field name="soamaximum" required="true">
+                        <description>soamaximum</description>
+                        <type>number</type>
+                </field>
+                <field name="ttl" required="true">
+                        <description>ttl</description>
+                        <type>number</type>
+                </field>
+                <!--
+                <field name="legalpersonid" required="true">
+                        <description>legalpersonid</description>
+                        <type>number</type>
+                </field>
+                <field name="admincpersonid" required="true">
+                        <description>admincpersonid</description>
+                        <type>number</type>
+                </field>
+                <field name="zonecpersonid" required="true">
+                        <description>zonecpersonid</description>
+                        <type>number</type>
+                </field>
+                <field name="techcpersonid" required="true">
+                        <description>techcpersonid</description>
+                        <type>number</type>
+                </field>
+                -->
+                <field name="validfrom">
+                        <description>validfrom</description>
+                        <type>date</type>
+                        <displayformat>dd.MM.yyyy</displayformat>
+                </field>
+                <field name="validuntil">
+                        <description>validuntil</description>
+                        <type>date</type>
+                        <displayformat>dd.MM.yyyy</displayformat>
+                </field>
+
+        </form>
+
+		<!--
+
+			?!
+
+		-->
+		<form id="dnszonesns">
+
+        		<name></name>
+                <description></description>
+                <formversion>0.1</formversion>
+
+                <field name="position" required="true">
+                        <description>position</description>
+                        <type>number</type>
+                </field>
+                <field name="dnszonesid" required="true">
+                        <description>dnszonesid</description>
+                        <type>number</type>
+                </field>
+                <field name="dnsnsid" required="true">
+                        <description>dnsnsid</description>
+                        <type>number</type>
+                </field>
+
+        </form>
+
+</forms>

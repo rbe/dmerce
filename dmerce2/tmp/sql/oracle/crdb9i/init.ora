@@ -1,0 +1,25 @@
+db_block_size=8192
+db_cache_size=209715200
+open_cursors=300
+background_dump_dest=$ORACLE_HOME/admin/$oracle_inst/bdump
+core_dump_dest=$ORACLE_HOME/admin/$oracle_inst/cdump
+timed_statistics=TRUE
+user_dump_dest=$ORACLE_HOME/admin/$oracle_inst/udump
+db_domain=$oracle_dbdomain
+remote_login_passwordfile=EXCLUSIVE
+control_files=("$DMERCE_ORACLE_DATAFILES/$oracle_inst/control01.ctl", "$DMERCE_ORACLE_DATAFILES/$oracle_inst/control02.ctl", "$DMERCE_ORACLE_DATAFILES/$oracle_inst/control03.ctl")
+compatible=9.0.0
+db_name=$oracle_inst
+instance_name=$oracle_inst
+java_pool_size=30720
+#large_pool_size=20971520
+shared_pool_size=104857600
+processes=100
+fast_start_mttr_target=300
+#resource_manager_plan=SYSTEM_PLAN
+sort_area_size=524288
+undo_management=AUTO
+undo_tablespace=UNDOTBS
+#log_archive_start = true
+#log_archive_dest_1 = 'LOCATION = $DMERCE_ORACLE_DATAFILES/archive1'
+#log_archive_format = arch%s.arc

@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!-- $Id: devdoc.xml,v 1.3 2003/12/19 16:08:17 mf Exp $ -->
+<document>
+	<section>
+		<title>Erstellung einer Distribution</title>
+		<content>
+			Eine auslieferbare Distribution kann jederzeit aufgrund des aktuellen
+			Codes aus dem CVS-Repository erzeugt werden. Zu diesem Zweck stehen
+			bereits aufwendige Ant-Skripts zur Verfügung, die alle benötigten
+			Build-Prozesse koordinieren und eine als ZIP-Datei gepackte Distribution
+			erzeugen.<p/>
+			Lernen Sie im Folgenden die verschiedenen Möglichkeiten der Distibutionserstellung
+			kennen.
+		</content>
+		<section>
+			<title>Quick &amp; Easy</title>
+			<content>
+				<p>
+				Die einfachste Methode, eine fertige Distribution zu erstellen, ist der
+				vollautomatische Build-Prozess, der über das Ant-Skript build-dmerce-pack.xml
+				gesteuert wird.</p>
+				<p>
+				Das Skript ist darauf ausgelegt, auf verschiedenen Entwicklungssystemen lauffähig
+				zu sein und enthält daher jeweils auf das entsprechende System angepasste Targets.<br/>
+				Um auf Gandalf den Build-Prozess zu starten, können die Targets <c>automatic-build-complete-gandalf</c>
+				und <c>automatic-build-withexample-gandalf</c> verwendet werden. Soll der Prozess auf einem
+				anderen Rechner ausgeführt werden, muss der Suffix <c>-gandalf</c> entsprechend ersetzt werden.</p>
+			</content>
+		</section>
+		<section>
+			<title>Schritt für Schritt</title>
+			<content>
+				<h2>Überblick</h2>
+				<p>
+				Wenn Sie mehr Einfluss auf den Erstellungsprozess der Distribution haben wollen,
+				müssen Sie - wie nachfolgend dargestellt - in einzelnen Teilschritten die erforderlichen
+				Teile der Distribution erstellen.</p>
+				<p>Im Detail handelt es sich um folgende Teilschritte:<br/>
+				<ul>
+					<li>Erstellung des dmerce-Webservices</li>
+					<li>Erstellung des Webservice-Clients für den demerce-Client</li>
+					<li>Erstellung der dmerce-Client-Bibliothek</li>
+					<li>Zusammenstellung der Distribution</li>
+				</ul>
+				</p>
+				<h2>Erstellung des dmerce-Webservices</h2>
+				<p>
+				Das Ant-Skript <c>build-core.xml</c> übernimmt die Erstellung des dmerce-Webservices.
+				Rufen Sie innerhalb dieses Build-Skriptes das Target <c>build-service</c> auf.
+				Das Target wird die Serverseite des Webservices mit allen benötigten Klassen neu kompilieren und im
+				Verzeichnis <c>dist</c> das deploybare WAR-Archiv <c>dmercews.war</c> ablegen.
+				</p>
+				<p>
+				Diesen Schritt müssen Sie nur dann ausführen, wenn sich eine Änderung innerhalb des
+				Webservices ergeben hat. Dies ist dann der Fall, wenn Sie z.B. die Methodensignaturen der über den
+				Webservice angebotenen Funktionen modifizieren.
+				</p>
+				<h2>Erstellung des Webservice-Clients</h2>
+				<p>
+				Das Ant-Skript <c>build-core.xml</c> übernimmt auch die Erstellung des Webservice-Clients.
+				Dazu müssen Sie <strong>nach</strong> Erzeugung des Webservices das Target <c>build-client</c> ausführen.
+				Die dann erzeugte JAR-Datei <c>webserviceclient.xml</c> enthält alle Stubs, die für den Zugriff
+				auf den Webservice benötigt werden und wird automatisch in das Verzeichnis <c>lib/webclient</c> kopiert,
+				damit die Änderungen bei der nächsten Kompilierung von Anwendungen automatisch eingebunden werden.
+				</p>
+				<p>
+				Diesen Schritt müssen Sie nur dann ausführen, wenn sich eine Änderung innerhalb des
+				Webservices ergeben hat. Dies ist dann der Fall, wenn Sie z.B. die Methodensignaturen der über den
+				Webservice angebotenen Funktionen modifizieren.
+				</p>
+				<h2>Erstellung der dmerce-Client-Bibliothek</h2>
+				<p>
+				Das Ant-Skript <c>build-webclient.xml</c> erzeugt auf der Basis der aktuellen Konfiguration
+				des Webservices und des Webservice-Clients eine JAR, die alle dmerce-Client-Klassen enthält.
+				Rufen Sie dazu das Target <c>portable-jar</c> auf. Dieses erzeugt im Verzeichnis <c>bin</c>
+				das JAR-Archiv <c>dmerce3-portable.jar</c>. Es enthält nicht die für den Webservice benötigten
+				Stubs, da diese getrennt in der <c>webserviceclient.jar</c> gehalten werden.
+				</p>
+				<p>
+				Diesen Schritt sollten Sie jedesmal ausführen, wenn Sie eine neue Distribution manuell erzeugen,
+				damit eventuelle Änderungen im dmerce-Client übernommen werden.
+				</p>
+				<h2>Zusammenstellung der Distribution</h2>
+				<p>
+				Abschließend kann mittels des Ant-Skriptes <c>build-dmerce-pack</c> eine Distribution erzeugt werden.
+				Das Target <c>build-dmerce-pack</c> erzeugt aus der aktuellen Konfiguration eine leere Distribution.
+				Sie müssen das Target jedoch gemeinsam mit einer systemspezifischen Initialisierungsroutine aufrufen.
+				Diese hat die Bezeichnung <c>preinit-XX</c>, wobei XX durch einen rechnerspezifischen Suffix zu
+				ersetzen ist. Auf Gandalf müssten Sie beispielsweise Ant mit den Targets <c>preinit-gandalf</c> und
+				<c>build-dmerce-pack</c> aufrufen.
+				</p>
+			</content>
+		</section>
+	</section>
+	<section>
+		<title>Einstiegspunkte</title>
+		<content>
+			<h1>Einstiegspunkte für die Entwicklung</h1>
+			<p>
+			<dmerce/> ist wegen der hohen Komplexität in mehrere logische Systembereiche aufgeteilt. In den nachfolgenden
+			Kapiteln werden Einstiegspunkte erläutert, um das System zu erweitern und/oder zu warten. Bitte schauen Sie
+			in die entsprechende API-Dokumentation (Javadoc), um nähere Informationen zu erhalten.
+			</p>
+		</content>
+		<section>
+			<title>Webservice</title>
+			<content>
+				<h1>Einstiegspunkt 'Webservice'</h1>
+				<p>
+				Der <dmerce/>-Webservice baut auf dem von Sun zur Verfügung gestellten Framework JAX-RPC auf, so dass
+				zur Implementierung eine Interface-Definition für die Client-Seite und die serverseitige Webservice-Implementierung
+				genügt. Die mit dem Webservice zusammenhängenden Klassen liegen alle im Source-Folder <c>src/core</c>.
+				</p>
+				<p>
+				Das Package <c>com.wanci.dmerce.webservice</c> enthält webservice-relevante Ressourcen.
+				Die Klasse <c>WebserviceLocator</c> ist eine Hilfsklasse, die die Verbindung mit dem Webservice einfacher macht.
+				Die Klasse <c>SQLService</c> kapselt vollständig den Webservice-Zugriff, damit Clients transparent auf die
+				SQL-Funktionen des <dmerce/>-Webservices zugreifen können. Es erscheint sinnvoll, für später hinzukommende
+				Webservice-Funktionalitäten weitere Wrapperklassen wie diese bereitzustellen.
+				</p>
+				<p>
+				Die eigentlichen Webservice-Interfaces liegen innerhalb des Packages <c>com.wanci.dmerce.webservice</c>
+				in entsprechenden Unterpackages. Das Interface zum Webservice für SQL-Zugriffe liegt beispielsweise im Unterpackage
+				<c>db</c> und heißt <c>SQLWebservice</c>.
+				</p>
+				<p>
+				Die Webservice-Implementierung liegt in einem korrespondierenden Unterpackage
+				<c>com.wanci.dmerce.webservice.impl.XX</c>.
+				</p>
+			</content>
+		</section>
+		<section>
+			<title>Workflow-Engine</title>
+			<content>
+				<h1>Einstiegspunkt 'Workflow-Engine'</h1>
+				<p>
+				Die für den <dmerce/>-Client zentrale Workflow-Engine ist vollständig im Source-Folder <c>src/webclient</c>
+				enthalten.
+				</p>
+				<p>
+				Die Kernkomponenten der Engine liegen im Package <c>com.wanci.dmerce.workflow</c>. Die für Web-Applikationen
+				spezialisierten Workflow-Komponenten finden Sie im Unterpackage <c>webclient</c>. Im Unterpackage <c>xmlbridge</c>
+				liegen die Klassen, die der JAXB-Precompiler erzeugt hat. Diese dienen zum Einlesen der <c>workflows.xml</c> und
+				müssen bei jeder Veränderung der Schema-Definition <c>WORKFLOWS.XSD</c> neu erzeugt werden.
+				</p>
+			</content>
+		</section>
+		<section>
+			<title>Taglibs</title>
+			<content>
+				<h1>Einstiegspunkt 'Taglibs'</h1>
+				<p>
+				Taglibs gehören vollständig zum <dmerce/>-Client und liegen daher im Source-Folder <c>src/webclient</c>.
+				Alle Taglibs liegen im Package <c>com.wanci.dmerce.taglib</c> und seinen Unterpackages. 
+				Wenn Sie neue Taglibs schreiben wollen, ist ein eigenes Unterpackage sinnvoll.
+				</p>
+				<p>
+				Wenn Sie Änderungen oder Erweiterungen an Taglibs vornehmen, müssen Sie wahrscheinlich auch Änderungen
+				am Web-Deskriptor durchführen. Dieser liegt im Verzeichnis <c>etc/webclient</c>.
+				</p>
+			</content>
+		</section>
+	</section>
+	<section>
+		<title>Interna</title>
+		<content>
+			<h1><dmerce/> Interna</h1>
+			<p>
+			In diesem Kapitel erfahren Sie Näheres über die Arbeitsweise der Systemkomponenten von <dmerce/>.
+			Der Überblick sollte Sie in die Lage versetzen, die ablaufenden Prozesse zu verstehen, damit Sie eigenständig
+			Modifikationen und Erweiterungen im System vornehmen können.
+			</p>
+		</content>
+		<section>
+			<title>Workflow-Engine</title>
+			<content>
+				<h1>Die Workflow-Engine</h1>
+				<p>
+				Ein Workflow setzt sich aus mehreren States (Zuständen) zusammen, die in Webanwendungen mit angezeigten Webseiten
+				korrespondieren. Das System wechselt zwischen verschiedenen Zuständen, wenn eine Benutzerinteraktion stattfindet.
+				Von einem Zustand in den anderen gelangt man über Transitions (Zustandsübergänge). Jeder Zustand definiert dazu,
+				welche Transitionen zu anderen Zuständen möglich sind.
+				</p>
+				<p>
+				Eine Transition besitzt genau eine Condition (Bedingung) und genau eine Action (Aktion). Wird ein Zustandübergang
+				angefordert (z.B. weil ein Link angeklickt worden ist), durchläuft der aktuelle Zustand die Liste seiner Transitionen
+				und prüft nacheinander, ob die Bedingung einer Transition erfüllt ist. Sobald eine Bedingung erfüllt ist, wird die
+				entsprechende Transition "gefeuert". "Feuern" bedeutet, dass dieser Zustandübergang betreten und damit in den definierten
+				Zielzustand gewechselt werden soll. Jede Transition besitzt weiterhin genau eine <c>Action</c>. In der <c>Action</c>
+				kann beliebiger Code ausgeführt werden, bevor zum Zielzustand gewechselt wird.
+				Die Transition führt stets zu einem Zielzustand, d.h. es gibt keine Transition, die ins Nichts führt.
+				</p>
+				<p>
+				Sowohl Conditions als auch Actions können selbst definiert werden, indem man Subklassen von den vordefinierten allgemeinen
+				Klassen ableitet und die abstrakten Methoden implementiert.
+				Näheres dazu finden Sie in der Benutzerdokumentation.
+				</p>
+				<p>
+				Ein sehr typischer Zustandsübergang ist wohl der einfache Wechsel von einer Seite zur nächsten, ohne dass besondere
+				Aktionen ausgeführt werden. Dazu kann eine Transition verwendet werden, die eine Bedingung enthält, die stets erfüllt ist
+				(<c>com.wanci.dmerce.workflow.AlwaysTrueCondition</c>), eine Aktion besitzt, die nichts ausführt (<c>com.wanci.dmerce.workflow.DoNothingAction</c>),
+				und als Zielzustand auf die nächste Seite verweist.
+				</p>
+				<p>
+				Soll am Ende einer Folge von Formularseiten ein Eintrag in der Datenbank erfolgen, kann in der Transition zwischen dem
+				vorletzten und letzten Zustand eine entsprechende Aktion ausgeführt werden.
+				</p>
+				<p>
+				Der Zugriff auf Daten aus den Formularen erfolgt über einen sogenannten WorkflowContext, der - in Anlehnung an die
+				Session-Variablen im Servlet-Container - Key/Value-Paare zu einem Workflow speichern kann. Über diesen Kontext können
+				sowohl <c>Conditions</c> als auch <c>Actions</c> auf Daten zugreifen, Berechnungen durchführen, aber auch Daten
+				zurückschreiben, damit sie in nachfolgenden Kontrollflüssen zur Verfügung stehen.
+				</p>
+				<p>
+				Endpoints sind Endzustände in einem Workflow. Ein Endpoint muss nicht explizit gekennzeichnet werden, da er dadurch charakterisiert
+				ist, dass ein Zustand keine Transition zu anderen Zuständen besitzt. Betritt die Workflow-Engine einen Endpoint, ist der Ablauf
+				dieses Workflows abgeschlossen.
+				</p>
+				<p>
+				Die gesamte Ablaufsteuerung wird in <dmerce/> von einer Workflow-Engine (<c>com.wanci.dmerce.workflow.webapp.WebappWorkflowEngine</c>) durchgeführt.
+				Jede Client-Session bekommt automatisch zu Beginn eine Workflow-Engine zugewiesen, die im Session-Kontext unter dem Namen "qWorkflowEngine" abgelegt wird.
+				</p>
+				<p>
+				Der WorkflowBuilder (<c>com.wanci.dmerce.workflow.webapp.WebappWorkflowBuilder</c>) übernimmt das Einlesen der <c>workflows.xml</c> und die darauf beruhende Struktur der Workflow-Definitionen.
+				Anhand der Informationen in der <c>workflows.xml</c> werden alle Workflows mit den darin enthaltenen Elementen erzeugt.
+				</p>
+			</content>
+		</section>
+		
+		<section>
+			<title>Workflow-Kontext</title>
+			<content>
+				<h1>Der Kontext eines Workflows</h1>
+				<p>
+				Innerhalb eines Workflows werden in der Regel Variablen benötigt, die die aktuellen Zustände verschiedener Elemente der Anwendung
+				halten können. So müssen z.B. über mehrere Seiten hinweg Benutzereingaben von Formularen festgehalten werden.
+				Um bequem auf Feldwerte zugreifen zu können, existiert der sogenannte <c>WorkflowContext</c>, in dem alle relevanten
+				Werte zu einem Workflow abgelegt sind.
+				</p>
+				<p>
+				Es exsistiert für jeden laufenden Workflow ein WorkflowContext. Dieser kann durch die Methode <c>getWorkflowContext(String workflowId)</c> in der WorkflowEngine
+				abgerufen werden, die im Session-Kontext unter dem Namen "qWorkflow" abgelegt ist.
+				</p>
+				<p>
+				In einem <c>WorkflowContext</c> können Sie unter einem String schlüssel beliebige Objekte ablegen und abrufen - genauso, wie Sie es in einem
+				Session-Kontext bewerkstelligen würden. Dazu verwenden Sie die Methoden <c>put(String key, Object value)</c> und <c>get(String key)</c>.
+				Ein gravierender Unterschied zum <c>setAttribute()</c> und <c>getAttribute()</c> einer HTTP-Session ist die Tatsache, dass Workflow-Kontexte
+				an Workflows gebunden sind. Damit kann der gleiche Schlüssel in verschiedenen Workflows auch unterschiedliche Werte besitzen.
+				</p>
+				<p>
+				Wenn es sich bei Ihrer Anwendung um eine Web-Applikation handelt, werden Sie hauptsächlich die Klassen aus dem Package
+				<c>com.wanci.dmerce.workflow.webapp</c> verwenden.
+				</p>
+			</content>
+		</section>
+		
+	</section>
+</document>

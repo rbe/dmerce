@@ -1,0 +1,10 @@
+<!--
+	
+	dmerce(R) jboss-web.xml template
+	
+-->	
+
+<jboss-web>
+	<context-root>CONTEXT_ROOT</context-root>
+	<virtual-host>VIRTUAL_HOST</virtual-host>
+</jboss-web>

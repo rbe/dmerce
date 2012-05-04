@@ -1,0 +1,37 @@
++-----------------+
++ AFC Datenimport +
++-----------------+
+
+Als erstes speichert man jede Tabelle der erhaltenen Excel Datei
+als CVS-Textdatei.
+
+isoConvAFC.py
+
+Dabei gibt es drei Dinge zu beachten.
+      
+      1) Man muß die Daten mit ';' als Seperator exportieren.
+      2) In der Tabelle Schaden ändert man das Format der Felder 
+	 CreatedDateTime und Schadendatum auf TT-MM-JJ HH:MM
+	 und exportiert sie so als CVS Datei
+      3) Die Dateinamen, die dann durch das Skript verifiziert werden,
+         stehen als 'Liste' im Programmcode selber. Deslhalb ist es
+	 sinnvoll, per Emacs dieses Programm auszuführen.
+
+
+Sind alle cvs Dateien erfolgreich konvertiert, öffnet man mit einem
+Brower den phpMyAmdin und leert als erstes die Tabelle, die man mit den
+neuen Daten füllen möchte.
+Dann importiert man die csv Datei. Die Feldnamen für die entsprechende Tabelle
+bekommt man aus dem Textdokument ImportFieldNames.txt
+
+So verfährt man mit jeder einzelnen Tabelle.
+
+Es gibt meinerseits noch einige Ideen, mit denen man das tool so anpassen kann,
+daß die Daten automatisch per dmerce SQL Layer in die passende Datenbank eingelesen
+werden, ohne daß man auf phpMyAdmin angewiesen ist.
+Natürlich kann man die Funktion, die das ISO Zeitformat in einen UNIX Timestamp umwandelt
+auch so abändern, daß das Zeitformat angegeben werden kann, damit man die CSV Datei nicht
+abändern muß. Das gleiche gilt natürlich auch für den Seperator.
+
+Bei diesen Ideen handelt es sich um kleinere Änderungen, die man aus meiner jetzigen Sicht
+innerhalb eine halben bis ganzen Tages durchführen kann.

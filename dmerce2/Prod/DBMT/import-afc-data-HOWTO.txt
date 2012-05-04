@@ -1,0 +1,46 @@
+importAFCData.py Dokumentation
+------------------------------
+
+Um das Skript importAFCData.py korrekt anwenden zu können, muß
+man einige Voraussetzungen einhalten. Die Daten der Exceltabelle
+muß man mit folgenden Dateinamen abspeichern:
+
+Fahrzeuge.txt
+Firma.txt
+Kostenstellen.txt
+Personen.txt
+Schaden.txt
+Schadenart.txt
+Schadenkosten.txt
+Schadentyp.txt
+Schadenort.txt
+
+Diese Dateien MÜSSEN im Verzeichnis /tmp/afc-data vorhanden sein.
+Wenn eine der Dateien fehlt oder falsch geschrieben ist, so wird 
+diese ignoriert.
+
+
+SEHR WICHTIG beim export der Daten aus der Excel Tabelle:
+---------------------------------------------------------
+Vor dem Export MUß das Datumsformat in der Tabelle Schaden der Felder 
+CreatedDateTime und SchadenDatum auf das isoFormat TT-MM-JJ HH:MM gebracht werden.
+
+Die erste Zeile, die beim Standardexport von CSV Daten die Feldbeschreibungen
+darstellt, wird beim Importvorgang ignoriert. 
+Folglich: 
+Exportiert man die Daten ohne diese Zeile, so wird trotzdem die erste Zeile nicht importiert.
+
+
+DB Verbindungen und Konfigurationsdatei
+---------------------------------------
+Das Skript stellt die Datenbankverbindung zu sys-Tabelle durch die 
+/usr/local/1Ci/dmerce/conf/dmerce.cfg her.
+In der Configurationstabelle wird der Eintrag im Feld FQHN 'import.afc.data'
+gesucht und die entsprechende Verbindung zur DB dmerce_afc hergestellt.
+
+
+Aufruf:
+-------
+Nachdem die Daten korrekt im /tmp/afc-data Verzeichnis abgespeichert wurden,
+ruft man einfach importAFCData.py auf und das Skript importiert automatisch
+die Daten.

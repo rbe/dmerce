@@ -1,0 +1,42 @@
+#!/bin/ksh
+#################################################
+#
+# Copyright 2002 1Ci GmbH, http://www.1ci.de
+#
+# $Id: qdux_comprall,v 1.2 2003/04/20 13:41:51 rb Exp $
+# $Author: rb $
+# $Revision: 1.2 $
+#
+# Recursively compress all contents of a
+# directory
+# 
+#################################################
+
+. ${DMERCE_HOME}/lib/libsh
+[ $? -gt 0 ] & exit 2
+. ${DMERCE_HOME}/lib/libdmerce
+[ $? -gt 0 ] && exit 2
+
+usage() {
+    echo "Missing argument: directory"
+    echo
+}
+
+check_params() {
+    if [ -z $DIR ]; then
+	usage
+    fi
+}
+
+DIR=$1
+
+libdmerce_copyr
+check_params
+libsh_set_log_filename qdux_comprall
+
+e "See logfile $DMERCE_LOG/$DMERCE_LOGFILENAME"
+libsh_log "Compressing directory ${DIR}"
+for file in `find ${DIR} -type f -name "*.tar"`
+  do
+  libsh_log `compress -v ${file}`
+done

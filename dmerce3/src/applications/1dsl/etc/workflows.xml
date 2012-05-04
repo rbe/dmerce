@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<workflows xmlns='http://www.1ci.de'
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+  xsi:schemaLocation='http://www.1ci.de ../../../etc/WORKFLOWS.xsd'
+  version="2.0"
+>
+
+<workflow id="creg">
+
+		<page id="register" template="creg_insert.jsp"
+			formid="customer" editable="false">
+
+			<formmap table="t_customer" primarykey="ID">
+				<fieldmap formfield="gender" dbfield="gender"/>
+				<fieldmap formfield="lastname" dbfield="lastname"/>
+				<fieldmap formfield="firstname" dbfield="firstname"/>
+				<fieldmap formfield="street" dbfield="street"/>
+				<fieldmap formfield="zipcode" dbfield="zipcode"/>
+				<fieldmap formfield="city" dbfield="city"/>
+				<fieldmap formfield="phone" dbfield="phone"/>
+				<fieldmap formfield="email" dbfield="email"/>
+				<fieldmap formfield="birthday" dbfield="birthday"/>
+				<fieldmap formfield="accountnumber" dbfield="accountnumber"/>
+				<fieldmap formfield="accountowner" dbfield="accountowner"/>
+				<fieldmap formfield="bankcode" dbfield="bankcode"/>
+				<fieldmap formfield="bank" dbfield="bank"/>
+				<fieldmap formfield="tacread" dbfield="tacread"/>
+				<fieldmap formfield="rowread" dbfield="rowread"/>
+				<fieldmap formfield="desiredstartdate" dbfield="desiredstartdate"/>
+
+			</formmap>
+
+			<transition name="save_to_db" target="creg_thankyou">
+				<condition type="buttonpressed" value="Anmelden"/>
+				<action type="callproc">
+					<parameter name="name" value="sp_createcustomer"/>
+					<formfield formid="customer" name="gender"/>
+					<formfield formid="customer" name="lastname"/>
+					<formfield formid="customer" name="firstname"/>
+					<formfield formid="customer" name="street"/>
+					<formfield formid="customer" name="zipcode"/>
+					<formfield formid="customer" name="city"/>
+					<formfield formid="customer" name="phone"/>
+					<formfield formid="customer" name="email"/>
+					<formfield formid="customer" name="birthday"/>
+					<formfield formid="customer" name="accountnumber"/>
+					<formfield formid="customer" name="accountowner"/>
+					<formfield formid="customer" name="bankcode"/>
+					<formfield formid="customer" name="bank"/>
+					<formfield formid="customer" name="tacread"/>
+					<formfield formid="customer" name="rowread"/>
+					<formfield formid="customer" name="desiredstartdate"/>
+                                 </action>
+			</transition>
+
+			<transition name="abort" target="creg_thankyou">
+				<condition type="buttonpressed" value="Cancel"/>
+			</transition>
+
+		</page>
+
+		<page id="creg_thankyou" template="creg_thankyou.jsp"/>
+
+	</workflow>
+
+<workflow id="cedit">
+
+		<page id="register" template="cedit_maintain.jsp"
+			formid="customer" editable="true">
+
+			<formmap table="t_customer" primarykey="ID">
+				<fieldmap formfield="gender" dbfield="gender"/>
+				<fieldmap formfield="lastname" dbfield="lastname"/>
+				<fieldmap formfield="firstname" dbfield="firstname"/>
+				<fieldmap formfield="street" dbfield="street"/>
+				<fieldmap formfield="zipcode" dbfield="zipcode"/>
+				<fieldmap formfield="city" dbfield="city"/>
+				<fieldmap formfield="phone" dbfield="phone"/>
+				<fieldmap formfield="email" dbfield="email"/>
+				<fieldmap formfield="birthday" dbfield="birthday"/>
+				<fieldmap formfield="accountnumber" dbfield="accountnumber"/>
+				<fieldmap formfield="accountowner" dbfield="accountowner"/>
+				<fieldmap formfield="bankcode" dbfield="bankcode"/>
+				<fieldmap formfield="bank" dbfield="bank"/>
+				<fieldmap formfield="tacread" dbfield="tacread"/>
+				<fieldmap formfield="rowread" dbfield="rowread"/>
+				<fieldmap formfield="desiredstartdate" dbfield="desiredstartdate"/>
+                <fieldmap formfield="statusid" dbfield="statusid"/>
+                <fieldmap formfield="remarks" dbfield="remarks"/>
+			</formmap>
+
+			<transition name="save_to_db" target="creg_thankyou">
+				<condition type="buttonpressed" value="Anmelden"/>
+				<action type="callproc">
+					<parameter name="name" value="sp_createcustomer"/>
+					<formfield formid="customer" name="gender"/>
+					<formfield formid="customer" name="lastname"/>
+					<formfield formid="customer" name="firstname"/>
+					<formfield formid="customer" name="street"/>
+					<formfield formid="customer" name="zipcode"/>
+					<formfield formid="customer" name="city"/>
+					<formfield formid="customer" name="phone"/>
+					<formfield formid="customer" name="email"/>
+					<formfield formid="customer" name="birthday"/>
+					<formfield formid="customer" name="accountnumber"/>
+					<formfield formid="customer" name="accountowner"/>
+					<formfield formid="customer" name="bankcode"/>
+					<formfield formid="customer" name="bank"/>
+					<formfield formid="customer" name="tacread"/>
+					<formfield formid="customer" name="rowread"/>
+					<formfield formid="customer" name="desiredstartdate"/>
+                    <formfield formid="customer" name="statusid"/>
+                    <formfield formid="customer" name="remarks"/>
+				</action>
+			</transition>
+
+			<transition name="abort" target="cedit_list">
+				<condition type="buttonpressed" value="Cancel"/>
+			</transition>
+
+		</page>
+
+		<page id="cedit_list" template="cedit_list.jsp"/>
+
+	</workflow>
+
+</workflows>

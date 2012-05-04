@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+    Document   : security.xml
+    Created on : 26. Februar 2004, 11:32
+    Author     : Masanori Fujita
+    Description:
+        Initial Draft on security.xml
+-->
+<!-- 
+<security xmlns="http://www.1ci.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.1ci.de file:/C:/Temp/security.xsd">
+-->
+<security>
+	<login>
+		<login-page>/login/login.jsp</login-page>
+		<error-page>/login/error.jsp</error-page>
+	</login>
+	<database-sec>
+		<authentication>
+			<table>user_passwort_tabelle</table>
+			<user-column>userid</user-column>
+			<password-column>password</password-column>
+		</authentication>
+		<authorization>
+			<table>user_role_tabelle</table>
+			<user-column>userid</user-column>
+			<role-column>roleid</role-column>
+		</authorization>
+	</database-sec>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Member-Bereich</web-resource-name>
+			<url-pattern>/members/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>Noch ein Bereich</web-resource-name>
+			<url-pattern>/special/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>member</role-name>
+			<role-name>admin</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<security-constraint>
+		<workflow id="register"/>
+		<auth-constraint>
+			<role-name>member</role-name>
+			<role-name>admin</role-name>
+		</auth-constraint>
+	</security-constraint>
+</security>

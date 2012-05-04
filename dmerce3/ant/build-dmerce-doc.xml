@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project basedir="." default="build-user" name="dmerce Documentation">
+
+	<property environment="env"/>
+	<property file="etc/core/build.properties"/>
+    <property name="appname" value="dmerce-doc"/>
+    <property name="src.web" value="${src}/doku"/>
+    
+    <!-- CLASSPATH used during compilation -->
+    <path id="build.classpath">  
+        <fileset dir="${lib.shared}">
+                <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="${lib.webengine}">
+                <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="${lib}">
+                <include name="*.jar"/>
+        </fileset>
+    </path>
+    
+<!-- *********************************************************************** -->
+<!-- *** DEPLOYMENT                                                      *** -->
+<!-- *********************************************************************** -->
+	<target depends="build-complete" name="deploy-complete">
+            <echo>deploying documentation as ${appname}</echo>
+            <copy file="${dist}/${appname}.war"
+            tofile="${env.JBOSS_HOME}/server/default/deploy/${appname}.war"/>
+	</target>
+
+	<target depends="build-user" name="deploy-user">
+            <echo>deploying documentation as ${appname}</echo>
+            <copy file="${dist}/${appname}.war"
+            tofile="${env.JBOSS_HOME}/server/default/deploy/${appname}.war"/>
+	</target>
+
+<!-- *********************************************************************** -->
+<!-- *** COMPILE                                                         *** -->
+<!-- *********************************************************************** -->
+	<target depends="prepare" name="compile">
+            <javac deprecation="on" destdir="${doc.build}" source="1.4">
+                <classpath refid="build.classpath"/>
+                <src path="${src.webclient}"/>
+				<src path="${src.core}/com/wanci/dmerce/res"/>
+				<src path="${src.core}/com/wanci/dmerce/exceptions"/>
+				<src path="${src.ncc}/com/wanci/ncc/whois"/>
+				<src path="${src.ant}"/>
+            </javac>
+	</target>
+
+<!-- *********************************************************************** -->
+<!-- *** WAR                                                             *** -->
+<!-- *********************************************************************** -->
+	<target name="build-complete" depends="clean, setup-doc, setup-devdoc, compile">
+		<war basedir="${src.web}"
+			warfile="${dist}/${appname}.war"
+            webxml="${etc.webclient}/web.xml"
+            excludes="${src.web}/etc/**/*">
+            	<lib dir="${lib.webengine}"/>
+                <lib dir="${lib.shared}"/>
+                <classes dir="${doc.build}"/>
+                <webinf dir="${etc.webclient}"/>
+		</war>
+		<antcall target="clean"/>
+	</target>
+
+	<target name="build-user" depends="clean, setup-doc, compile">
+		<war basedir="${src.web}"
+			warfile="${dist}/${appname}.war"
+            webxml="${etc.webclient}/web.xml"
+            excludes="etc/**/* api/**/*">
+            	<lib dir="${lib.webengine}"/>
+                <lib dir="${lib.shared}"/>
+                <classes dir="${doc.build}"/>
+                <webinf dir="${etc.webclient}"/>
+		</war>
+		<antcall target="clean"/>
+	</target>
+
+<!-- *********************************************************************** -->
+<!-- *** PREPARE                                                         *** -->
+<!-- *********************************************************************** -->
+	<target name="prepare" depends="clean">
+		<tstamp/>
+		<mkdir dir="${build}"/>
+		<mkdir dir="${doc.build}"/>
+		<mkdir dir="${dist}"/>
+	</target>
+	
+<!-- *********************************************************************** -->
+<!-- *** CLEAN                                                           *** -->
+<!-- *********************************************************************** -->
+	<target name="clean">
+		<delete dir="${doc.build}"/>
+	</target>
+
+	<target name="distclean" depends="clean">
+		<delete file="${dist}/${appname}.war"/>
+	</target>
+
+<!-- *********************************************************************** -->
+<!-- *** SETUP DOC                                                       *** -->
+<!-- *********************************************************************** -->
+	<target name="setup-doc" depends="setup-web-inf">
+        <copy todir="${doc.build}/com/wanci/dmerce/res" file="${src.web}/etc/doc.xml"/>
+	</target>
+
+	<target name="setup-devdoc" depends="setup-web-inf">
+        <copy todir="${doc.build}/com/wanci/dmerce/res" file="${src.web}/etc/devdoc.xml"/>
+	</target>
+
+<!-- *********************************************************************** -->
+<!-- *** SETUP WEB INF                                                   *** -->
+<!-- *********************************************************************** -->
+	<target depends="prepare" name="setup-web-inf">
+            <!-- res-Zeug -->
+            <copy todir="${doc.build}/com/wanci/dmerce/res">
+                <fileset dir="${src.core}/com/wanci/dmerce/res"/>
+            </copy>
+            <!-- xml dateien: forms.xml workflows.xml -->
+            <copy todir="${doc.build}/com/wanci/dmerce/res">
+            	<fileset
+            		dir="${src.web}/etc"
+            		includes="*.xml *.xsl"
+            		excludes="doc.xml devdoc.xml"/>
+            </copy>
+            <!-- jaxb -->
+            <copy todir="${doc.build}">
+                <fileset dir="${src.webclient}">
+                    <include name="**/jaxb.properties"/>
+                    <include name="**/bgm.ser"/>
+                </fileset>
+            </copy>
+	</target>
+
+</project>

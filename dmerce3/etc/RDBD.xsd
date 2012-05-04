@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : DB Result.xsd
+    Created on : 23. August 2003, 19:08
+    Author     : Masanori Fujita
+    Description:
+        Purpose of XML Schema document follows.
+-->
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.wanci.com"
+            xmlns="http://www.wanci.com"
+            elementFormDefault="qualified">
+
+    <xsd:element name="rdbsdata">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="meta" type="META"/>
+                <xsd:element name="data" type="DATA"/>
+                <xsd:element name="error" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:complexType name="META">
+        <xsd:sequence>
+            <xsd:element name="sql-statement" type="xsd:string"/>
+            <xsd:element name="type-info" type="TYPEINFO"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="DATA">
+        <xsd:sequence>
+            <xsd:element name="row" minOccurs="0" maxOccurs="unbounded" type="ROW"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="ROW">
+        <xsd:sequence>
+            <xsd:element name="field" minOccurs="0" maxOccurs="unbounded" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="TYPEINFO">
+        <xsd:sequence>
+            <xsd:element name="column" minOccurs="0" maxOccurs="unbounded">
+                <xsd:complexType>
+                    <xsd:attribute name="name" type="xsd:string"/>
+                    <xsd:attribute name="type" type="xsd:string"/>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+        
+</xsd:schema>

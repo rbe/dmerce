@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project basedir="." default="help" name="dmerce System Targets">
+	
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+	
+	<!--
+		
+		Default target: help
+		
+	-->
+	<target name="help" description="Help for systemtargets.xml"/>
+	
+	<!--
+		
+		Install and update
+		
+	-->
+	<target name="installeclipse-linuxia32">
+		<property name="eclipse.zip" value="eclipse-SDK-3.0M7-linux-motif.zip"/>
+		<!-- <mkdir dir="${dmerce.product.base}/eclipse"/> -->
+		<get src="http://downloads.1ci.com/${eclipse.zip}"
+			dest="${dmerce.install}/${eclipse.zip}"/>
+		<unzip src="${dmerce.install}/${eclipse.zip}" dest="${dmerce.product.base}"/>
+	</target>
+
+	<target name="installeclipse-solsparc64">
+		<property name="eclipse.zip" value="eclipse-SDK-3.0M7-solaris-motif.zip"/>
+		<!-- <mkdir dir="${dmerce.product.base}/eclipse"/> -->
+		<get src="http://downloads.1ci.com/${eclipse.zip}"
+			dest="${dmerce.install}/${eclipse.zip}"/>
+		<unzip src="${dmerce.install}/${eclipse.zip}" dest="${dmerce.product.base}"/>
+	</target>
+
+	<target name="installeclipse-winia32">
+		<property name="eclipse.zip" value="eclipse-SDK-3.0M7-win32.zip"/>
+		<!-- <mkdir dir="${dmerce.product.base}/eclipse"/> -->
+		<get src="http://downloads.1ci.com/${eclipse.zip}"
+			dest="${dmerce.install}/${eclipse.zip}"/>
+		<unzip src="${dmerce.install}/${eclipse.zip}" dest="${dmerce.product.base}"/>
+	</target>
+
+	<target name="installxampp-linuxia32">
+		<property name="xampp.tar.gz" value="xampp-linux-1.4.2.tar.gz"/>
+		<get src="http://downloads.1ci.com/${xampp.tar.gz}"
+			dest="${dmerce.install}/${xampp.tar.gz}"/>
+		<untar compression="gzip" src="${dmerce.install}/${xampp.tar.gz}"
+			dest="${dmerce.product.base}"/>
+		<!-- chown -R nobody:nogroup htdocs var/mysql phpmyadmin -->
+		<echo message=""/>
+		<echo message="XAMPP must be started as root!"/>
+		<echo message="Please create a link from /opt/lampp:"/>
+		<echo message=""/>
+		<echo message="ln -s $DMERCE_BASE/produc/lampp /opt/lampp"/>
+		<echo message=""/>
+		<echo message="Start XAMPP as root:"/>
+		<echo message=""/>
+		<echo message="/opt/lampp/lampp start"/>
+		<echo message=""/>
+	</target>
+
+	<target name="installxampp-solsparc64">
+		<property name="xampp.sh" value="xampp-solaris-0.2.sh"/>
+		<get src="http://downloads.1ci.com/${xampp.sh}"
+			dest="${dmerce.install}/${xampp.sh}"/>
+		<exec dir="${dmerce.product.xampp}" executable="${xampp.sh}" os="unix"/>
+	</target>
+
+	<target name="installxampp-winia32">
+		<property name="xampp.zip" value="xampp-win32-1.3.zip"/>
+		<get src="http://downloads.1ci.com/${xampp.zip}" dest="${dmerce.install}/${xampp.zip}"/>
+		<unzip src="${dmerce.install}/${xampp.zip}" dest="${dmerce.product.base}"/>
+		<exec dir="${dmerce.product.xampp}" executable="setup_xampp.bat" os="Windows"/>
+	</target>
+
+	<!--
+		
+		Create own distribution
+		
+	-->
+	<target name="create-distrib">
+		<antcall target="clean"/>
+		<zip destfile="${dmerce.base}/dmerce-distrib-${DSTAMP}-${TSTAMP}.zip">
+			<zipfileset dir="${dmerce.appl}" prefix="applications"/>
+			<zipfileset dir="${dmerce.bin}" prefix="bin"/>
+			<zipfileset dir="${dmerce.etc}" prefix="etc"/>
+			<zipfileset dir="${dmerce.product.ant}" prefix="product/ant"/>
+			<zipfileset dir="${dmerce.product.dmerce}" prefix="product/dmerce"/>
+			<zipfileset dir="${dmerce.product.j2sdk}" prefix="product/j2sdk"/>
+			<zipfileset dir="${dmerce.product.jboss}" prefix="product/jboss"/>
+			<zipfileset dir="${dmerce.base}" includes="readme.txt"/>
+		</zip>
+	</target>
+
+	<target name="create-clean-distrib">
+		<antcall target="clean"/>
+		<zip destfile="${dmerce.base}/dmerce-distrib-${DSTAMP}-${TSTAMP}.zip">
+			<zipfileset dir="${dmerce.bin}" prefix="bin"/>
+			<zipfileset dir="${dmerce.etc}" prefix="etc"/>
+			<zipfileset dir="${dmerce.product.ant}" prefix="product/ant"/>
+			<zipfileset dir="${dmerce.product.dmerce}" prefix="product/dmerce"/>
+			<zipfileset dir="${dmerce.product.j2sdk}" prefix="product/j2sdk"/>
+			<zipfileset dir="${dmerce.product.jboss}" prefix="product/jboss"/>
+			<zipfileset dir="${dmerce.base}" includes="readme.txt"/>
+		</zip>
+	</target>
+
+	<!--
+		
+		Common dmerce tasks
+		- Clean up
+		- Create recommended directory structure
+		- Reconfigure settings
+		- Generate set.bat for Windows using values from etc/properties.xml
+		- Generate dmercerc on UNIX using values from etc/properties.xml
+
+	-->
+	
+    <!-- 
+    	
+    	Cleanup
+    	
+    	dmerce
+    	JBoss
+    	Example applications
+    	
+    -->
+    
+    <!-- dmerce -->
+    <target name="clean-dmerce">
+    	<delete dir="${dmerce.build}"/>
+    </target>
+
+    <target name="clean-build">
+    	<delete dir="${build}"/>
+   	</target>
+
+	<!-- JBoss -->
+    <target name="clean-jboss-tmp">
+		<delete dir="${dmerce.product.jboss.defaultserver.tmpdir}"/>
+		<mkdir dir="${dmerce.product.jboss.defaultserver.tmpdir}"/>
+    </target>
+
+    <target name="clean-jboss-log">
+		<delete dir="${dmerce.product.jboss.defaultserver.logdir}"/>
+		<mkdir dir="${dmerce.product.jboss.defaultserver.logdir}"/>
+    </target>
+
+    <target name="clean-jboss" depends="clean-jboss-tmp, clean-jboss-log"/>
+    
+	<!-- Remove example applications -->
+    <target name="clean-example-apps">
+    	<delete file="${dmerce.deploydir}/callproc.war"/>
+    	<delete file="${dmerce.deploydir}/date.war"/>
+    	<delete file="${dmerce.deploydir}/fileupload.war"/>
+    	<delete file="${dmerce.deploydir}/multiple.war"/>
+    	<delete file="${dmerce.deploydir}/simple.war"/>
+    </target>
+    
+    <!-- Overall target for cleaning -->
+    <target name="clean" depends="clean-dmerce, clean-jboss"/>
+    
+	<!--
+		
+		Create directory structure
+		
+	-->
+	
+	<target name="create-directory-structure">
+		<mkdir dir="${dmerce.base}"/>
+		<mkdir dir="${dmerce.appl}"/>
+		<mkdir dir="${dmerce.backup}"/>
+		<mkdir dir="${dmerce.bin}"/>
+		<mkdir dir="${dmerce.etc}"/>
+		<mkdir dir="${dmerce.install}"/>
+		<mkdir dir="${dmerce.uploadedfiles}"/>
+		<mkdir dir="${dmerce.sys}"/>
+	</target>
+	
+	<!--
+		
+		Reconfigure
+		
+	-->
+    <target name="reconfigure-settings-win">
+    	<replaceregexp file="${dmerce.bin}/set.bat" 
+    		match="(.*START_APACHE)=(.*)"
+            replace="\1=${start.apache}"
+            byline="true"/>
+    	<replaceregexp file="${dmerce.bin}/set.bat" 
+    		match="(.*START_MYSQL)=(.*)"
+            replace="\1=${start.mysql}"
+            byline="true"/>
+    	<replaceregexp file="${dmerce.bin}/set.bat" 
+    		match="(.*START_ORACLE)=(.*)"
+            replace="\1=${start.oracle}"
+            byline="true"/>
+    	<replaceregexp file="${dmerce.bin}/set.bat" 
+    		match="(.*START_FILEZILLA)=(.*)"
+            replace="\1=${start.filezilla}"
+            byline="true"/>
+    	<replaceregexp file="${dmerce.bin}/set.bat" 
+    		match="(.*START_PHPMYADMIN)=(.*)"
+            replace="\1=${start.browser.phpmyadmin}"
+            byline="true"/>
+    	<replaceregexp file="${dmerce.bin}/set.bat" 
+    		match="(.*START_DMERCEDOC)=(.*)"
+            replace="\1=${start.browser.dmercedoc}"
+            byline="true"/>
+    	<replaceregexp file="${dmerce.bin}/set.bat" 
+    		match="(.*START_ECLIPSE)=(.*)"
+            replace="\1=${start.eclipse}"
+            byline="true"/>
+    	<replaceregexp file="${dmerce.bin}/set.bat" 
+    		match="(.*DMERCE_BASE)=(.*)"
+            replace="\1=${dmerce.base}"
+            byline="true"/>
+    	<replaceregexp file="${dmerce.bin}/set.bat" 
+    		match="(.*ORACLE_SID)=(.*)"
+            replace="\1=${oracle.sid}"
+            byline="true"/>
+    	<replaceregexp file="${dmerce.bin}/set.bat" 
+    		match="(.*ORACLE_BASE)=(.*)"
+            replace="\1=${oracle.base}"
+            byline="true"/>
+    	<replaceregexp file="${dmerce.bin}/set.bat" 
+    		match="(.*ORACLE_HOME=%ORACLE_BASE%)(.*)"
+            replace="\1/${oracle.home}"
+            byline="true"/>
+        <replace file="${dmerce.bin}/set.bat" token="/" value="\"/>
+    </target>
+    
+    <target name="reconfigure-settings-unix">
+        <replaceregexp file="${dmerce.etc}/dmercerc"
+            match="(.*START_APACHE)=(.*)"
+            replace="\1=${start.apache}"
+            byline="true"/>
+        <replaceregexp file="${dmerce.etc}/dmercerc"
+            match="(.*START_MYSQL)=(.*)"
+            replace="\1=${start.mysql}"
+            byline="true"/>
+        <replaceregexp file="${dmerce.etc}/dmercerc"
+            match="(.*START_ORACLE)=(.*)"
+            replace="\1=${start.oracle}"
+            byline="true"/>
+        <replaceregexp file="${dmerce.etc}/dmercerc"
+            match="(.*START_FILEZILLA)=(.*)"
+            replace="\1=${start.filezilla}"
+            byline="true"/>
+        <replaceregexp file="${dmerce.etc}/dmercerc"
+            match="(.*START_PHPMYADMIN)=(.*)"
+            replace="\1=${start.browser.phpmyadmin}"
+            byline="true"/>
+        <replaceregexp file="${dmerce.etc}/dmercerc"
+            match="(.*START_DMERCEDOC)=(.*)"
+            replace="\1=${start.browser.dmercedoc}"
+            byline="true"/>
+        <replaceregexp file="${dmerce.etc}/dmercerc"
+            match="(.*START_ECLIPSE)=(.*)"
+            replace="\1=${start.eclipse}"
+            byline="true"/>
+        <replaceregexp file="${dmerce.etc}/dmercerc"
+            match="(.*DMERCE_BASE)=(.*)"
+            replace="\1=${dmerce.base}"
+            byline="true"/>
+        <replaceregexp file="${dmerce.etc}/dmercerc"
+            match="(.*ORACLE_SID)=(.*)"
+            replace="\1=${oracle.sid}"
+            byline="true"/>
+        <replaceregexp file="${dmerce.etc}/dmercerc"
+            match="(.*ORACLE_BASE)=(.*)"
+            replace="\1=${oracle.base}"
+            byline="true"/>
+        <replaceregexp file="${dmerce.etc}/dmercerc"
+            match="(.*ORACLE_HOME=$ORACLE_BASE)(.*)"
+            replace="\1/${oracle.home}"
+            byline="true"/>
+    </target>
+    
+    <!--
+    	
+    	Setup
+    	
+    -->
+
+    <target name="setup-win" depends="create-directory-structure,
+    	reconfigure-settings-win">
+    </target>
+    
+    <target name="setup-unix" depends="create-directory-structure,
+    	reconfigure-settings-unix">
+    	<chmod perm="ug+rx" dir="${dmerce.base}/bin" includes="*"/>
+    	<chmod perm="ug+rx" dir="${dmerce.product.ant}/bin" includes="*.sh"/>
+    	<chmod perm="ug+rx" dir="${dmerce.product.jboss}/bin" includes="*"/>
+    	<chmod perm="ug+rx" dir="${dmerce.product.j2sdk}/bin" includes="*"/>
+    </target>
+    
+</project>

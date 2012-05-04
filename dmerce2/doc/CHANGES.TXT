@@ -1,0 +1,46 @@
+dmerce 3:
+
+  - magic-Vars
+  - Logger in all classes/methods
+  - dictionaries: keys are case-insensitive
+
+dmerce 2.3.0:
+
+ - (sql) soll erkennen schema.tabelle.feld...............ERL.
+   - regexp anpassen
+   - makro muss erkennen ob 2 oder 3 werte von der
+     regexp zurueckkommen
+
+ - dmerce_sys.Templates..................................ERL.
+   - add field "Client": 0 / 1
+   - DTL.Template
+
+ - Login: Tables/Trigger:
+   - add field "ClientGroup" that indicates wheter the
+     user is in a clientgroup and which one or not
+
+ - SQL-Layer/Oracle:
+   - which tables/fields can be accessed how by user/role
+   - when selecting, inserting, updateing or deleteing we verify
+     that the user/role is granted to do that manipulation
+
+     SELECT: when select is not granted to user/role -> table/field
+             the result is empty
+
+     INSERT, UPDATE, DELETE: when this operations are not permitted
+             to user/role -> table/field we silently ignore this
+
+     algorithm: check which table(s)/field(s) are permitted to select,
+                insert, update or delete and manipulate query before
+                execution (DTL.Operator.SQL)
+
+     DTL.Operator.SQL:
+
+     - do not raise exceptions, first check permissions for all table(s)/field(s)
+       in query and remove unpermitted
+
+   - UXS should only be used to decide/protect which 
+      - templates
+      - triggers
+     can be accessed by groups/users. only dmerce functions sould be
+     protected by UXS, not database objects

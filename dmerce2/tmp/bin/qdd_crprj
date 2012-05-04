@@ -1,0 +1,198 @@
+#!/bin/sh
+
+#################################################
+#
+# Copyright 2002 1Ci GmbH, http://www.1ci.de
+#
+# Create dmerce projects from scratch
+#
+# $Id: qdd_crprj,v 1.4 2003/06/02 15:08:24 ka Exp $
+# $Author: ka $
+# $Revision: 1.4 $
+#
+#################################################
+
+. ${DMERCE_HOME}/lib/libsh
+[ $? -gt 0 ] && exit 2
+. ${DMERCE_HOME}/lib/libdmerce
+[ $? -gt 0 ] && exit 2
+
+usage() {
+    echo "ERROR: wrong or missing arguments!
+
+usage: $0 [arguments]
+arguments ::=
+              scratch*          source file from \$DMERCE_HOME/scratch
+
+              db*               destination database type
+                                mysql, oracle
+
+              hostserial        serial for host
+
+	      projectfqhn*      fully qualified host name of project
+
+              projectdbname*    db name for new project
+
+              projectdbuser     db user for new project
+
+              projectdbpwd      password for new db user
+
+              projectdestdir*   destination directory
+                                relative to \$DMERCE_WEBSITES
+
+              projectuploaddir  destination directory for uploaded files
+                                (in dmerce_sys.Configuration)
+
+              dmerce_syspwd     password of dmerce_sys user
+                                standard is 'dmerce_sys'
+
+              mysqlrootpwd      password for mysql root user
+
+              oraclesyspwd      password for oracle sys user
+                                (has to have DBA privileges!)
+              
+              nodata            do no create database an insert data
+                                (value 0 or 1, standard is 0)
+"
+}
+
+check_args() {
+    if [ x"${projectfqhn}" = x"" -o x"${projectdbname}" = x"" -o x"${projectdestdir}" = x"" ]; then
+	usage
+	exit 1
+    fi
+    if [ x"${projectdbuser}" = x"" ]; then
+	projectdbuser=${projectdbname}
+    fi
+    if [ x"${projectdbpwd}" = x"" ]; then
+	projectdbpwd=${projectdbname}$$
+    fi
+    if [ x"${hostserial}" = x"" ]; then
+	hostserial=1
+    fi
+    if [ x"${dmerce_syspwd}" = x"" ]; then
+	dmerce_syspwd='dmerce_sys'
+    fi
+    if [ x"${nodata}" = x"" ]; then
+	nodata=0
+    fi
+}
+
+unpack() {
+    cd ${DMERCE_TMP}
+    #cat $DMERCE_HOME/scratch/${scratch}.cpio | cpio -iduc
+    f="${DMERCE_HOME}/scratch/${scratch}.tar"
+    uncompress -c $f.Z | ${TAR} -x -f -
+    cd ..
+}
+
+mysql() {
+    #if [ $projectdbname -gt 16 ]; then
+	#e "Database username '${projectdbuser}' too long (max 16 chars)"
+	#exit 1
+    #fi
+    if [ x"${nodata}" = x"0" ]; then
+	e "Creating database '${projectdbname}'"
+	echo "CREATE DATABASE ${projectdbname};" | $MYSQL_HOME/bin/mysql -u root --password=${mysqlrootpwd}
+	for i in ${DMERCE_TMP}/sql/mysql/*.sql
+	  do
+	  e "Processing SQL file '${i}'"
+	  cat ${i} | $MYSQL_HOME/bin/mysql -u root --password=${mysqlrootpwd} ${projectdbname}
+	done
+	e "Granting database privileges"
+	echo "GRANT SELECT, INSERT, UPDATE, DELETE ON ${projectdbname}.* TO ${projectdbuser}@localhost IDENTIFIED BY '${projectdbpwd}';
+GRANT SELECT ON dmerce_sys.Configuration TO ${projectdbuser}@localhost IDENTIFIED BY '${projectdbpwd}';
+GRANT SELECT ON dmerce_sys.Templates TO ${projectdbuser}@localhost IDENTIFIED BY '${projectdbpwd}';
+GRANT SELECT, INSERT, UPDATE on dmerce_sys.DBOID TO ${projectdbuser}@localhost IDENTIFIED BY '${projectdbpwd}';
+GRANT SELECT, INSERT, UPDATE on dmerce_sys.SAMSessions TO ${projectdbuser}@localhost IDENTIFIED BY '${projectdbpwd}';
+GRANT SELECT, INSERT on dmerce_sys.SendEmail TO ${projectdbuser}@localhost IDENTIFIED BY '${projectdbpwd}';
+GRANT SELECT, INSERT, UPDATE, DELETE ON ${projectdbname}.* TO dmerce_sys@localhost IDENTIFIED BY '${dmerce_syspwd}';
+" | $MYSQL_HOME/bin/mysql -u root --password=${mysqlrootpwd}
+	if [ -f ${DMERCE_TMP}/sql/mysql/dmerce_sys/DBOID.sql ]; then
+	    e "Creating entries for templates in dmerce_sys.DBOID from 'dmerce_sys/DBOID.sql'"
+	    cat ${DMERCE_TMP}/sql/mysql/dmerce_sys/DBOID.sql | ${SED} "s/projectdbname/'$projectdbname'/g" | ${MYSQL_HOME}/bin/mysql -u root --password=${mysqlrootpwd} dmerce_sys
+	fi
+	if [ -f ${DMERCE_TMP}/sql/mysql/dmerce_sys/Templates.sql ]; then
+	    e "Creating entries for templates in dmerce_sys.Templates from 'dmerce_sys/templates.sql'"
+	    cat ${DMERCE_TMP}/sql/mysql/dmerce_sys/Templates.sql | ${SED} "s/fqhn/'$projectfqhn'/g" | ${MYSQL_HOME}/bin/mysql -u root --password=${mysqlrootpwd} dmerce_sys
+	else
+	    e "Creating entries for templates in dmerce_sys.Templates with SAM=1"
+	    echo `tmpl2sam ${projectfqhn} ${DMERCE_WEBSITES}/${projectdestdir}/templates` | ${MYSQL_HOME}/bin/mysql -u root --password=${mysqlrootpwd} dmerce_sys
+	fi
+	if [ -f ${DMERCE_TMP}/sql/mysql/exec_sql/*.sql ]; then
+	    for sql in ${DMERCE_TMP}/sql/mysql/exec_sql/*.sql
+	      do
+	      e "Executing SQL file '${sql}'"
+	      cat ${sql} | ${SED} "s/projectdbuser/'$projectdbuser'/g" | ${MYSQL_HOME}/bin/mysql -u root --password=${mysqlrootpwd} ${projectdbname}
+	    done
+	fi
+    else
+	echo "skipping database creation and data insert"
+    fi
+    e "Creating entry for configuration in dmerce_sys.Configuration"
+    echo "INSERT INTO dmerce_sys.Configuration (FQHN, HostSerial, SQL, OwnerConnectString, FileUploadDir, Debug) VALUES ('${projectfqhn}', ${hostserial}, '${DMERCE_SYS}', '${DMERCE_SYS}', '${projectuploaddir}', 0);" | ${MYSQL_HOME}/bin/mysql -u root --password=${mysqlrootpwd} dmerce_sys
+    
+}
+
+postgresql() {
+    e "Creating database '${projectdbname}'"
+    $PGSQL_HOME/bin/createdb -U psql ${projectdbname}
+    for i in ${DMERCE_TMP}/sql/postgresql/*.sql
+      do
+      e "Processing SQL file '${i}'"
+      cat ${i} | $PGSQL_HOME/bin/psql -U ${projectdbuser} ${projectdbname}
+    done
+}
+
+dmerce_cfg() {
+    e "Creating dmerce.cfg '${DMERCE_WEBSITES}/${projectdestdir}/dmerce.cfg'"
+    DMERCE_SYS="MySQL:${projectdbuser}:${projectdbpwd}@localhost:${projectdbname}"
+    export DMERCE_SYS
+    echo "[q]
+Sys = ${DMERCE_SYS}
+FQHN = ${projectfqhn}
+DocRoot = ${DMERCE_WEBSITES}/${projectdestdir}
+" > ${DMERCE_WEBSITES}/${projectdestdir}/dmerce.cfg
+}
+
+website() {
+    e "Creating website in '${DMERCE_WEBSITES}/${projectdestdir}'"
+    ${CPR} ${DMERCE_TMP}/website/* ${DMERCE_WEBSITES}/${projectdestdir}
+    mkdir ${DMERCE_WEBSITES}/${projectdestdir}/SAM
+    mkdir ${DMERCE_WEBSITES}/${projectdestdir}/error
+}
+
+clean() {
+    e "Cleaning '${DMERCE_TMP}'"
+    ${RM} -rf ${DMERCE_TMP}
+    unset DMERCE_TMP DMERCE_SYS
+}
+
+eval $*
+if [ x"${quiet}" = x"" ]; then
+    libdmerce_copyr
+    echo "CREATE DMERCE PROJECT"
+    echo
+fi
+libsh_discover_env
+libsh_determine_uname
+libsh_system_init
+DMERCE_TMP=".tmp.$$"
+export DMERCE_TMP
+trap 'clean; exit 1' INT
+${MKDIR} ${DMERCE_TMP}
+check_args
+unpack
+${MKDIR} -p ${DMERCE_WEBSITES}/${projectdestdir}
+website
+dmerce_cfg
+if [ x"${db}" = x"mysql" ]; then
+    mysql
+elif [ x"${db}" = x"oracle" ]; then
+    oracle
+else
+    usage
+    exit 1
+fi
+clean
+e "Done"

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : RDBDExample.xml
+    Created on : August 25, 2003, 2:44 PM
+    Author     : pg
+    Description:
+        Purpose of the document follows.
+-->
+
+<rdbsdata xmlns='http://www.wanci.com'
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+  xsi:schemaLocation='http://www.wanci.com RDBD.xsd'>
+  
+  <meta>
+    <sql-statement>SELECT * FROM TABLE_A</sql-statement>
+    <type-info>
+        <column name="Feld1" type="String"/>
+        <column name="Feld2" type="Integer"/>
+        <column name="Feld3" type="Boolean"/>
+    </type-info>
+  </meta>
+  <data>
+    <row>
+        <field>Zeile 1</field>
+        <field>123</field>
+        <field>true</field>
+    </row>
+    <row>
+        <field>Zeile 2</field>
+        <field>456</field>
+        <field>false</field>
+    </row>
+  </data>
+  
+  <error>Fehler 1</error>
+
+</rdbsdata>

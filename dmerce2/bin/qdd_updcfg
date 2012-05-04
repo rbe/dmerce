@@ -1,0 +1,46 @@
+#!/bin/ksh
+
+. ${DMERCE_HOME}/lib/libsh
+
+copyr
+echo "UPDATING DMERCE CONFIGURATION FILES"
+echo
+
+update_cfg() {
+    cfg=$1
+    g1=`grep DocRoot $cfg | wc -l | sed 's# ##g'`
+    g2=`grep FQHN $cfg | wc -l | sed 's# ##g'`
+    doc_root=${DOCUMENT_ROOT}`echo $cfg | sed 's#/dmerce.cfg##g`
+    fqhn=`echo ${doc_root} | sed s#${DMERCE_WEBSITES}/##g | sed 's#/# #g'`
+    set +A fqhn $fqhn
+    i=`expr ${#fqhn[@]}`
+    f=''
+    while [ $i ];
+      do
+      i=`expr $i - 1`
+      if [ x"$f" != x"" ]; then
+	  f="$f."
+      fi
+      f="$f${fqhn[$i]}"
+      if [ $i == 0 ]; then
+	  break
+      fi
+    done
+    echo "`date`: Updating dmerce project '$f'"
+    if  [ "$g1" = "0" ]; then
+	echo "DocRoot = ${doc_root}" >> ${cfg}
+	echo "`date`:   DocRoot"
+    fi
+    if [ "$g2" = "0" ]; then
+	echo "FQHN = ${f}" >> ${cfg}
+	echo "`date`:   FQHN"
+    fi
+}
+
+find ${DMERCE_WEBSITES} -type f -name "dmerce.cfg" | xargs echo >> .dmerce.$$
+for i in `cat .dmerce.$$`
+do
+  update_cfg $i
+done
+rm .dmerce.$$
+

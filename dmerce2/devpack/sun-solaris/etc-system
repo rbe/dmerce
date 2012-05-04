@@ -1,0 +1,10 @@
+* Settings for Oracle9i
+set shmsys:shminfo_shmmax=4294967295
+set shmsys:shminfo_shmmin=1
+set shmsys:shminfo_shmmni=100
+set shmsys:shminfo_shmseg=10
+set semsys:seminfo_semmni=100
+set semsys:seminfo_semmsl=256
+set semsys:seminfo_semmns=630
+set semsys:seminfo_semopm=100
+set semsys:seminfo_semvmx=32767

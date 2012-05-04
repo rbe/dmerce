@@ -1,0 +1,16 @@
+DROP ROLE r_dmerce_sys;
+CREATE ROLE r_dmerce_sys
+       NOT IDENTIFIED;
+GRANT CREATE SESSION TO r_dmerce_sys;
+GRANT CREATE TABLE TO r_dmerce_sys;
+GRANT CREATE ROLE TO r_dmerce_sys;
+GRANT CREATE VIEW TO r_dmerce_sys;
+GRANT CREATE USER TO r_dmerce_sys;
+GRANT DROP USER TO r_dmerce_sys;
+GRANT GRANT ANY PRIVILEGE to r_dmerce_sys;
+GRANT CREATE SEQUENCE TO r_dmerce_sys;
+GRANT CREATE ANY SEQUENCE TO r_dmerce_sys;
+GRANT SELECT ANY SEQUENCE TO r_dmerce_sys;
+GRANT DROP ANY SEQUENCE TO r_dmerce_sys;
+GRANT CREATE PROCEDURE TO r_dmerce_sys;
+-- 8i: GRANT CREATE PACKAGE TO r_dmerce_sys;

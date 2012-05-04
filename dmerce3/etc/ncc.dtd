@@ -1,0 +1,87 @@
+<!ELEMENT ncc (server*, service-group*, monitor*, redirector*)>
+<!ELEMENT server (interface+, inet-service+)>
+<!ELEMENT interface EMPTY>
+<!ELEMENT inet-service (tcp+)>
+<!ELEMENT tcp EMPTY>
+
+<!ELEMENT service-group (service-group-member+)>
+<!ELEMENT service-group-member EMPTY>
+  
+<!ELEMENT monitor (Service-group+, Server+)>
+<!ELEMENT Service-group EMPTY>
+<!ELEMENT Server EMPTY>
+  
+<!ELEMENT redirector (ip-from+, ip-to+)>
+<!ELEMENT ip-from EMPTY>
+<!ELEMENT ip-to EMPTY>
+
+<!ELEMENT portscanner (network*,host*,port*)>
+<!ELEMENT network (port*)>
+<!ELEMENT host (port*)>
+<!ELEMENT port EMPTY>
+
+<!ATTLIST server
+	name ID #REQUIRED
+>
+
+<!ATTLIST interface
+    name CDATA #REQUIRED
+	ip-address NMTOKEN #IMPLIED
+>
+
+<!ATTLIST inet-service
+    type CDATA #REQUIRED
+	ip NMTOKEN #IMPLIED
+>
+
+<!ATTLIST tcp
+    name CDATA #REQUIRED
+	value CDATA #IMPLIED
+>       
+
+<!ATTLIST service-group
+	name CDATA #REQUIRED
+>
+
+<!ATTLIST service-group-member
+	name CDATA #REQUIRED
+>
+
+<!ATTLIST Service-group
+	name CDATA #REQUIRED
+>
+
+<!ATTLIST Server
+	name CDATA #REQUIRED
+>
+
+<!ATTLIST redirector
+	name ID #REQUIRED
+>
+
+<!ATTLIST ip-from
+	address NMTOKEN #REQUIRED
+    port NMTOKEN #REQUIRED
+>
+
+<!ATTLIST ip-to
+    address NMTOKEN #REQUIRED
+    port NMTOKEN #REQUIRED
+>
+
+
+<!ATTLIST network
+  	name CDATA #IMPLIED
+  	range CDATA #REQUIRED
+>  
+
+<!ATTLIST host
+  	name CDATA #IMPLIED
+  	ipaddress CDATA #IMPLIED
+>  
+  
+<!ATTLIST port
+  	number CDATA #REQUIRED
+  	protocol CDATA #REQUIRED
+>  
+

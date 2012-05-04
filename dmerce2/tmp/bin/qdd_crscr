@@ -1,0 +1,78 @@
+#!/bin/sh
+
+#################################################
+#
+# Copyright 2000-2002 1Ci GmbH, http://www.1ci.de
+#
+# $Id: qdd_crscr,v 1.2 2003/05/09 14:18:51 rb Exp $
+# $Author: rb $
+# $Revision: 1.2 $
+#
+#################################################
+
+. ${DMERCE_HOME}/lib/libsh
+[ $? -gt 0 ] && exit 2
+. ${DMERCE_HOME}/lib/libdmerce
+[ $? -gt 0 ] && exit 2
+
+usage() {
+    echo "ERROR: wrong arguments!
+
+usage: $0 [arguments]
+arguments ::=
+              scratchdirs   directory where many products reside
+                            e.g.:
+                                  product1/sql/
+                                  product1/website/
+                                  product2/sql/
+                                  product2/website/
+                                  product3/sql/
+                                  product3/website/
+                                  ...
+
+              scratchdir    directory of a product where sql/ and 
+                            websites/ reside
+                            e.g.:
+                                  sql/
+                                  website/
+
+              product       name of product and file to create
+"
+}
+
+make_shar() {
+    scratchdir=$1
+    product=$2
+    cd ${scratchdir}
+    e "Creating scratch from '${scratchdir}' in file '${o}/${product}.cpio' with '${CPIO}'"
+    #${FIND} . -print | ${CPIO} -o -c -O ${o}/${product}.cpio
+    ${TAR} -c -f ${o}/${product}.cpio .
+    cd ${o}
+}
+
+proc_dir() {
+    dir=$1
+    e "Processing ${dir}"
+    cd ${dir}
+    for i in *
+    do
+      make_shar ${dir}/${i} ${i}
+    done
+}
+
+libdmerce_copyr
+echo "CREATE SCRATCH OF DMERCE PROJECT"
+echo
+libsh_discover_env
+libsh_system_init
+eval $*
+o=`pwd`
+if [ x"${scratchdirs}" != x"" ]; then
+    proc_dir ${scratchdirs}
+elif [ x"${scratchdir}" != x"" -a x"${product}" != x"" ]; then
+    make_shar ${scratchdir} ${product}
+elif [ $# -lt 2 -o x"${scratchdir}" = x"" -o x"${product}" = x"" ]; then
+    usage
+    exit
+fi
+cd ${opwd}

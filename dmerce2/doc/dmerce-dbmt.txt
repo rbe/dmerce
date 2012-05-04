@@ -1,0 +1,187 @@
+Dmerce-dbmt
+
+Es ist dringend notwendig, daß das komplette DBMT
+überarbeitet wird, denn es wird hierbei noch nicht
+mit dem aktuellen dmerce SQL Layer gearbeitet.
+
+Modul
+-----
+sqlAl_td
+
+GetTableFieldType
+
+	GetIt
+	----
+	Kann geloescht werden
+
+	DescribeTable
+	-----------
+	Tabellen Daten werden
+	In Form einer Liste zuerck gegeben
+	-> Uebergabe des Tabellennamens
+
+
+HandleDB
+
+	CreateDB
+	-------
+	Eine Datenbank wird angelegt
+	-> Uebergabe des DB Namens
+
+
+	CreateTable
+	---------
+	Eine Tabelle wird angelegt
+	-> Uebergabe des Tabellennamens,
+	-> Uebergabe der Felddaten im
+	SQL-Format
+
+
+	AlterTable
+	--------
+	Aendert eine Tabelle
+	-> Uebergabe Tabelle
+	-> Uebergabe Felddaten im SQL-Format
+
+HandleTables
+
+	CheckForPresents
+	-------------
+	Vergleicht zwei Tabellen
+	-> Ubergabe SourceTableDictionary
+	-> Uebergabe DestinationTableDictionary
+	Rueckgabe von Liste der zu erstellenden
+	Tabellen und ein dictionary der Felder, die
+	schon vorhanden sind
+
+	compareFields
+	----------
+	Vergleich der bereits bestehenden Felder.
+	Feltypen, default Wert etc.
+	-> Uebergabe von SourceTableDictionary
+	und dem aus CheckForPresents gewonnenen
+	dictionary der vorhandenen Felder
+
+	formStatement
+	-----------
+	Erzeug ein SQL gueltiges Statement, das fuer die 
+	Methoden AlterTable und CreateTable geeignet 
+	sind
+	-> Uebergabe des dictionaries of TableTypes, und
+	den Tabellennamen
+	Es wird des SQL-Statement zurueck gegeben.
+
+	copyStruct
+	--------
+	Stoesst das kopieren der Struktur von Tabelle 1 
+	nach Tabelle 'neu' an
+	-> Uebergabe von 
+	destination Database Name
+	destination Host
+	destination User
+	destiantion Password
+	Tabelle
+	Statement
+
+
+Modul
+-----
+iso2Date2.py
+
+queryDB
+
+	checkPresents
+	-------------
+	Ueberprueft das vorhandensein eines Feldes innerhalb
+	einer Tabelle, und ob es gefuellt ist.
+	-> Uebergabe von Tabellenname, Feldname
+	-> Rueckgabe von
+	   1 = Feld existiert, mit Daten
+	   2 = Feld existiert, ohne Daten
+	   3 = Feld existiert nicht
+
+
+	readData
+	--------
+	Gibt den Inhalt eines bestimmten Feldes innerhalb einer
+	Tabelle zurueck, referenziert anhand des ID Feldes
+	-> Uebergabe von Feldname, Tabellenname, ID-Feldname
+
+	Null
+	----
+	Aendert ein Feld in den Typ datetime, not null.
+	-> Uebergabe von Tabellenname, Feldname
+
+	update
+	------
+	Ein Feld wird geaendert.
+	Erst wird das Feld geloescht und dann neu mit im Feldtyp
+	'double(16,6) NOT NULL AFTER ID' erstellt
+	-> Uebergabe von Tabellenname, Feldname
+
+	change
+	------
+	Setzt ein Feld einer Tabelle auf einen neuen Wert.
+	In diesem Fall wird ein float Wert mit uebergeben, da
+	es sich um ein double(16,6) Feld handelt.
+	-> Uebergabe von Tabellenname, Feldname, neuer Floatwert, ID
+
+	toDouble
+	--------
+	Aendert ein bestehendes Feld auf den Typ double(16,6)
+	-> Uebergabe von Tabellenname, Feldname
+
+	showTables
+	----------
+	Gibt eine Liste aller vorhandenen Tabellen innherhalb einer
+	Datenbank zurueck.
+
+
+Modul
+-----
+set-default.py
+
+Dieses Modul dient dazu, innherhalb einer Datenbank in allen Tabellen
+ein Feld hinzuzufuegen, wobei man den Default-Wert, den Feldtypus und
+den Inhalt bestimmen kann. Sollte das Feld schon vorhanden sein, wird
+es den Uebergebenen default Werten angepasst.
+
+Shell-Aufruf
+------------
+set-default.py --db="<Datenbank>"
+	       --field="<Feldname>"
+	       --set="<Wert / Inhalt>"
+	       --type="<FeldTyp>"
+	       --default="<Default Wert>"
+
+Es muessen alle Parameter uebergeben werden !!!
+
+DBData
+	GetTables
+	---------
+	Liefert eine Liste aller Tabellen einer Datenbank
+	
+	DescribeTable
+	-------------
+	Liefert eine Liste bestehend aus allen Feldnamen und deren Einstellungen
+	-> Uebergabe von Tabellenname
+
+	UpdateTable
+	-----------
+	Eine Tabelle wird auf neuen Inhalt gesetzt,
+	und das Feld wird anschliessend auf neuen default Wert gesetzt.
+	-> Uebergabe Tabelle, Feld, default-Wert, neuerWert, Feldtyp(string)
+
+	AddField
+	--------
+	Ein Feld wird einer Tabelle hinzugefuegt. Es kann der Feldtyp und der
+	Default Wert bestimmt werden.
+	-> Uebergabe Tabelle, Feldname, default-Wert, Feldtyp(string)
+
+Function
+	CheckFor
+	--------
+	Schaut innerhalb einer uebergebenen Liste an einer bestimmten Stelle, 
+	ob der uebergebene Wert vorhanden ist.
+	-> Uebergabe von Suchwert, Liste, Suchstelle
+	<- Rueckgabe von None od. 1	

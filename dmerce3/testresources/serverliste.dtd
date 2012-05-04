@@ -1,0 +1,39 @@
+  <!ELEMENT serverliste (server+)>
+
+  <!ELEMENT server (url?, protocol?, host?, path?, file+, port?, user?, password?)>
+  <!ELEMENT url EMPTY>
+  <!ELEMENT protocol EMPTY>
+  <!ELEMENT host EMPTY>
+  <!ELEMENT path EMPTY>
+  <!ELEMENT file EMPTY>
+  <!ELEMENT port EMPTY>
+  <!ELEMENT user EMPTY>
+  <!ELEMENT password EMPTY>
+  
+  <!ATTLIST server
+  		name CDATA #REQUIRED
+  >
+  <!ATTLIST url
+  		value CDATA #REQUIRED
+  >
+  <!ATTLIST protocol
+  		value CDATA #REQUIRED
+  >
+  <!ATTLIST host 
+  		value CDATA #REQUIRED
+  >
+  <!ATTLIST path
+  		value CDATA #IMPLIED
+  >
+  <!ATTLIST file
+  		value CDATA #IMPLIED
+  >
+  <!ATTLIST port
+  		value CDATA #REQUIRED
+  >
+  <!ATTLIST username
+  		value CDATA #IMPLIED
+  >
+  <!ATTLIST password
+  		value CDATA #IMPLIED
+  >

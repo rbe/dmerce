@@ -1,0 +1,205 @@
+#!/bin/bash
+
+#
+#Benoetigte Pakete von Debian
+#
+#sysutils fuer den procinfo Befehl
+#memstat fuer memstat
+
+DATE=`date`
+mypr="pr -r -t -o5"
+
+header(){
+    echo
+    echo "1Ci(R) GmbH, http://www.1ci.de, Copyright 2000-2002"
+    echo
+    echo
+    echo "/------------------------------------------------------------------------\\"
+    echo "| System status at ${DATE}"
+    echo "\\________________________________________________________________________/"
+    echo
+    echo "LINUX DEBIAN SYSTEM REPORT" | $mypr
+    echo
+    echo "* Report type ${rep_type}" | $mypr
+}
+
+p() {
+    msg=$1
+    type=$2
+    if [ x"$msg" = x"" -o x"$type" = x"" ]; then
+        echo "Uh-oh"
+        return
+    fi
+    echo
+    if [ $type = 2 ]; then
+        echo "^--------------------------------------^-----------------------------------------^"
+    fi
+    echo "*"
+    if [ $type = 1 ]; then
+        echo "* `date`: $msg * START"
+    elif [ $type = 2 ]; then
+        echo "* `date`: $msg * STOP"
+    fi
+    echo "*"
+    if [ $type = 1 ]; then
+        echo "v--------------------------------------v-----------------------------------------v"
+    fi
+    echo
+}
+
+sysinfo(){
+    title="System Information"
+    p "$title" 1
+    echo "Uptime:            `uptime | sed s/\ [0-9][0-9]:[0-9][0-9]:[0-9][0-9]\ //`" | $mypr
+    echo "Operating System:  `uname -s`" | $mypr
+    echo "Release:           `uname -r`" | $mypr
+    echo "Version:           `uname -v`" | $mypr
+    echo "Processor:         `cat /proc/cpuinfo | grep "model name" | awk '{print $4" "$5" "$6" "$7" "$8" "$9" "$10}'`" | $mypr
+    echo
+    echo
+    echo "Processor Information" | $mypr
+    echo "---------------------" | $mypr
+    cat /proc/cpuinfo | awk '{print "   "$_}' | $mypr
+    echo
+    echo
+    procinfo | $mypr
+    p "$title" 2
+}
+
+meminfo(){
+    title="Memory Status Information"
+    p "$title" 1
+    if [ -x `which memstat` ]; then
+	memstat | $mypr
+    else
+	echo "Debian Package memstat is not installed!"
+    fi
+    p "$title" 2
+}
+
+harddiscs() {
+    title="Harddisc Information"
+    p "$title" 1
+    df -ha | $mypr
+    echo
+    echo
+    df -hai | $mypr
+    p "$title" 2
+}
+
+swaps() {
+    title="Swap Status"
+    p "$title" 1
+    cat /proc/swaps | $mypr
+    p "$title" 2
+}
+
+procview() {
+    title=$1
+    shift
+    title="Process view - $title"
+    p "$title" 1
+    for proc in $*
+      do
+      if [ `ps aux | grep $proc | grep -v grep | grep -c $proc` -gt 0 ]; then
+	  ps aux | grep $proc | grep -v grep | $mypr
+      else
+	  echo "No Process for $proc !!!!" | $mypr
+      fi
+    done
+    p "$title" 2
+}
+
+interfaces() {
+    title="Interfaces"
+    p "$title" 1
+    netstat -i | $mypr
+    p "$title" 2
+}
+
+routingtable() {
+    title="Kernel routing table"
+    p "$title" 1
+    netstat -rn | $mypr
+    p "$title" 2
+}
+
+interfacestats() {
+    title="Interface Statistics"
+    p "$title" 1
+    netstat -s | $mypr
+    p "$title" 2
+}
+
+useractivity() {
+    title="User Activity Report"
+    p "$title" 1
+    echo "Switched Users Today" | $mypr
+    echo "--------------------" | $mypr
+    cat /var/log/auth.log | grep su | grep -v \(su\) | grep "`date | awk '{print $2" "$3}'`" | $mypr
+    echo
+    echo
+    echo "Last Logins" | $mypr
+    echo "-----------" | $mypr
+    last | head -20 | $mypr
+    echo
+    echo
+    echo "Currently Logged on" | $mypr
+    echo "-------------------" | $mypr
+    who -a | $mypr
+    p "$title" 2
+}
+
+packages_installed(){
+    title="Installed Debian Packages"
+    p "$title" 1
+    if [ -x `which dpkg` ]; then
+	dpkg -l | grep ii | sed s/ii\ \ //g | $mypr
+    else
+	echo "This is No Debian System using dpkg!"
+    fi
+    p "$title" 2
+}
+
+package_status(){
+    if [ -x `which dpkg` ]; then
+	title="Installed Debian Packages Status"
+	p "$title" 1
+	for i in `dpkg -l|grep ii|awk '{print $2}'|$mypr`; 
+	  do dpkg -s $i 2>&1|$mypr;
+	  echo "---------------------------------------------------------------------" | $mypr
+	  echo
+	done
+	p "$title" 2
+    else
+	echo "This is no Debian System using dpkg!";
+    fi
+}
+
+main(){
+    sysinfo
+    if [ x"$rep_type" = x"full" ]; then
+	meminfo
+    fi
+    harddiscs
+    swaps
+    procview MySQL mysql
+    procview Apache apache
+    interfaces
+    routingtable
+    interfacestats
+    useractivity
+    if [ x"$rep_type" = x"full" ]; then
+	packages_installed
+	package_status
+    fi
+}
+
+eval $*
+if [ x"$rep_type" = x"" ]; then
+    rep_type="short"
+    export rep_type
+fi
+
+header
+main

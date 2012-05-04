@@ -1,0 +1,34 @@
+dmerce 3:
+
+ - parser (analyse, doku, verbesserung in bezug auf makros)
+ - mehr objekt-orientierung   (macros!)
+ - mod_python
+ - erweitern des rechtesystems
+   - ausblenden von, mandanten
+   - einsatz von datenbank-views? (pgsql, oracle)
+ - sql-makros mit bindestrichen (anstatt leerstelle)
+ - sam maximum-timeout
+ - fehlerbehandlung verbessern
+ - include
+ - packages!!!
+ - instanz von Core.OS.Base (ENV) und Log in DMS.MBase.Class / immer uebergeben
+
+ - SQLHdlOracle: UpperDict in Cache-Klasse einbauen (ERL. nur noch einsetzen)
+
+ - Klasse zur Behandlung von Dateinamen; zur Konvertierung z. B. bei Upload
+   - es sollen keine doppelten // vorhanden sein
+   - ...
+
+ - Klasse zur Behandlung von Werten (DMS.Object.Value etc.) verbessern
+   - mehr oop
+   - generell einsetzen, so dass in dmercewebs/makros z.B. nie
+     long-werte mit L ausgeben werden!
+
+ - SQL LIMIT wird von oracle nicht verstanden -> ROWID
+
+ - generell DMS.Cache.Cache mit case insensitive verwenden
+   (alle dictionaries!)
+
+dmerce 4:
+
+ - netzwerk-server

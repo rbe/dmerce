@@ -1,0 +1,59 @@
+#!/usr/bin/ksh
+
+. ${DMERCE_HOME}/lib/libdmerce
+[ $? -gt 0 ] && exit 2
+
+MAGICK_HOME="/opt/ImageMagick-5.5.7"
+LD_LIBRARY_PATH=$MAGICK_HOME/lib:$LD_LIBRARY_PATH
+IDENTIFY="$MAGICK_HOME/bin/identify"
+MOGRIFY="$MAGICK_HOME/bin/mogrify"
+FILES="`ls *.jpg *.JPG *.jpeg *.JPEG *.gif *.GIF *.png *.PNG 2>/dev/null`"
+
+usage() {
+    echo "usage: $0 RESIZE_TO_X RESIZE_TO_Y"
+}
+
+qd_resize() {
+    for f in $FILES
+      do
+      identify=`$IDENTIFY $f | awk '{print $3}'`
+      width=`echo $identify | awk 'BEGIN{FS="x"}{print $1}'`
+      height=`echo $identify | awk 'BEGIN{FS="x"}{print $2}'`
+      e "Image '$f' has size of $widthx$heigth pixel ($width != $RESIZE_TO_X, $heigth != $RESIZE_TO_Y?)"
+      if [ $RESIZE_TO_X -gt 0 -a $RESIZE_TO_Y -eq 0 ]; then
+	  if [ $width -ne $RESIZE_TO_X ]; then
+	      e "Resizing image to width of $RESIZE_TO_X pixel"
+	      $MOGRIFY -resize $RESIZE_TO_X $f
+	      e "Done mogrifying!"
+	  fi
+      fi
+      if [ $RESIZE_TO_X -gt 0 -a $RESIZE_TO_Y -gt 0 ]; then
+	  if [ $width -ne $RESIZE_TO_X -o $height -ne $RESIZE_TO_Y ]; then
+	      e "Resizing image to size of $RESIZE_TO_Xx$RESIZE_TO_Y pixel"
+	      $MOGRIFY -resize $RESIZE_TO_Xx$RESIZE_TO_Y $f
+	      e "Done mogrifying!"
+	  fi
+      fi
+    done
+}
+
+main() {
+    RESIZE_TO_X=$1
+    shift
+    RESIZE_TO_Y=$1
+    shift
+    [ $# -gt 2 ] && FILES=$*
+    qd_resize $RESIZE_TO_X $RESIZE_TO_Y $FILES
+}
+
+libdmerce_copyr
+echo "RESIZING IMAGES USING IMAGEMAGICK"
+echo
+if [ $# -lt 2 ]; then
+    usage
+    exit 2
+fi
+e "START"
+main
+e "STOP"
+exit 0

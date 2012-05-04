@@ -1,0 +1,167 @@
+#!/usr/bin/ksh
+
+MAILSYNC_HOME=/usr/local/1ci-mailsync
+SEND=send.txt
+RECEIVE=receive.txt
+SEND_AND_RECEIVE=send_and_receive.txt
+ACCESS_FILE=access
+VIRTUSERTABLE_FILE=virtusertable
+
+#
+# Functions
+#
+
+e() {
+    echo "`date`: $*"
+}
+
+remove_files() {
+    e "Removing imported files ..."
+    cd $MAILSYNC_HOME
+    rm send.txt
+    rm receive.txt
+    rm send_and_receive.txt
+    rm $ACCESS_FILE
+    rm $VIRTUSERTABLE_FILE
+}
+
+#
+# Standard entries in access
+#
+std_access_entries() {
+    discard_address flowers777@yandex.ru
+    relay_address automat@obeta.de
+    relay_address adam@obeta.de
+    relay_address p.adam@obeta.de
+    relay_address adm@obeta.de
+    relay_address administratoren@obeta.de
+}
+
+#
+# Standard entries in virtusertable
+#
+std_virtusertable_entries() {
+    accept_address @obeta.de info@obeta.de
+    accept_address info@obeta.de
+    accept_address domainmaster@obeta.com domainmaster
+    accept_address domainmaster@obeta.org domainmaster
+    accept_address domainmaster@obeta.net domainmaster
+    accept_address info@winbox2000.de
+    accept_address test@winbox2000.de
+    accept_address christian@winbox2000.de
+    accept_address @teel.de y.hakim@obeta.de
+}
+
+#
+# Add an email that will be discarded
+#
+discard_address() {
+    ADR=${1%%;}
+    shift
+    e "Discarding address $ADR"
+    echo "From:$ADR\tDISCARD" >> $ACCESS_FILE
+}
+
+#
+# Add an email that should be relayed (From:-header)
+#
+relay_address() {
+    ADR=${1%%;}
+    shift
+    e "Relaying address $ADR"
+    echo "From:$ADR\tRELAY" >> $ACCESS_FILE
+}
+
+#
+# Add an email address that will be accepted and delievered
+# to a local user account
+#
+accept_address() {
+    ADR=${1%%;}
+    shift
+    TO=${1:-obmail}
+    e "Accepting address $ADR (user account: $TO)"
+    echo "$ADR\t$TO" >> $VIRTUSERTABLE_FILE
+}
+
+#
+# Generate hash databases (berkeley db)
+#
+generate_databases() {
+    e "Generating databases"
+    uniq -u $ACCESS_FILE > /etc/mail/access
+    uniq -u $VIRTUSERTABLE_FILE > /etc/mail/virtusertable
+    cd /etc/mail
+    makemap hash access < access
+    makemap hash virtusertable < virtusertable
+}
+
+#
+# Import addresses that are allow for relaying
+#
+process_send() {
+    for i in `cat $SEND | sort | awk -F\; '/.*@.*/{print $1}'`; do
+	relay_address ${i%%;}
+    done
+}
+
+#
+# Import addresses that should be accepted (and delievered locally)
+#
+process_receive() {
+    for i in `cat $RECEIVE | sort | awk -F\; '/.*@.*/{print $1}'`; do
+	accept_address ${i%%;}
+    done
+}
+
+#
+# Import addresses that should send and receive
+#
+process_send_and_receive() {
+    for i in `cat $SEND_AND_RECEIVE | /opt/sfw/bin/gawk -F\; '{for (i = 1; i < NF; i++) print $i}'`; do
+	accept_address ${i%%;}
+	relay_address ${i%%;}
+    done
+}
+
+#
+# Check all addresses that should be accepted
+#
+check_accept() {
+    cd $MAILSYNC_HOME
+    for i in `cat $SEND_AND_RECEIVE | /opt/sfw/bin/gawk -F\; '{for (i = 1; i < NF; i++) print $i}'`; do
+	e "Checking that $i will be accepted for local delievery"
+	/usr/lib/sendmail -bv $i
+    done
+    for i in `cat $RECEIVE | sort | awk -F\; '/.*@.*/{print $1}'`; do
+	e "Checking that $i will be accepted for local delievery"
+	/usr/lib/sendmail -bv $i
+    done
+}
+
+main() {
+    if [ -r send.txt -a -r receive.txt -a -r send_and_receive.txt ]; then
+    	echo
+    	echo "1Ci(R) GmbH, Copyright (C) 2003, http://www.1ci.de"
+    	echo
+    	echo "GENERATE SENDMAIL access/virtusertable FILES"
+    	echo
+    	: > access
+    	: > virtusertable
+    	#e "Generating standard entries"
+    	#std_access_entries
+    	#std_virtusertable_entries
+    	e "Processing accounts which can send mails"
+    	process_send
+    	e "Processing accounts which can receive mails"
+    	process_receive
+    	e "Processing accounts which can send and receive mails"
+    	process_send_and_receive
+    	generate_databases
+    	check_accept
+    	remove_files
+    fi
+}
+
+trap '' 1 2 3 9 15
+main

@@ -1,0 +1,99 @@
+#!/bin/sh
+
+#################################################
+#
+# Copyright 2000-2002 1Ci GmbH, http://www.1ci.de
+#
+# $Id: libdmerce,v 1.21 2003/09/16 20:06:20 rb Exp $
+# $Author: rb $
+# $Revision: 1.21 $
+#
+#################################################
+
+[ -r ${DMERCE_HOME}/lib/dmercerc ] && . ${DMERCE_HOME}/lib/dmercerc || ( echo "dmerce rc not found!"; exit 255 )
+
+DMERCE_LIBDMERCE=1
+export DMERCE_LIBDMERCE
+
+DMERCE_DIRS="tmp etc lib bin examples doc logs scratch build product sql sql/mysql sql/oracle sql/postgresql"
+DMERCE_DIRS_4PKG="etc lib bin examples doc scratch product sql"
+export DMERCE_DIRS DMERCE_DIRS_4PKG
+
+COPYR="1Ci(R) GmbH, http://www.1ci.de, Copyright 2000-2003"
+export COPYR
+
+libdmerce_copyr() {
+    echo
+    echo ${COPYR}
+    echo
+}
+
+libdmerce_check_dmerce_dirs() {
+    for d in $DMERCE_DIRS
+    do
+      if [ ! -d ${DMERCE_HOME}/$d ]; then
+	  mkdir ${DMERCE_HOME}/$d
+      fi
+    done
+}
+
+libdmerce_check_env() {
+    if [ -n "${DMERCE_HOME}" -a -n "${MYSQL_HOME}" -a -n "${DMERCE_WEBSITES}" ]; then
+	echo 1
+    else
+	echo 0
+    fi
+}
+
+libdmerce_cfg_get_dbtype() {
+    cfgstr=$1
+    echo `expr "${cfgstr}" : '.* = \([a-zA-Z]*\):.*'`
+}
+
+libdmerce_cfg_get_dbname() {
+    cfgstr=$1
+    echo `expr "${cfgstr}" : '.*@.*:\(.*\)$'`
+}
+
+libdmerce_cfg_get_dbhost() {
+    cfgstr=$1
+    echo `expr "${cfgstr}" : '.*@\(.*\):.*$'`
+}
+
+libdmerce_cfg_get_dbuser() {
+    cfgstr=$1
+    echo `expr "${cfgstr}" : '.*:\(.*\):.*@.*'`
+}
+
+libdmerce_cfg_get_dbpwd() {
+    cfgstr=$1
+    echo `expr "${cfgstr}" : '.*:\(.*\)@.*'`
+}
+
+libdmerce_cfg_get_standard() {
+    cfgstr=$1
+    echo `expr "${cfgstr}" : '.*[ ]*=[ ]*\(.*\)'`
+}
+
+libdmerce_tmpl2sam() {
+    fqhn=$1
+    templates=$2
+    for tmpl in `find ${templates} -type f | sed '
+s/.*templates\///g
+s/\.html//g
+s/\.\///g
+s/\//,/g
+'`
+    do
+      echo "${stmt}INSERT INTO dmerce_sys.Templates (FQHN, FQTN, SAM) VALUES ('${fqhn}', '${tmpl}', 1);"
+    done
+}
+
+libdmerce_check_sshagent() {
+	if [ `ssh-add -l 2>&1 | grep -c Could` -gt 0 ]; then
+        	e "Starting ssh-agent"
+        	eval `ssh-agent` > $SSHAGENT_PID
+        	e "Adding key"
+        	echo 1ciMuensterCompointJesteburg | ssh-add > /dev/null 2>&1
+	fi
+}

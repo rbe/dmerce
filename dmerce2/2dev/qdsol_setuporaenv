@@ -1,0 +1,35 @@
+#!/bin/ksh
+
+#################################################
+#
+# Copyright 2000-2003 1Ci GmbH, http://www.1ci.de
+#
+# $Id: qdsol_setuporaenv,v 1.1 2003/04/19 18:25:38 rb Exp $
+# $Author: rb $
+# $Revision: 1.1 $
+#
+# Setup ORACLE(R) Environment for Sun Solaris(TM)
+# 
+#################################################
+
+groupadd -g 112 oinstall
+groupadd -g 106 osdba
+groupadd -g 101 osoper
+useradd -u 1031 -g 112 -G 101,106 -d /opt/oracle -s /usr/bin/bash oracle
+
+echo "
+set shmsys:shminfo_shmmax=4294967295
+set shmsys:shminfo_shmmin=1
+set shmsys:shminfo_shmmni=100
+set shmsys:shminfo_shmseg=10
+set semsys:seminfo_semmni=100
+set semsys:seminfo_semmns=1024
+set semsys:seminfo_semmsl=256
+" >> /etc/system
+
+reboot
+
+./runInstaller -silent -responseFile /tmp/enterprise.rsp
+/tmp/orainstRoot.sh
+./runInstaller -silent -responseFile /tmp/enterprise.rsp
+/opt/oracle/9i2_64/root.sh

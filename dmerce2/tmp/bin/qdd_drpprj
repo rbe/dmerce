@@ -1,0 +1,113 @@
+#!/bin/ksh
+
+#################################################
+#
+# Copyright 2002 1Ci GmbH, http://www.1ci.de
+#
+# Create dmerce projects from scratch
+#
+# $Id: qdd_drpprj,v 1.1 2003/04/19 18:25:38 rb Exp $
+# $Author: rb $
+# $Revision: 1.1 $
+#
+#################################################
+
+. ${DMERCE_HOME}/lib/libsh
+. ${DMERCE_HOME}/lib/libdmerce
+. ${DMERCE_HOME}/lib/dmercerc
+
+usage() {
+    echo "ERROR: wrong or missing arguments!
+
+usage: $0 [arguments]
+arguments ::=
+              projectfqhn*      fully qualified host name
+
+              projectdestdir*   project destination directory
+                                relative to \$DMERCE_WEBSITES
+
+              mysqlrootpwd      password for mysql root user
+
+              oraclesyspwd      password for oracle sys user
+                                (has to have DBA privileges!)
+              verbose           interactive mode y = on, n = off stadard is y
+
+"
+}
+
+check_args() {
+    if [ x"${projectfqhn}" = x"" -o x"${projectdestdir}" = x"" ]; then
+	usage
+	exit 1
+    fi
+    if [ x"${verbose}" = x"no"]; then
+	key="y"
+    else
+	key=""
+    fi
+}
+
+mysql() {
+    echo "`date`: Dropping MySQL database '${projectdbname}' on ${projectdbhost}, user ${projectdbuser}"
+    echo "DROP DATABASE ${projectdbname};
+DELETE FROM dmerce_sys.Configuration WHERE FQHN = '${projectfqhn}';
+DELETE FROM dmerce_sys.Templates WHERE FQHN = '${projectfqhn}';
+DELETE FROM dmerce_sys.DBOID WHERE D = '${projectdbname}';
+DELETE FROM mysql.db WHERE Host = '${projectdbhost}' AND User = '${projectdbuser}';
+DELETE FROM mysql.tables_priv WHERE Host = '${projectdbhost}' AND User = '${projectdbuser}';
+DELETE FROM mysql.columns_priv WHERE Host = '${projectdbhost}' AND User = '${projectdbuser}';
+DELETE FROM mysql.user WHERE Host = '${projectdbhost}' AND User = '${projectdbuser}';" | ${MYSQL_HOME}/bin/mysql -u root --password=${mysqlrootpwd}
+}
+
+website() {
+    echo "`date`: Removing website '${DMERCE_WEBSITES}/${projectdestdir}'"
+    ${RM} -rf ${DMERCE_WEBSITES}/${projectdestdir}
+}
+
+copyr
+echo "DROP DMERCE PROJECT"
+echo
+discover_env
+trap 'echo "DO NOT INTERRUPT THIS PROCESS!"' INT
+eval $*
+check_args
+if [ -f ${DMERCE_WEBSITES}/${projectdestdir}/dmerce.cfg ]; then
+    echo "`date`: Found '${DMERCE_WEBSITES}/${projectdestdir}/dmerce.cfg'. Continuing."
+    e=`grep Sys ${DMERCE_WEBSITES}/${projectdestdir}/dmerce.cfg`
+    projectdbtype=`cfg_get_dbtype "${e}"`
+    projectdbname=`cfg_get_dbname "${e}"`
+    projectdbhost=`cfg_get_dbhost "${e}"`
+    projectdbuser=`cfg_get_dbuser "${e}"`
+    projectdbpwd=`cfg_get_dbpwd "${e}"`
+    export projectdbtype projectdbname projectdbhost projectdbuser projectdbpwd
+    echo "`date`: FYI: projectdbtype = ${projectdbtype}"
+    echo "`date`: FYI: projectdbname = ${projectdbname}"
+    echo "`date`: FYI: projectdbhost = ${projectdbhost}"
+    echo "`date`: FYI: projectdbuser = ${projectdbuser}"
+    echo "`date`: FYI: projectdbpwd = ${projectdbpwd}"
+    if [ x"${projectdbtype}" = x"" -o x"${projectdbname}" = x"" -o x"${projectdbhost}" = x"" -o x"${projectdbuser}" = x"" -o x"${projectdbpwd}" = x"" ]; then
+	echo "`date`: Cannot read dmerce.cfg! Exiting."
+	exit 1
+    fi
+    if [ x"${key}" = x""]; then
+	echo -n "`date`: Are you sure (any key = YES/n = NO)? "
+	typeset -l key
+	read key
+	if [ "${key}" = "n" ]; then
+	    echo "`date`: User aborted."
+	    exit 1
+	fi
+    fi
+    if [ x"${projectdbtype}" = x"MySQL" ]; then
+	mysql
+    elif [ x"${projectdbtype}" = x"Oracle" ]; then
+	oracle
+    else
+	usage
+	exit 1
+    fi
+    website
+else
+    echo "`date`: No '${DMERCE_WEBSITES}/${projectdestdir}/dmerce.cfg' found. Exiting."
+fi
+echo "`date`: Done"

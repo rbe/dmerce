@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE web-app
+  PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
+  "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
+-->
+<web-app>
+	<display-name>dmerce(R) 3 Web Application Development Framework</display-name>
+	<servlet>
+		<servlet-name>dmerce</servlet-name>
+		<servlet-class>com.wanci.dmerce.servlet.Dmerce3</servlet-class>
+		<load-on-startup />
+	</servlet>
+	<servlet>
+		<servlet-name>forwarder</servlet-name>
+		<servlet-class>com.wanci.dmerce.servlet.Forward</servlet-class>
+		<load-on-startup />
+	</servlet>
+	<servlet>
+		<servlet-name>error</servlet-name>
+		<servlet-class>com.wanci.dmerce.servlet.Error</servlet-class>
+		<load-on-startup />
+	</servlet>
+	<servlet>
+		<servlet-name>filestreamer</servlet-name>
+		<description>Wrapper für Dateien auf dem lokalen Filesystem</description>
+		<servlet-class>com.wanci.dmerce.servlet.FileStreamer</servlet-class>
+		<load-on-startup />
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>dmerce</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>filestreamer</servlet-name>
+		<url-pattern>/files/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>error</servlet-name>
+		<url-pattern>/error</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>forwarder</servlet-name>
+		<url-pattern>/dmerce</url-pattern>
+	</servlet-mapping>
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+	<error-page>
+		<exception-type>java.lang.Exception</exception-type>
+		<location>/error</location>
+	</error-page>
+	<taglib>
+		<taglib-uri>/tags/dmerce</taglib-uri>
+		<taglib-location>/WEB-INF/dmerce.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>/tags/dmerce-sql</taglib-uri>
+		<taglib-location>/WEB-INF/dmerce-sql.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>/tags/dmerce-form</taglib-uri>
+		<taglib-location>/WEB-INF/dmerce-form.tld</taglib-location>
+	</taglib>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Member-Bereich</web-resource-name>
+			<url-pattern>/members/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>Noch ein Bereich</web-resource-name>
+			<url-pattern>/special/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>member</role-name>
+			<role-name>admin</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>dmerce internal secured area for workflow
+				register</web-resource-name>
+			<url-pattern>/_sec_/register/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>member</role-name>
+			<role-name>admin</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<login-config>
+		<auth-method>FORM</auth-method>
+		<form-login-config>
+			<form-login-page>/login/login.jsp</form-login-page>
+			<form-error-page>/login/error.jsp</form-error-page>
+		</form-login-config>
+	</login-config>
+</web-app>

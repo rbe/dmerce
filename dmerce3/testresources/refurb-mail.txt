@@ -1,0 +1,251 @@
+----------
+X-Sun-Data-Type: text
+X-Sun-Data-Description: text
+X-Sun-Data-Name: text
+X-Sun-Content-Lines: 125
+X-Sun-Content-Length: 7505
+
+Sehr geehrte Damen und Herren,
+ 
+vielen Dank für Ihr Interesse an unseren Gebrauchtsystemen
+Gebrauchtoptionen und Gebrauchtersatzteilen.
+ 
+Dieses File mit Datum vom 10.06.2003 ersetzt alle vor diesem Zeitpunkt
+angeforderten oder anderweitig erhaltenen Files.
+ 
+Die Lieferzeit für diese Systeme und Komponenten kann je nach 
+Produktgruppe bis zu 8 Wochen betragen.
+ 
+Wenn Sie sich auch für gebrauchte X-Optionen interessieren, starten
+Sie bitte diese Anfrage erneut über refurb@sun.com mit dem Eintrag
+rfbx im Subject (siehe auch HELP FILE).
+ 
+Mit Datum vom 10.06.2003 sind folgende Produkte verfügbar:
+ 
+ 
+BESTELL-                PREIS /EURO             BESCHREIBUNG            - RABATT
+BEZEICHNUNG             (pro Stück)  
+==========================================================================================
+R10K-24X2580-24GB 	 290900.00	RE10000/24x400MHZ,8MB/24GB RAM	- CAT A
+R10K-48X2580-48GB 	 520100.00	RE10000/48x400MHZ,8MB/48GB RAM	- CAT A
+R3500-4X2580-4GB  	  36200.00	RFB E3500 w/4x400Mhz//8MB E-Cache, 4GB Memory	- CAT A
+R3500-4X2590-4GB  	  53300.00	RFB E3500 w/4X464Mhz, 4GB Memory	- CAT A
+R3500-6X2580-6GB  	  51400.00	RFB E3500 w/6x400Mhz, 6GB Memory	- CAT A
+R4500-14X2580-14GB	 101900.00	RFB E4500 w/14x400Mhz, 14GB Memory	- CAT A
+R4500-4X2580-4GB  	  45500.00	RFB E4500 w/4x400Mhz, 4GB Memory	- CAT A
+R4500-4X2580-8GB  	  50500.00	ENTERPRISE 4500 W/ 4X400MHZ 8MB CPU, 8GB MEMORY (8X256MB)	- CAT A
+R4500-4X2590-4GB  	  55700.00	RFB E4500 w/4X464Mhz, 4GB Memory	- CAT A
+R4500-4X2590-8GB  	  67300.00	ENTERPRISE 4500 W/ 4X 464 MHZ/8MB CPU, 8GB (8X256MB) MEMORY	- CAT A
+R4500-8X2580-8GB  	  70400.00	RFB E4500 w/8x400Mhz, 8GB Memory	- CAT A
+R5500-12X2580-12GB	  86600.00	RFB E5500 w/12x400MHz/8MB, 12GB Memory	- CAT A
+R5500-8X2580-8GB  	  64700.00	RFB E5500 w/8x400MHz/8MB, 8GB Memory	- CAT A
+R6500-10X2580-10GB	 116100.00	RFB E6500 w/10x400Mhz, 10GB Memory	- CAT A
+R6500-16X2580-16GB	 152300.00	RFB E6500 w/16x400Mhz,16GB Memory	- CAT A
+R6500-20X2580-20GB	 176100.00	RFB E6500 w/20x400MHz, 20GB Memory	- CAT A
+R6500-20X2590-40GB	 299900.00	ENTERPRISE 6500 W/ 20X 464Mhz CPUS, 40GB MEMORY	- CAT A
+R6500-8X2580-8GB  	 104700.00	RFB E6500 w/8x400Mhz, 8GB Memory	- CAT A
+RA14-UEC2-9S-256CJ	   1600.00	RFB E2/2x300MHZ / 256MB / 9.1GB / CD	- CAT H
+RA14-UJC1-9F-001EH	   3050.00	RFB U2/400MHZ,2MB / 1GB / 2X9GB / CD	- CAT H
+RA14-UJC1-9S-002EH	   4450.00	RFB U2/400MHZ,2MB / 2GB / 2X9GB / CD	- CAT H
+RA14-UJC2-9S-002EH	   5800.00	RFB U2/2x400MHZ,2MB / 2GB / 2X9GB / CD	- CAT H
+RA16-UEC1-9Q-001EH	   2000.00	RFB U30/300MHZ / E3DM3 / 1GB / 18GB / CD	- CAT H
+RA16-UEC1-9Q-512EH	   1700.00	RFB U30/300MHZ / E3DM3 / 512MB / 18GB / CD	- CAT H
+RA21UFE19J-256CP  	    660.00	RFB U5/270MHZ / 256MB / 9.1GB / PGX24 / CD	- CAT H
+RA21UGE1A9P-256CR 	    980.00	RFB U5/360MHZ / PGX24 / 256MB / 8.4GB / CD	- CAT H
+RA21UJC1A9P-256CP 	   1350.00	RFB U5/400MHZ / PGX24 / 256MB / 9GB / CD	- CAT H
+RA21UJC1A9P-C128CP	   1150.00	RFB U5/400MHZ / PGX24 / 128MB / 9GB / CD	- CAT H
+RA22-UEA1A9L-512CG	   1700.00	RFB U10/300MHZ / C3DS3 / 512MB / 4.3GB / CD	- CAT H
+RA22UEA1Z9J-A128CG	    850.00	RFB U10/300MHZ / PGX / 128MB / 4.3GB / CD	- CAT H
+RA22UHC1Z9Q-A512CG	   2550.00	RFB U10/333MHZ / E3DM3 / 512MB / 4.3GB / CD	- CAT H
+RA22UKC1A9K-001CP 	   2700.00	RFB U10/440MHZ / CTR 3 / 1GB / 9GB / CD	- CAT H
+RA22UKC1A9P-C256CP	   2200.00	RFB U10/440MHZ / PGX24 / 256MB / 9GB / CD	- CAT H
+RA22UKC1A9P-C512CP	   2950.00	RFB U10/440MHZ / PGX24 / 512MB / 9GB / CD	- CAT H
+RA23UEC1-9Q-001EP 	   2650.00	RFB U60/300MHZ / E3DM3 / 1GB / 18G / CD	- CAT H
+RA23UEC2-9Q-001EP 	   2900.00	RFB U60/2x300MH / E3DM3 / 1GB / 18GB / CD	- CAT H
+RA23UGD1-9K-001EH 	   2900.00	RFB U60/360MHZ / CS3 / 1GB / 18GB / CD	- CAT H
+RA23UGD2-9Q-001EH 	   3700.00	RFB U60/2x360MHZ / E3DM3 / 1GB / 18GB / CD	- CAT H
+RA23ULD1-9Q-001EP 	   4350.00	RFB U60/450MHZ / E3DM3 / 1GB / 18GB / CD	- CAT H
+RA23ULD1-9Q-512ELD	   3700.00	RFB U60/450MHZ / E3DM3 / 512MB / 36GB / CD	- CAT H
+RA23ULD1-9S-001EH 	   4450.00	RFB U60/450MHZ / 1GB / 18GB / CD	- CAT H
+RA23ULD2-9Q-002EP 	   7300.00	RFB U60/2X450MHZ / E3DM3 / 2GB / 2X9.1GB / CD	- CAT H
+RA23ULD2-9S-002EH 	   8700.00	RFB U60/2X450MHZ / 2GB / 18GB / CD	- CAT H
+RA25-UEC1-9S-256CL	   6500.00	RFB E450/300MHZ / 256MB / 9GB / CD	- CAT H
+RA25-UJD2-9S-002EJ	   9000.00	RFB E450/2X400MHZ / 2GB / 2X18GB / CD	- CAT H
+RA25-UJD4-9S-004EJ	  15900.00	RFB E450/4X400MHZ / 4GB / 2X18GB / CD	- CAT H
+RA25-UMF2-002EK   	  20600.00	RFB E450/2x480MHZ / 2GB / 2x36GB / 3PS / CD	- CAT H
+RA26-UEC2-001CD4  	   4250.00	RFB E250/2X300MHZ / 2MB / 1GB / 36GB / CD	- CAT H
+RA26-UJC1-001EJ   	   4750.00	RFB E250/400MHZ / 1GB / 2x18GB / CD	- CAT H
+RA26-UJC2-002CD4  	   6900.00	RFB E250/2X400MHZ / 2GB / 4x9.1GB7.2K / CD	- CAT H
+RA26-UJC2-002FJ   	   6900.00	RFB E250/2X400MHZ / 2GB / 4x9.1GB / CD	- CAT H
+RA27-ULD1-9Z-001AV	  10500.00	RFB U80/450MHZ / E3DM6 / 1GB / 2x18GB / CD	- CAT H
+RA27-ULD2-9Q-001EJ	  11700.00	RFB U80/2X450MHZ / E3DM3 / 1GB / 2x18GB / CD	- CAT H
+RA28-UNF1-9L-002JA	   8100.00	RFB SB 750MHZ / CR3D / 2GB / 18GB / CD	- CAT H
+RA28-UNF1-9Z-001JA	   7900.00	RFB SB 750MHZ / E3DM6 / 1GB / 18GB / CD	- CAT H
+RA30-WRF2-04GQF   	  27500.00	RFB SFV880/2X750MHZ / 4GB / 6X36GB / DVD	- CAT H
+RA33-ULD2-9S-002EJ	  12300.00	RFB E420/2x450MHZ / 2GB / 2x18GB / CD	- CAT H
+RA33-ULD4-9S-004EJ	  19000.00	RFB E420/4x450MHZ / 4GB / 2x18GB / CD	- CAT H
+RA34-ULD1-9S-001EJ	   6300.00	RFB E220/450MHZ / 1GB / 2x18GB / CD	- CAT H
+RA34-ULD2-9S-002EJ	   9700.00	RFB E220/2x450MHZ / 2GB / 2x18GB / CD	- CAT H
+RA35-WRF2-2GQB1   	  11400.00	RFB 280R/2x750MHz / 2GB / 2x36GB / DVD	- CAT H
+RA35-WRF2-4GQB1   	  12700.00	RFB 280R/2x750MHz / 4GB / 2x36GB / DVD	- CAT H
+RA35-WSPF2-2GQB1  	  13500.00	RFB 280R/2x900MHZ / 2GB / 2x36GB / DVD	- CAT H
+RA35-WSPF2-4GRB1  	  18000.00	RFB 280R/2x900MHZ / 4GB / 2x73GB / DVD	- CAT H
+RF3800-4049       	  84600.00	RF3800 / CAB / 4x900MHZ / 4GB	- CAT A
+RF3800-4169       	 105800.00	RF3800 SERVER W/ 4X 900 MHZ CPUs, 16GB	- CAT A
+RF4800-P447R      	  95200.00	RF4800 / CAB / 1x(RSF-CPUBD-447)	- CAT A
+RF4800-P449R      	 140100.00	RF4800 / CAB / 1x(RSF-CPUBD-4049) / D240	- CAT A
+RF4810-P447R      	 100500.00	RF4800 / CAB / 1X(RSF-CPUBD-447) / D240	- CAT A
+RF6800-P12129R    	 428400.00	RF6800 / CAB / 3x(RSF-CPUBD-4049) / D240	- CAT A
+RF6800-P12247R    	 275000.00	RF6800 / CAB / 3x(RSF-CPUBD-487) / D240	- CAT A
+RF6800-P12249R    	 449500.00	RF6800 / CAB / 3x(RSF-CPUBD-4089) / D240	- CAT A
+RN03-ULD2-9S-002AV	  11100.00	R-NETRA t1 1125 / 2X440MHZ,4MB / 2GB / 2x36GB / 32XCD	- CAT H
+RN06-UKC1-9S001AT2	   4450.00	R NETRA t1-105 / 440MHz,2MB / 1GB / 2x18GB / Version ATO	- CAT H
+RN06-UKC1-9S256AT1	   2650.00	R-NETRA t1 105 / 440MHZ,2MB / 256MB / 18GB 10K-RPM	- CAT H
+RN06-UKC1-9S512AT1	   3150.00	R-NETRA t1 / 440MHZ,2MB / 512MB / 18GB / RM-KIT	- CAT H
+RN07-UKC1-9S512AT1	   3150.00	R-NETRA t1 / 440MHZ,2MB / 512MB / 18GB-10KRPM	- CAT H
+RN14-ULD2-9S-002CW	  18000.00	R-NETRA t 1405 / 2X440MHZ,4MB / 2GB / 72GB / 32XCD	- CAT H
+RN14-ULD4-9S-004AT	  26400.00	R-NETRA t 1405 / 4X440MHZ,4MB / 4GB / 18GB / 32XCD	- CAT H
+ 
+ 
+ 
+
+	AA-IBB auf Anfrage IBB.
+
+	Seit 02-JULI-2001 alle Preisangaben in EURO.
+
+Änderungen und Irrtum vorbehalten. 
+Alle angegebenen Preise sind Nettopreise zzgl. gesetzl. MWSt.  
+ 
+Weitere Information zu RFB-Produkten und RFB-Konfigurationen erhalten Sie 
+per E-Mail von dem IBB-Team über ibb-gy@Sun.COM.
+ 
+ 
+Mit freundlichen Grüßen  
+ 
+IBB ( Installed Based Business )
+
+
+PS: 
+Kennen Sie schon unsere Desktop Upgrade Promo ?
+Info unter http://www.sun.de/Produkte/Promo/Ultra/index.html
+
+ 
+----------
+X-Sun-Data-Type: text
+X-Sun-Data-Name: HELP1
+X-Sun-Content-Lines: 113
+X-Sun-Content-Length: 3411
+
+			Funktionsbeschreibung
+			refurb@Germany.Sun.COM
+			refurb@sun.com
+	===============================================================================
+	
+	
+	Durch Eingabe von "Keywords" im Subject der E-Mail an den Alias
+	
+ 			 refurb@Germany.Sun.COM oder refurb@sun.com
+ 			 
+       ist es möglich, verschiedene RFB-Informationen abzurufen.
+
+        HELP   oder  HILFE 	Diese Datei mit dem Inhalt der Schlüsselwörter 
+
+        RFB 			Liste der RFB-Systeme
+
+	RA14	oder ra14	alle refurbished Ultra 2 ( A14 )
+
+	RA16	oder ra16	alle refurbished Ultra 30 ( A16 )
+
+	RA21	oder ra21	alle refurbished Ultra 5 ( A21 )
+
+	RA23	oder ra23	alle refurbished Ultra 60 ( A23 )
+
+	RA25	oder ra25	alle refurbished Enterprise E450 ( A25 )
+
+	RA26	oder ra26	alle refurbished Enterprise E250 ( A26 )
+
+	RA27	oder ra27	alle refurbished Ultra 80 ( A27 )
+
+	RA30	oder ra30	alle refurbished Sun Fire V880 ( A30 )
+
+	RA33	oder ra33	alle refurbished Enterprise E420R ( A33 )
+
+	RA34	oder ra34	alle refurbished Enterprise E220R ( A34 )
+
+	RA35	oder ra35	alle refurbished Sun Fire 280R ( A35 )
+
+	RF6800  oder rf6800   	alle refurbished Sun Fire 6800 Server 
+
+	RF4800  oder rf4800   	alle refurbished Sun Fire 4800 Server 
+
+	RF3800  oder rf3800   	alle refurbished Sun Fire 3800 Server 
+
+	RFBE10K  oder rfbe10k   alle refurbished Sun Enterprise E10000 Server 
+
+	RFB6000  oder rfb6000   alle refurbished Sun Enterprise E6X00 Server 
+
+	RFB5000  oder rfb5000   alle refurbished Sun Enterprise E5X00 Server 
+
+	RFB4000  oder rfb4000   alle refurbished Sun Enterprise E4X00 Server 
+
+	RFB3000  oder rfb3000   alle refurbished Sun Enterprise E3X00 Server 
+
+
+	REFURBISHED NETRA:
+	======================
+
+	RN03	oder rn03	alle refurbished Netra T1125 AC
+
+	RN06	oder rn06	alle refurbished Netra T1 Model 105 AC
+
+	RN07	oder rn07	alle refurbished Netra T1 Model 100 DC
+
+	RN14	oder rn14	alle refurbished Netra T 1405 AC 
+
+
+	REFURBISHED PRODUKTGRUPPEN:
+	==========================
+
+	RFB-WG-SERVER	oder WORKGROUP		alle refurbished Server (z.B. E2 E250 E450)
+
+	RFB-SERVER	oder rfb-server		alle refurbished Server (z.B. E3000 E4000 E5000 E6000)
+	
+	RFB-DESKTOP	oder rfb-desktop	alle refurbished Workstation (z.B. A11,A12,A14,A21,A22,A23,A27)
+
+	RFB-NETRA	oder rfb-netra		alle refurbished Netra (z.B. N03,N06,N07,N1405)
+
+	RFB-SUNFIRE	oder rfb-sunfire	alle refurbished Sun Fire Server (z.B. SF280R,V880, 
+										SF6800,SF4800,SF3800)
+
+
+	REFURBISHED X-OPTIONEN:
+	======================
+
+        RFBX oder X             RFB X-Optionen z.B. RFBX5207A
+
+	RSG oder rsg		RFB StorEdge Produkte
+
+	RSF oder rsf		RFB Enterprise und Sun Fire Systemboards 
+
+
+	REFURBISHED STORAGE ARRAYS:
+	==========================
+
+        RFBD1000 oder rfbd1000             RFB A1000 / D1000 STORAGE ARRAY
+        RFBA3500 			   RFB A3500  STORAGE ARRAY
+        RFBUNIPACK 			   RFB UNIPACK 
+        RFBMULTIPACK 			   RFB MULTIPACK
+        RFBA5000 	                   RFB A5000 STORAGE ARRAY
+        RFBA5100			   RFB A5100 STORAGE ARRAY
+        RFBA5200			   RFB A5200 STORAGE ARRAY
+        RFBT3			   	   RFB T3 STORAGE ARRAY
+
+	REFURBISHED ERSATZTEILE:
+	=======================
+
+        ET oder et              (nein nicht der Außerirdische) sondern die komplette Liste
+                                der RFB-Ersatzteile mit derzeit ca. 200 Einträgen
+
+        RFB501  oder rfb501     alle Memorys , Framebuffer , CPU-Platinen
+
+        RFB-KONF oder rfb-konf  Konfigurationsfile der RFB-Systeme

@@ -1,0 +1,24 @@
+#!/bin/ksh
+
+#################################################
+#
+# Copyright 2000-2003 1Ci GmbH, http://www.1ci.de
+#
+# $Id: qdsol_genhostnames,v 1.1 2003/04/19 18:25:38 rb Exp $
+# $Author: rb $
+# $Revision: 1.1 $
+#
+# Sun Solaris(TM)
+# 
+#################################################
+
+#[ -r ${DMERCE_HOME}/lib/libsh ] && . ${DMERCE_HOME}/lib/libsh || ( echo "dmerce libsh not found!"; exit 255 )
+#[ -r ${DMERCE_HOME}/lib/libdmerce ] && . ${DMERCE_HOME}/lib/libdmerce || ( echo "dmerce libdmerce not found!"; exit 255 )
+#[ -r ${DMERCE_HOME}/lib/libsolaris ] && . ${DMERCE_HOME}/lib/libsolaris || ( echo "dmerce libsolaris not found!"; exit 255 )
+
+i=0
+while [ $i -lt 51 ]
+  do
+  i=`expr $i + 1`
+  echo "addif 10.48.31.$i netmask 255.255.255.0 broadcast 10.48.31.255 private up"
+done

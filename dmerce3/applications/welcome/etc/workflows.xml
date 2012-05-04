@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<workflows xmlns='http://www.1ci.de'
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+  xsi:schemaLocation='http://www.1ci.de ../../../etc/WORKFLOWS.xsd'
+  version="2.0"
+>
+
+    <workflow id="am_register">
+
+        <page id="registerpage" template="am_create.jsp" formid="form1" editable="true">
+
+            <formmap table="t_am_kunde" primarykey="id">
+                <fieldmap formfield="nachname" dbfield="nachname"/>
+                <fieldmap formfield="vorname" dbfield="vorname"/>
+                <fieldmap formfield="email" dbfield="email"/>
+                <fieldmap formfield="plz" dbfield="plz"/>
+                <fieldmap formfield="strasse" dbfield="strasse"/>
+                <fieldmap formfield="ort" dbfield="ort"/>
+                <fieldmap formfield="geburtsdatum" dbfield="geburtsdatum"/>
+                <fieldmap formfield="foto" dbfield="foto" file="true"/>
+            </formmap>
+
+            <transition name="save_to_db" target="list">
+            	<condition type="buttonpressed" value="Ok"/>
+            	<action type="maintain">
+                    <formfield formid="form1" name="nachname"/>
+                    <formfield formid="form1" name="vorname"/>
+                    <formfield formid="form1" name="email"/>
+                    <formfield formid="form1" name="plz"/>
+                    <formfield formid="form1" name="strasse"/>
+                    <formfield formid="form1" name="ort"/>
+                    <formfield formid="form1" name="geburtsdatum"/>
+                    <formfield formid="form1" name="foto"/>
+                 </action>
+            </transition>
+
+            <transition name="abort" target="list" validation="false">
+            	<condition type="buttonpressed" value="Cancel"/>
+            </transition>
+
+        </page>
+
+        <page id="list" template="am_list.jsp"/>
+
+    </workflow>
+
+</workflows>

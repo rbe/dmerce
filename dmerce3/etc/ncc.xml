@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ncc SYSTEM "ncc.dtd">
+<ncc>
+  <server name="www1-1">
+    <interface name="eri0" ip-address="10.48.35.3" />
+    <inetservice type="http" ip="">
+      <tcp name="ports" value="80" />
+      <tcp name="send" value="GET /\r\n\r\n" />
+      <tcp name="expectContent" value="html" />
+      <tcp name="noExpectContent" value="fehler" />
+    </inetservice>
+  </server>
+  <server name="www1-2">
+    <interface name="eri0" ip-address="10.48.35.3" />
+    <inet-service type="http" ip="">
+      <tcp name="ports" value="80" />
+      <tcp name="send" value="GET /\r\n\r\n" />
+      <tcp name="expectContent" value="html" />
+      <tcp name="noExpectContent" value="fehler" />
+    </inet-service>
+  </server>
+  <server name="www2">
+    <interface name="eri0" ip-address="10.48.35.3" />
+    <inet-service type="http" ip="">
+      <tcp name="ports" value="80" />
+      <tcp name="send" value="GET /\r\n\r\n" />
+      <tcp name="expectContent" value="html" />
+      <tcp name="noExpectContent" value="fehler" />
+    </inet-service>
+  </server>
+  <service-group name="www1">
+    <service-group-member name="www1-1" />
+    <service-group-member name="www1-2" />
+  </service-group>
+  <monitor>
+    <service-group name="www1" />
+    <server name="www2" />
+  </monitor>
+  <redirector name="rdr1">
+    <ip-from address="10.48.35.3" port="8085" />
+    <ip-to address="212.128.150.71" port="80" />
+  </redirector>
+  <portscanner>
+    <host name="" ipaddress="10.48.35.3">
+      <port number="80" protocol="tcp" />
+    </host>
+  </portscanner>
+</ncc>
+

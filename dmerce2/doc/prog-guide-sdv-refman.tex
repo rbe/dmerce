@@ -1,0 +1,3298 @@
+%%  SDV REFMAN BEGINN %%
+\section{Referenz}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Package}
+
+%%%%%%%%%%%%%%%%%%
+\paragraph{Module}
+
+\begin{itemize}
+\item \wancicode{sdv.py} enth\"alt die Klasse \wancicode{SDV}, die
+  Hauptklasse von SDV.
+  
+\item \wancicode{error.py} enth\"alt die Klasse \wancicode{Error}, die
+  zu abgefangenen Fehlern entsprechende Fehlermeldungen in graphischer
+  Form ausgibt.
+  
+\item \wancicode{lib.py} enth\"alt zus\"atzliche Funktionen.
+  
+\item \wancicode{data.py} enth\"alt die Klasse \wancicode{Data}, die
+  Eingabedatenobjekte erzeugt, die Klasse \wancicode{File}, die
+  Dateiobjekte f\"ur Bilddateien erzeugt und die Klasse
+  \wancicode{Size}, die 2-Tupel-Objekte f\"ur Bildgr\"o"senangaben
+  erzeugt.
+  
+\item \wancicode{colors.py} enth\"alt die Klassen \wancicode{Color}
+  und \wancicode{Colorlist}, die Farb-, bzw. Farblistenobjekte
+  erzeugen.
+  
+\item \wancicode{file.py} enth\"alt die Klassen \wancicode{Font} und
+  \wancicode{File}, die jeweils Fontdatei- (\wancicode{.pil}) und
+  Bilddateiobjekte (\wancicode{.jpg}, \wancicode{.png} usw.) erzeugt.
+  
+\item \wancicode{title.py} enth\"alt die Klasse \wancicode{Title}, die
+  ein Titelfeldobjekt erzeugt.
+  
+\item \wancicode{legend.py} enth\"alt die Klasse \wancicode{Legend},
+  die ein Legendenfeldobjekt erzeugt.
+  
+\item \wancicode{graphic.py} enth\"alt die Klasse \wancicode{Graphic},
+  die ein Grafikfeldobjekt erzeugt.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Dokumentation}
+
+\begin{itemize}
+\item Die Plain-Text-Datei \wancicode{read.me} enth\"alt allgemeine
+Informationen zum \textit{Package} und entspricht in etwa
+diesem Abschnitt.
+
+\item \wancicode{techdoc.tex}, also dieser Text, stellt die vollst\"andige 
+technische Dokumentation zu \wancicode{dmerce}-SDV dar. 
+
+\item \wancicode{userdoc.tex} ist eine Benutzerreferenz, die anhand
+von Beispielaufrufen die Benutzung von SDV illustriert.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Klassen}
+Systematische Darstellung der Klassen, ihrer Attribute und Methoden,
+dabei wird wie folgt vorgegangen:
+\begin{itemize}
+\item \textbf{Modul} gibt an, in welchem Modul des Packages sich die
+  Klassendeklaration befindet.
+\item \textbf{Parameter} gibt die Variablen an, die vom Benutzer der
+  Klasse mitgegeben werden k\"onnen und auf mit welchen Methoden dies
+  geschehen kann. Dazu ist zu sagen, da"s SDV grunds\"atzlich keine
+  automatischen \wancicode{\_\_init\_\_()}-Methoden verwendet, sondern
+  nur eigene \wancicode{Init()}-Methoden zur Anwendung kommen.
+\item \textbf{Prim\"are Attribute} beschreibt die Klassenattribute,
+  die direkt aus den Parametern gewonnen werden. In den meisten
+  F\"allen entsprechen sie den Parametern genau.
+\item \textbf{Sekund\"are Attribute} beschreibt diejenigen
+  Klassenattribute, die nachtr\"aglich durch Methoden erzeugt werden,
+  ohne da"s daf\"ur Parameter angegeben wurden. Der Zusammenhang mit
+  Parametern ist allenfalls indirekt.
+\item \textbf{Methoden} beschreibt die Methoden der jeweiligen Klasse.
+  Dazu z\"ahlen neben anderen in den meisten F\"allen \wancicode{Set}-
+  und\wancicode{Get}-Methoden, die also dazu dienen, Attribute zu
+  setzen, bzw. auszugeben, eine \wancicode{Init}-Methode, die dazu
+  geeignet ist, einen ganzen Satz an Parametern anzugeben,
+  gelegentlich auch eine \wancicode{SetUp}-Methode, die zum Festlegen
+  von Attributen genutzt wird.
+\item \textbf{Objektfunktionalit\"at} erg\"anzt die Information um den
+  funktionalen Zusammenhang der Attribute und Methoden nachdem ein
+  Objekt erzeugt wurde.
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SDV
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\paragraph{\wancicode{SDV}}
+
+\begin{description}
+\item[Modul] \wancicode{sdv.py}
+
+%%%%%%%% Parameter %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  
+\item[Parameter] Parameter sind die Werte, die der Klasse vom Benutzer
+  mitgegeben werden
+
+\begin{itemize}
+\item \wancicode{filename} (obligatorisch)
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., filename =
+    <foo.bar.png>,...)}  oder \wancicode{SetFilename(<foo.bar.png>)}
+\item[\textit{Valids}] Alle g\"ultigen Dateinamen mit Formaten:
+  \wancicode{.jpg}, \wancicode{.gif}, \wancicode{.png} oder
+  \wancicode{.bmp}
+\item[\textit{Default}] \wancicode{<foo.bar.png>}
+\item[\textit{Description}] Dateiname der fertigen Graphik
+  einschlie"slich des Dateiformats.
+\item[\textit{Attribute}] \wancicode{self.\_\_filename},
+  \wancicode{self.\_\_fileformat}
+\end{enumerate}
+
+\item \wancicode{size} (optional)
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., size = (<n>, <m>),...)}
+  oder \wancicode{SetSize(<n>, <m>)}
+\item[\textit{Valids}] ein 2-\textit{Tupel}, dessen Elemente positive
+  \textit{Integer} (also $n, m > 0$) sind. Unabh\"angig von SDV
+  sollten ggf. Maxima der Bilddarstellung beachtet werden.
+\item[\textit{Default}] \wancicode{(800,600)}
+\item[\textit{Description}] beschreibt die Gr\"o"se (in Pixeln) der
+  resultierenden Gesamtgraphik
+\item[\textit{Attribute}] \wancicode{self.\_\_size}
+\end{enumerate}
+
+\item \wancicode{topmargin} (optional)
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., topmargin = <n>,...)}
+  oder \wancicode{SetTopmargin(<n>)}
+\item[\textit{Valids}] Jede positive \textit{Integer}. Au"serdem
+  sollte \wancicode{topmargin} $+$ \wancicode{bottommargin} $<$
+  \wancicode{size[1]} sein.
+\item[\textit{Default}] \wancicode{30}
+\item[\textit{Description}] Gibt die Breite des oberen Randes der
+  Graphik bis zum oberen Rand der obersten Bildelemente an
+\item[\textit{Attribute}] \wancicode{self.\_\_topmargin}
+\end{enumerate}
+
+\item \wancicode{bottommargin} (optional)
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., bottommargin = <n>,...)}
+  oder \wancicode{SetBottommargin(<n>)}
+\item[\textit{Valids}] Jede positive \textit{Integer}. Au"serdem
+  sollte \wancicode{topmargin} $+$ \wancicode{bottommargin} $<$
+  \wancicode{size[1]} sein.
+\item[\textit{Default}] \wancicode{30}
+\item[\textit{Description}] Gibt die Breite des unteren Randes der
+  Graphik bis zum unteren Rand der untersten Bildelemente an
+\item[\textit{Attribute}] \wancicode{self.\_\_bottommargin}
+\end{enumerate}
+
+\item \wancicode{leftmargin} (optional)
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., leftmargin = <n>,...)}
+  oder \wancicode{SetLeftmargin(<n>)}
+\item[\textit{Valids}] Jede positive \textit{Integer}. Au"serdem
+  sollte \wancicode{leftmargin} $+$ \wancicode{rightmargin} $<$
+  \wancicode{size[1]} sein.
+\item[\textit{Default}] \wancicode{30}
+\item[\textit{Description}] Gibt die Breite des linken Randes der
+  Graphik bis zum linken Rand derjenigen Bildelemente an, die sich am
+  weitesten links befinden.
+\item[\textit{Attribute}] \wancicode{self.\_\_leftmargin}
+\end{enumerate}
+
+\item \wancicode{rightmargin} (optional)
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., rightmargin = <n>,...)}
+  oder \wancicode{SetRightmargin(<n>)}
+\item[\textit{Valids}] Jede positive \textit{Integer}. Au"serdem
+  sollte \wancicode{leftmargin} $+$ \wancicode{rightmargin} $<$
+  \wancicode{size[1]} sein.
+\item[\textit{Default}] \wancicode{30}
+\item[\textit{Description}] Gibt die Breite des rechten Randes der
+  Graphik bis zum rechten Rand derjenigen Bildelemente an, die sich am
+  weitesten rechts befinden.
+\item[\textit{Attribute}] \wancicode{self.\_\_rightmargin}
+\end{enumerate}
+
+\item \wancicode{dist} (optional)
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., dist = <n>,...)}  oder
+  \wancicode{SetDist(<n>)}
+\item[\textit{Valids}] Jede positive \textit{Integer}.
+\item[\textit{Default}] \wancicode{10}
+\item[\textit{Description}] Gibt den Abstand der einzelnen
+  Bildelemente zueinander an.
+\item[\textit{Attribute}] \wancicode{self.\_\_dist}
+\end{enumerate}
+
+\item \wancicode{colormode} (optional)
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., colormode =
+    <``mode''>,...)}  oder \wancicode{SetColormode(<``mode''>)}
+\item[\textit{Valids}] \wancicode{``RGB''}
+\item[\textit{Default}] \wancicode{``RGB''}
+\item[\textit{Description}] Legt den Farbmodus der Graphik fest.
+  (Z.Zt. ist nur der RGB-Modus vorgesehen)
+\item[\textit{Attribute}] \wancicode{self.\_\_colormode}
+\end{enumerate}
+
+\item \wancicode{color} (optional)
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., color = <color>,...)}
+  oder \wancicode{SetColor(<color>)}
+\item[\textit{Valids}] Jede zul\"assige RGB-Farbcodierung
+\item[\textit{Default}] \wancicode{(255,255,255)} (wei"s)
+\item[\textit{Description}] Legt die Hintergrundfarbe der Grundgraphik
+  fest.
+\item[\textit{Attribute}] \wancicode{self.\_\_color}
+\end{enumerate}
+
+\item \wancicode{wallpaper} (optional)
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetWallpaper(<'wallpaper.foo'>)}
+\item[\textit{Valids}] Jeder zul\"assige Dateiname einer Graphikdatei
+  mit denselben Formaten von \wancicode{fileformat}.  NB!
+  \wancicode{size} mu"s dieselbe Gr\"o"se haben, wie das Wallpaper!
+\item[\textit{Default}] \wancicode{''}
+\item[\textit{Description}] Legt den Dateinamen des Hintergrundbildes
+  fest.
+\item[\textit{Attribute}] \wancicode{self.\_\_wallpaper}
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%% Primaere Attribute %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\item[Prim\"are Attribute] Prim\"are Attribute sind Attribute, die
+  unver\"andert aus Parametern \"ubernommen werden.
+
+\begin{itemize}
+  
+\item \wancicode{self.\_\_filename}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., filename =
+    <foo.bar.png>,...)}  oder \wancicode{SetFilename(<foo.bar.png>)}
+\item[\textit{Valids}] Alle g\"ultigen Dateinamen mit Formaten:
+  \wancicode{.jpg}, \wancicode{.gif}, \wancicode{.png} oder
+  \wancicode{.bmp}
+\item[\textit{Default}] \wancicode{<foo.bar.png>}
+\item[\textit{Description}] Dateiname der fertigen Graphik
+  einschlie"slich des Dateiformats.
+\item[\textit{Parametre}] \wancicode{filename},
+\end{enumerate}
+
+\item \wancicode{self.\_\_size}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., size = (<n>, <m>),...)}
+  oder \wancicode{SetSize(<n>, <m>)}
+\item[\textit{Valids}] ein 2-\textit{Tupel}, dessen Elemente positive
+  \textit{Integer} (also $n, m > 0$) sind. Unabh\"angig von SDV
+  sollten ggf. Maxima der Bilddarstellung beachtet werden.
+\item[\textit{Default}] \wancicode{(800,600)}
+\item[\textit{Description}] beschreibt die Gr\"o"se (in Pixeln) der
+  resultierenden Gesamtgraphik
+\item[\textit{Parametre}] \wancicode{size}
+\end{enumerate}
+
+\item \wancicode{self.\_\_topmargin}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., topmargin = <n>,...)}
+  oder \wancicode{SetTopmargin(<n>)}
+\item[\textit{Valids}] Jede positive \textit{Integer}. Au"serdem
+  sollte \wancicode{topmargin} $+$ \wancicode{bottommargin} $<$
+  \wancicode{size[1]} sein.
+\item[\textit{Default}] \wancicode{30}
+\item[\textit{Description}] Gibt die Breite des oberen Randes der
+  Graphik bis zum oberen Rand der obersten Bildelemente an
+\item[\textit{Parametre}] \wancicode{topmargin}
+\end{enumerate}
+
+\item \wancicode{self.\_\_bottommargin}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., bottommargin = <n>,...)}
+  oder \wancicode{SetBottommargin(<n>)}
+\item[\textit{Valids}] Jede positive \textit{Integer}. Au"serdem
+  sollte \wancicode{topmargin} $+$ \wancicode{bottommargin} $<$
+  \wancicode{size[1]} sein.
+\item[\textit{Default}] \wancicode{30}
+\item[\textit{Description}] Gibt die Breite des unteren Randes der
+  Graphik bis zum unteren Rand der untersten Bildelemente an
+\item[\textit{Parametre}] \wancicode{bottommargin}
+\end{enumerate}
+
+\item \wancicode{self.\_\_leftmargin}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., leftmargin = <n>,...)}
+  oder \wancicode{SetLeftmargin(<n>)}
+\item[\textit{Valids}] Jede positive \textit{Integer}. Au"serdem
+  sollte \wancicode{leftmargin} $+$ \wancicode{rightmargin} $<$
+  \wancicode{size[1]} sein.
+\item[\textit{Default}] \wancicode{30}
+\item[\textit{Description}] Gibt die Breite des linken Randes der
+  Graphik bis zum linken Rand derjenigen Bildelemente an, die sich am
+  weitesten links befinden.
+\item[\textit{Parametre}] \wancicode{leftmargin}
+\end{enumerate}
+
+\item \wancicode{self.\_\_rightmargin}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., rightmargin = <n>,...)}
+  oder \wancicode{SetRightmargin(<n>)}
+\item[\textit{Valids}] Jede positive \textit{Integer}. Au"serdem
+  sollte \wancicode{leftmargin} $+$ \wancicode{rightmargin} $<$
+  \wancicode{size[1]} sein.
+\item[\textit{Default}] \wancicode{30}
+\item[\textit{Description}] Gibt die Breite des rechten Randes der
+  Graphik bis zum rechten Rand derjenigen Bildelemente an, die sich am
+  weitesten rechts befinden.
+\item[\textit{Parametre}] \wancicode{rightmargin}
+\end{enumerate}
+
+\item \wancicode{self.\_\_dist}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., dist = <n>,...)}  oder
+  \wancicode{SetDist(<n>)}
+\item[\textit{Valids}] Jede positive \textit{Integer}.
+\item[\textit{Default}] \wancicode{10}
+\item[\textit{Description}] Gibt den Abstand der einzelnen
+  Bildelementen zueinander an.
+\item[\textit{Parametre}] \wancicode{dist}
+\end{enumerate}
+
+\item \wancicode{self.\_\_colormode}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., colormode =
+    <``mode''>,...)}  oder \wancicode{SetColormode(<``mode''>)}
+\item[\textit{Valids}] \wancicode{``RGB''}
+\item[\textit{Default}] \wancicode{``RGB''}
+\item[\textit{Description}] Legt den Farbmodus der Graphik fest.
+  (Z.Zt. ist nur der RGB-Modus vorgesehen)
+\item[\textit{Parametre}] \wancicode{colormode}
+\end{enumerate}
+
+\item \wancicode{self.\_\_color}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., color = <color>,...)}
+  oder \wancicode{SetColor(<color>)}
+\item[\textit{Valids}] Jede zul\"assige RGB-Farbcodierung
+\item[\textit{Default}] \wancicode{(255,255,255)} (wei"s)
+\item[\textit{Description}] Legt die Hintergrundfarbe der Grundgraphik
+  fest.
+\item[\textit{Parametre}] \wancicode{color}
+\end{enumerate}
+
+\item \wancicode{self.\_\_wallpaper}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetWallpaper(<'wallpaper.foo'>)}
+\item[\textit{Valids}] Jeder zul\"assige Dateiname einer Graphikdatei
+  mit denselben Formaten von \wancicode{fileformat}.  NB!
+  \wancicode{size} mu"s dieselbe Gr\"o"se haben, wie das Wallpaper!
+\item[\textit{Default}] \wancicode{''}
+\item[\textit{Description}] Legt den Dateinamen des Hintergrundbildes
+  fest.
+\item[\textit{Parametre}] \wancicode{wallpaper}
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%% Sekundaere Attribute %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\item[Sekund\"are Attribute] Sekund\"are Attribute werden im Gegensatz
+  zu pri\"aren durch eine mehr oder weniger komplizierte Funktion,
+  bzw. Methode ermittelt, ohne vorher an die Klasse \"ubergeben worden
+  zu sein.
+
+
+\begin{itemize}
+\item \wancicode{self.\_\_fileformat}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., filename =
+    <foo.bar.png>,...)}  oder \wancicode{SetFilename(<foo.bar.png>)}
+\item[\textit{Valids}] \wancicode{.jpg}, \wancicode{.gif},
+  \wancicode{.png} oder \wancicode{.bmp}
+\item[\textit{Description}] Dateiformat der fertigen Graphik
+\end{enumerate}
+
+\item \wancicode{self.\_\_topmost}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{TopTitle()}
+\item[\textit{Valids}] nat\"urliche Zahlen
+\item[\textit{Description}] Bezeichnet den kleinsten y-Wert, an dem
+  weitere Bildelemente lokalisiert werden k\"onnen
+\end{enumerate}
+
+\item \wancicode{self.\_\_bottommost}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{BottomTitle()} und
+  \wancicode{BottomLegend()}
+\item[\textit{Valids}] nat\"urliche Zahlen
+\item[\textit{Description}] Bezeichnet den h\"ochsten y-Wert, an dem
+  weitere Bildelemente lokalisiert werden k\"onnen
+\end{enumerate}
+
+\item \wancicode{self.\_\_leftmost}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{LeftLegend()}
+\item[\textit{Valids}] nat\"urliche Zahlen
+\item[\textit{Description}] Bezeichnet den kleinsten x-Wert, an dem
+  weitere Bildelemente lokalisiert werden k\"onnen
+\end{enumerate}
+
+\item \wancicode{self.\_\_rightmost}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{RightLegend()}
+\item[\textit{Valids}] nat\"urliche Zahlen
+\item[\textit{Description}] Bezeichnet den h\"ochsten x-Wert, an dem
+  weitere Bildelemente lokalisiert werden k\"onnen
+\end{enumerate}
+
+\item \wancicode{self.\_\_titlesize}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{TopTitle()} und
+  \wancicode{Bottomtitle}
+\item[\textit{Valids}] 2-Tupel von nat\"urlichen Zahlen
+\item[\textit{Description}] Bezeichnet die Gr\"o"se, die f\"ur das
+  Titel-Bildobjekt vorgesehen ist
+\end{enumerate}
+
+\item \wancicode{self.\_\_titlelocation}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{TopTitle()}
+\item[\textit{Valids}] 2-Tupel von nat\"urlichen Zahlen
+\item[\textit{Description}] Bezeichnet die Koordinaten, an denen das
+  Titel-Bilobjekt lokalisiert wird
+\end{enumerate}
+
+\item \wancicode{self.\_\_legendsize}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{LeftLegend()},
+  \wancicode{RightLegend()}, \wancicode{BottomLegend()}
+\item[\textit{Valids}] 2-Tupel von nat\"urlichen Zahlen
+\item[\textit{Description}] Bezeichnet die Gr\"o"se, die f\"ur das
+  Legenden-Bildobjekt vorgesehen ist
+\end{enumerate}
+
+\item \wancicode{self.\_\_legendlocation}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{LeftLegend()},
+  \wancicode{RightLegend()}, \wancicode{BottomLegend()}
+\item[\textit{Valids}] 2-Tupel von nat\"urlichen Zahlen
+\item[\textit{Description}] Bezeichnet die Koordinaten, an denen das
+  Legenden-Bilobjekt lokalisiert wird
+\end{enumerate}
+
+\item \wancicode{self.\_\_graphicsize}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Graphic()}
+\item[\textit{Valids}] 2-Tupel von nat\"urlichen Zahlen
+\item[\textit{Description}] Bezeichnet die Gr\"o"se, die f\"ur das
+  Graphic-Bildobjekt vorgesehen ist
+\end{enumerate}
+
+\item \wancicode{self.\_\_graphiclocation}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Graphic()}
+\item[\textit{Valids}] 2-Tupel von nat\"urlichen Zahlen
+\item[\textit{Description}] Bezeichnet die Koordinaten, an denen das
+  Legenden-Bilobjekt lokalisiert wird
+\end{enumerate}
+
+\item \wancicode{self.\_\_pict}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Draw()},
+  \wancicode{AttachWallpaper()}, \wancicode{Paste},
+  \wancicode{Paste()}, \wancicode{Save()}, \wancicode{Show()}
+\item[\textit{Valids}] Objekte, die erzeugt werden von
+  \wancicode{Image.new()} der PIL Image-Moduls.
+\item[\textit{Description}] Das gesamte Bildobjekt
+
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%% Methoden %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\item[Methoden] Die Methoden von \wancicode{SDV}.
+\begin{itemize}
+  
+\item \wancicode{Init()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{filename = 'foo.bar.png'},
+  \wancicode{size = (800,600)}, \wancicode{leftmargin = 30},
+  \wancicode{rightmargin = 30}, \wancicode{topmargin = 30},
+  \wancicode{bottommargin = 30}, \wancicode{dist = 10},
+  \wancicode{colormode = ``RGB''}, \wancicode{color = (255,255,255)},
+\item[\textit{Description}] Initialisiert alle ben\"otigten Parameter
+  auf einmal. Alle Argument haben ein \textit{default}.
+\item[\textit{Results}] \wancicode{self.\_\_filename},
+  \wancicode{self.\_\_fileformat}, \wancicode{self.\_\_size},
+  \wancicode{self.\_\_topmargin}, \wancicode{self.\_\_bottommargin},
+  \wancicode{self.\_\_leftmargin}, \wancicode{self.\_\_rightmargin},
+  \wancicode{self.\_\_dist}, \wancicode{self.\_\_colormode},
+  \wancicode{self.\_\_color}
+
+
+\end{enumerate}
+
+\item \wancicode{SetUp()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] aktiviert das Layout f\"ur die
+  Gesamtgraphik
+\item[\textit{Results}] \wancicode{self.\_\_topmost},
+  \wancicode{self.\_\_bottommost}, \wancicode{self.\_\_leftmost},
+  \wancicode{self.\_\_rightmost},
+\end{enumerate}
+
+\item \wancicode{SetFilename()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{filename = '}
+\item[\textit{Description}] Setzen des Dateinamens und -formates.
+\item[\textit{Results}] \wancicode{self.\_\_filename},
+  \wancicode{self.\_\_fileformat}
+\end{enumerate}
+
+\item \wancicode{SetSize()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{size}
+\item[\textit{Description}] Setzen der Gesamtbildgr\"o"se
+\item[\textit{Results}] \wancicode{self.\_\_size}
+\end{enumerate}
+
+\item \wancicode{SetTopmargin()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{topmargin}
+\item[\textit{Description}] Setzen des oberen Bildrandes
+\item[\textit{Results}] \wancicode{self.\_\_topmargin}
+\end{enumerate}
+
+\item \wancicode{SetBottommargin()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{bottommargin}
+\item[\textit{Description}] Setzen des unteren Bildrandes
+\item[\textit{Results}] \wancicode{self.\_\_bottommargin}
+\end{enumerate}
+
+\item \wancicode{SetLeftmargin()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{leftmargin}
+\item[\textit{Description}] Setzen des linken Bildrandes
+\item[\textit{Results}] \wancicode{self.\_\_leftmargin}
+\end{enumerate}
+
+\item \wancicode{SetRightmargin()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{rightmargin}
+\item[\textit{Description}] Setzen des rechten Bildrandes
+\item[\textit{Results}] \wancicode{self.\_\_rightmargin}
+\end{enumerate}
+
+\item \wancicode{SetDist()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{dist}
+\item[\textit{Description}] Setzen des gegenseitigen Abstands der
+  Bildelemente
+\item[\textit{Results}] \wancicode{self.\_\_dist}
+\end{enumerate}
+
+\item \wancicode{SetColormode()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{colormode}
+\item[\textit{Description}] Setzen des Farbmodus
+\item[\textit{Results}] \wancicode{self.\_\_colormode}
+\end{enumerate}
+
+\item \wancicode{SetColor()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{color}
+\item[\textit{Description}] Setzen der Hintergrundfarbe
+\item[\textit{Results}] \wancicode{self.\_\_color}
+\end{enumerate}
+
+\item \wancicode{SetWallpaper()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{wallpaper}
+\item[\textit{Description}] \"Offnet ein Bildobjekt f\"ur ein
+  Hintergrundbild
+\item[\textit{Results}] \wancicode{self.\_\_wallpaper}
+\end{enumerate}
+
+\item \wancicode{TopTitle()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{font}, \wancicode{text = 'test'}
+\item[\textit{Description}] Plazieren und konfektionieren des
+  Titel-Bildobjektes am oberen Bildrand
+\item[\textit{Results}] \wancicode{self.\_\_titlesize},
+  \wancicode{self.\_\_titlelocation}
+\end{enumerate}
+
+\item \wancicode{BottomTitle()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{font}, \wancicode{text = 'test'}
+\item[\textit{Description}] Plazieren und konfektionieren des
+  Titel-Bildobjektes am unteren Bildrand
+\item[\textit{Results}] \wancicode{self.\_\_titlesize},
+  \wancicode{self.\_\_titlelocation}
+\end{enumerate}
+
+\item \wancicode{GetTitlesize()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Liefert die Gr\"o"se des Titel-
+  Bildobjektes als 2-Tupel
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{GetTitlelocation()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Liefert die Plazierung der linken oberen
+  Ecke des Titel-Bildobjektes im Gesamtbild als 2-Tupel
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{LeftLegend()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{x}, \wancicode{y},
+  \wancicode{font}
+\item[\textit{Description}] Plazieren und konfektionieren des
+  Legenden-Bildobjektes am linken Bildrand
+\item[\textit{Results}] \wancicode{self.\_\_legendsize},
+  \wancicode{self.\_\_legendlocation}
+\end{enumerate}
+
+\item \wancicode{RightLegend()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{x}, \wancicode{y},
+  \wancicode{font}
+\item[\textit{Description}] Plazieren und konfektionieren des
+  Legenden-Bildobjektes am rechten Bildrand
+\item[\textit{Results}] \wancicode{self.\_\_legendsize},
+  \wancicode{self.\_\_legendlocation}
+\end{enumerate}
+
+\item \wancicode{BottomLegend()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{x}, \wancicode{y},
+  \wancicode{font}
+\item[\textit{Description}] Plazieren und konfektionieren des
+  Legenden-Bildobjektes am unteren Bildrand
+\item[\textit{Results}] \wancicode{self.\_\_legendsize},
+  \wancicode{self.\_\_legendlocation}
+\end{enumerate}
+
+\item \wancicode{GetLegendsize()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Liefert die Gr\"o"se des Legenden-
+  Bildobjektes als 2-Tupel
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{GetLegendLocation()}
+\begin{enumerate}
+\item[\textit{Arguments}]
+\item[\textit{Description}] Liefert die Plazierung der linken oberen
+  Ecke des Legenden-Bildobjektes im Gesamtbild als 2-Tupel
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{Graphic()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}]Plazieren und konfektionieren des
+  Graphik-Bildobjektes
+\item[\textit{Results}] \wancicode{self.\_\_graphicsize},
+  \wancicode{self.\_\_graphiclocation}
+\end{enumerate}
+
+\item \wancicode{GetGraphicsize()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Liefert die Gr\"o"se des
+  Graphik-Bildobjektes als 2-Tupel
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{GetGraphiclocation()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Liefert die Plazierung der linken oberen
+  Ecke des Graphik-Bildobjektes im Gesamtbild als 2-Tupel
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{Draw()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Generiert das Gesamt-Bildobjekt
+\item[\textit{Results}] \wancicode{self.\_\_pict}
+\end{enumerate}
+
+\item \wancicode{AttachWallpaper()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{alpha = 0.0}
+\item[\textit{Description}] Unterlegt das Hintergrundbild (sofern
+  vorhanden) unter das fertige Gesamtbild
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{Paste()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{part}, \wancicode{location}
+\item[\textit{Description}] F\"ugt ein Teil-Bildobjekt
+  (\wancicode{part}) an der Stelle \wancicode{location} in das
+  Gesamt-Bildobjekt ein.
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{Save()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Speichert das Gesamt-Bildobjekt unter
+  \wancicode{self.\_\_filename} und \wancicode{self.\_\_fileformat}
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{Show()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Zeigt das Gesamt-Bildobjekt auf dem
+  Bildschirm an.
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%%%% Objektfunktionalitaet %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\item[Objektfunktionalit\"at]
+\end{description}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Error
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\paragraph{\wancicode{Error}}
+\subparagraph{Modul} \wancicode{error.py}
+
+%%%%%%%%% Parameter %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subparagraph{Parameter} 
+\begin{itemize}
+\item \wancicode{message}
+\begin{enumerate}
+\item[\textit{Methods}]
+\wancicode{\_\_init\_\_(..., message = '',...)}
+\item[\textit{Valids}] Jeder String
+\item[\textit{Default}] \wancicode{''}
+\item[\textit{Description}] Der Text der Fehlermeldung
+\item[\textit{Attribute}] \wancicode{self.\_\_message}
+\end{enumerate}
+
+\item \wancicode{size}
+\begin{enumerate}
+\item[\textit{Methods}]
+\wancicode{\_\_init\_\_(..., size = (640,480),...)}
+\item[\textit{Valids}] Jedes 2-Tupel von positiven ganzen Zahlen
+\item[\textit{Default}] \wancicode{(640,480}
+\item[\textit{Description}] Die Gr\"o"se des Fehlergraphik
+\item[\textit{Attribute}] \wancicode{self.\_\_size}
+\end{enumerate}
+
+\item \wancicode{font}
+\begin{enumerate}
+\item[\textit{Methods}]
+\wancicode{\_\_init\_\_(..., font = '/fonts/helvB12.pil',...)}
+\item[\textit{Valids}] Jeder g\"ultige Fontpfad
+\item[\textit{Default}] \wancicode{'/fonts/helvB12.pil'}
+\item[\textit{Description}] Der Font der Fehlermeldung
+\item[\textit{Attribute}] \wancicode{self.\_\_font}
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%% Primaere Attribute %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Prim\"are Attribute} 
+\begin{itemize}
+\item \wancicode{self.\_\_message}
+\begin{enumerate}
+\item[\textit{Methods}]
+\wancicode{\_\_init\_\_(..., message = '',...)}
+\item[\textit{Valids}] Jeder String
+\item[\textit{Default}] \wancicode{''}
+\item[\textit{Description}] Der Text der Fehlermeldung
+\item[\textit{Parametre}] \wancicode{message}
+\end{enumerate}
+
+\item \wancicode{self.\_\_size}
+\begin{enumerate}
+\item[\textit{Methods}]
+\wancicode{\_\_init\_\_(..., size = (640,480),...)}
+\item[\textit{Valids}] Jedes 2-Tupel von positiven ganzen Zahlen  
+\item[\textit{Default}] \wancicode{''}
+\item[\textit{Description}] Die Gr\"o"se der Fehlergraphik
+\item[\textit{Parametre}] \wancicode{size}
+\end{enumerate}
+
+\item \wancicode{self.\_\_font}
+\begin{enumerate}
+\item[\textit{Methods}]
+\wancicode{\_\_init\_\_(..., font = '/fonts/helvB12.pil',...)}
+\item[\textit{Valids}] Jeder g\"ultige Fontpfad
+\item[\textit{Default}] \wancicode{'/fonts/helvB12.pil'}
+\item[\textit{Description}] Der Font der Fehlermeldung
+\item[\textit{Parametre}] \wancicode{font}
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%%%% Sekundaere Attribute %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Sekund\"are Attribute} 
+keine
+
+%%%%%%%%%% Methoden %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+
+\newpage
+
+\subparagraph{Methoden}
+\begin{itemize}
+\item \wancicode{\_\_init\_\_()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{message}, \wancicode{size},
+\wancicode{font}
+\item[\textit{Description}] Initialisiert ein \wancicode{Error}-Objekt
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{Draw()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Erzeugt ein Bildobjekt, das die
+Fehlermeldung als Graphik ausgibt
+\item[\textit{Results}]
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Data
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\paragraph{\wancicode{Data}}
+\subparagraph{Modul} \wancicode{data.py}
+
+%%%%%%%% Parameter %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subparagraph{Parameter} 
+\begin{itemize}
+
+\item \wancicode{x}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetX(x)}
+\item[\textit{Valids}] Jede Liste von Strings oder Zahlen
+\item[\textit{Default}] keiner
+\item[\textit{Description}] Die Argumentliste
+\end{enumerate}
+
+\item \wancicode{y}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetY(y)}
+\item[\textit{Valids}] Jede Liste von Zahlen, die die 
+gleiche L\"ange hat, wie \wancicode{x}
+\item[\textit{Default}] keiner
+\item[\textit{Description}] Die Wertliste
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%% Primaere Attribute %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Prim\"are Attribute}
+\begin{itemize}
+
+\item \wancicode{self.\_\_x}
+\begin{enumerate}
+\item[\textit{Methods}]
+\wancicode{SetX(x)}
+\item[\textit{Valids}] Jede Liste von Strings oder Zahlen
+\item[\textit{Default}] keiner
+\item[\textit{Description}] Die Argumentliste
+\item[\textit{Parametre}] \wancicode{x}
+\end{enumerate}
+
+\item \wancicode{self.\_\_y}
+\begin{enumerate}
+\item[\textit{Methods}]
+\wancicode{SetY(y)}
+\item[\textit{Valids}] Jede Liste von Zahlen, die die 
+gleiche L\"ange hat, wie \wancicode{x}  
+\item[\textit{Default}] keiner
+\item[\textit{Description}] Die Wertliste
+\item[\textit{Parametre}] \wancicode{y}
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%% Sekundaere Attribute %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Sekund\"are Attribute}
+keine
+
+%%%%%%%% Methoden %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Methoden}
+\begin{itemize}
+
+\item \wancicode{SetX()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{x}
+\item[\textit{Description}] Setzt die Argumentliste
+\item[\textit{Results}] \wancicode{self.\_\_x}
+\end{enumerate}
+
+\item \wancicode{SetY()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{y}
+\item[\textit{Description}] Setzt die Wertliste
+\item[\textit{Results}] \wancicode{self.\_\_y}
+\end{enumerate}
+
+\item \wancicode{GetX()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Liefert die Argumentliste
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{GetY()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Liefert die Wertliste
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%%% Objektfunktionalitaet %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Objektfunktionalit\"at}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Size
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\paragraph{\wancicode{Size}}
+\subparagraph{Modul}
+\wancicode{data.py}
+
+%%%%%%% Parameter %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subparagraph{Parameter}
+\begin{itemize}
+\item \wancicode{size}
+\begin{enumerate}
+\item[\textit{Methods}]
+\wancicode{Init(size)} oder 
+\wancicode{(SetSize(size)}
+\item[\textit{Valids}] Jedes 2-Tupel von positiven ganzen Zahlen
+\item[\textit{Default}] keine
+\item[\textit{Description}] Die Gr\"o"senangabe
+\item[\textit{Attribute}] \wancicode{self.\_\_size}
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%% Primaere Attribute %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Prim\"are Attribute}
+\begin{itemize}
+\item \wancicode{self.\_\_size}
+\begin{enumerate}
+\item[\textit{Methods}]
+\wancicode{Init(size)}
+\wancicode{SetSize(size)}
+\item[\textit{Valids}] Jedes 2-Tupel von positiven ganzen Zahlen
+\item[\textit{Default}] keiner
+\item[\textit{Description}] Die Gr\"ossenangabe
+\item[\textit{Parametre}] \wancicode{size}
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%%% Sekundaere Attribute %%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Sekund\"are Attribute}
+keine
+
+%%%%%%%%% Methoden %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Methoden}
+\begin{itemize}
+
+\item \wancicode{Init(size)}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{size}
+\item[\textit{Description}] Initialisiert die Klasse
+\item[\textit{Results}] \wancicode{self.\_\_size}
+\end{enumerate}
+
+\item \wancicode{SetSize(size)}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{size}
+\item[\textit{Description}] Setzt die Gr\"o"enangabe
+\item[\textit{Results}] \wancicode{self.\_\_size}
+\end{enumerate}
+
+\item \wancicode{GetSize()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Liefert die Gr\"o"enangabe
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%% Objektfuntkionalitaet %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Objektfunktionalit\"at}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Colormode
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\paragraph{\wancicode{Colormode}}
+
+\subparagraph{Modul} \wancicode{colors.py}
+
+%%%%%%%%%% Parameter %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subparagraph{Parameter}
+\begin{itemize}
+
+\item \wancicode{mode}
+\begin{enumerate}
+\item[\textit{Methods}]
+\wancicode{Init(mode = ``RGB'')},
+\wancicode{SetMode(mode = ``RGB'')}
+\item[\textit{Valids}] \wancicode{``RGB'', ``RGBA'', ``CMYK'', 
+``1'', ``P'', ``L'', ``XYZ''}
+\item[\textit{Default}] \wancicode{``RGB''}
+\item[\textit{Description}] Der Farbmodus
+\item[\textit{Attribute}] \wancicode{self.\_\_mode}
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%%%% Primaere Attribute %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Prim\"are Attribute}
+\begin{itemize}
+
+\item \wancicode{self.\_\_mode}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(mode = ``RGB'')}
+\item[\textit{Valids}] \wancicode{``RGB'', ``RGBA'', ``CMYK'', 
+``1'', ``P'', ``L'', ``XYZ''}
+\item[\textit{Default}] ``RGB''
+\item[\textit{Description}] Der Farbmodus
+\item[\textit{Parametre}] \wancicode{mode}
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%%%% Sekundaere Attribute %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Sekund\"are Attribute}
+keine
+
+%%%%%%%%%%  Methoden %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Methoden}
+\begin{itemize}
+
+\item \wancicode{Init()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{mode}
+\item[\textit{Description}] Initialisiert die Klasse
+\item[\textit{Results}] \wancicode{self.\_\_mode}
+\end{enumerate}
+
+\item \wancicode{SetMode()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{mode} 
+\item[\textit{Description}] Setzt den Farbmodus
+\item[\textit{Results}] \wancicode{self.\_\_mode}
+\end{enumerate}
+
+\item \wancicode{GetMode()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine 
+\item[\textit{Description}] Liefert den Farbmodus
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%%%% Objektfunktionalitaet  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Objektfunktionalit\"at}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Color
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\paragraph{\wancicode{Color}}
+\subparagraph{Modul}
+\wancicode{colors.py}
+
+%%%%%%%%% Parameter %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subparagraph{Parameter}
+
+\begin{itemize}
+\item \wancicode{mode}
+\begin{enumerate}
+\item[\textit{Methods}]
+\wancicode{Init(mode = ``RGB'')}
+\wancicode{SetMode(mode)}
+\item[\textit{Valids}] \wancicode{``RGB'', ``RGBA'', ``CMYK'', 
+``1'', ``P'', ``L'', ``XYZ''}
+\item[\textit{Default}] \wancicode{``RGB''}
+\item[\textit{Description}] Der Farbmodus des Farbobjektes
+\item[\textit{Attribute}] \wancicode{self.\_\_mode}
+\end{enumerate}
+
+\item \wancicode{value}
+\begin{enumerate}
+\item[\textit{Methods}] 
+\wancicode{SetValue(value)}
+\item[\textit{Valids}] Jede korrekte Farbangabe in Abh\"angigkeit
+von \wancicode{self.\_\_mode}
+\item[\textit{Default}] keiner
+\item[\textit{Description}] Der Farbwert
+\item[\textit{Attribute}] \wancicode{self.\_\_value}
+\end{enumerate}
+
+\item \wancicode{shade}
+\begin{enumerate}
+\item[\textit{Methods}] 
+\wancicode{ShadeDown(), ShadeUp()}
+\item[\textit{Valids}] Jede ganze Zahl
+\item[\textit{Default}] keiner
+\item[\textit{Description}] Wert, um den \wancicode{self.\_\_value} in
+ab- bzw. aufschattiert wird
+\item[\textit{Attribute}] keine
+\end{enumerate}
+
+\end{itemize}
+
+\newpage
+
+\subparagraph{Prim\"are Attribute}
+\begin{description}
+\item \wancicode{self.\_\_mode}
+\begin{enumerate}
+\item[\textit{Methods}]
+\wancicode{Init(), SetMode()}
+\item[\textit{Valids}] 
+\wancicode{``RGB'', ``RGBA'', ``CMYK'', ``1'', ``P'', ``L'', ``XYZ''}
+\item[\textit{Default}] \wancicode{``RGB''}
+\item[\textit{Description}] Der Farbmodus
+\item[\textit{Parametre}] \wancicode{mode}
+\end{enumerate}
+
+\item \wancicode{self.\_\_value}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetValue()}
+\item[\textit{Valids}] Jede korrekte Farbangabe in Abh\"angigkeit
+von \wancicode{self.\_\_mode}
+\item[\textit{Default}] keiner
+\item[\textit{Description}] Der Farbwert
+\item[\textit{Parametre}] \wancicode{value}
+\end{enumerate}
+
+\end{description}
+
+\newpage
+
+\subparagraph{Sekund\"are Attribute}
+keine
+
+\newpage
+
+\subparagraph{Methoden}
+\begin{description}
+\item \wancicode{Init()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{mode}
+\item[\textit{Description}] Initialisiert ein Objekt
+\item[\textit{Results}] \wancicode{self.\_\_mode}
+\end{enumerate}
+
+\item \wancicode{TestRGB()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{value}
+\item[\textit{Description}] Testet die Eingabe auf Korrektheit bzgl.
+dem RGB-Format
+\item[\textit{Results}] \wancicode{1} oder \wancicode{0}
+\end{enumerate}
+
+\item \wancicode{Test()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{value}
+\item[\textit{Description}] Testet die Eingabe auf Korrektkeit bzgl.
+\wancicode{self.\_\_mode}
+\item[\textit{Results}] \wancicode{1} oder \wancicode{0}
+\end{enumerate}
+
+\item \wancicode{SetMode()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{mode}
+\item[\textit{Description}] Setzt den Farbmodus
+\item[\textit{Results}] \wancicode{self.\_\_mode}
+\end{enumerate}
+
+\item \wancicode{SetValue()}
+\begin{enumerate}
+\item[\textit{Arguments}]  \wancicode{value}
+\item[\textit{Description}] Setzt den Farbwert
+\item[\textit{Results}] \wancicode{self.\_\_value}
+\end{enumerate}
+
+\item \wancicode{ShadeDown()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{shade}
+\item[\textit{Description}] Schattiert \wancicode{self.\_\_value}
+um \wancicode{shade} ab. \wancicode{self.\_\_value} bleibt unver\"andert
+\item[\textit{Results}] Abschattierter Farbwert
+\end{enumerate}
+
+\item \wancicode{ShadeUp()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{shade}
+\item[\textit{Description}] Schattiert \wancicode{self.\_\_value}
+um \wancicode{shade} auf. \wancicode{self.\_\_value} bleibt unver\"andert
+\item[\textit{Results}] Aufschattierter Farbwert
+\end{enumerate}
+
+\item \wancicode{GetMode()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Liefert \wancicode{self.\_\_mode}
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{GetValue()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Liefert \wancicode{self.\_\_value}
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\end{description}
+
+\subparagraph{Objektfunktionalit\"at}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Colorlist
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\newpage
+
+\paragraph{\wancicode{Colorlist}}
+\subparagraph{Modul} \wancicode{colors.py}
+
+%%%%%%%%% Parameter %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subparagraph{Parameter}
+\begin{itemize}
+\item \wancicode{list}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., list, ...)},
+\wancicode{SetLight(list)}
+\item[\textit{Valids}] Jede Liste von Farben, die 
+\wancicode{self.\_\_mode} entsprechen
+\item[\textit{Default}] keiner
+\item[\textit{Description}] Die Farbliste
+\item[\textit{Attribute}] \wancicode{self.\_\_light}
+\end{enumerate}
+
+\item \wancicode{mode}
+\begin{enumerate}
+\item[\textit{Methods}]
+\wancicode{Init(..., mode = ``RGB'', ...)},
+\wancicode{SetMode(mode = ``RGB'')}
+\item[\textit{Valids}] 
+\wancicode{``RGB'', ``RGBA'', ``CMYK'', ``1'', ``P'', ``L'', ``XYZ''}
+\item[\textit{Default}] \wancicode{``RGB''}
+\item[\textit{Description}] Der Farbmodus f\"ur alle Farben in
+\wancicode{self.\_\_light, self.\_\_medium, self.\_\_dark}
+\item[\textit{Attribute}] \wancicode{self.\_\_mode}
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%%%% Primaere Attribute%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Prim\"are Attribute}
+\begin{itemize}
+\item \wancicode{self.\_\_light}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init()}, \wancicode{SetLight}
+\item[\textit{Valids}] Jede Liste von Farben, die 
+\wancicode{self.\_\_mode} entsprechen
+\item[\textit{Default}] keiner
+\item[\textit{Description}] Die hellste der drei resultierenden
+Farblisten
+\item[\textit{Parametre}] \wancicode{list}
+\end{enumerate}
+
+\item \wancicode{self.\_\_mediumshade}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetMediumshade()}
+\item[\textit{Valids}] Jede ganze Zahl
+\item[\textit{Default}] keiner
+\item[\textit{Description}] Mittlerer Abschattierungskoeffizient
+\item[\textit{Parametre}] \wancicode{shade}
+\end{enumerate}
+
+\item \wancicode{self.\_\_darkshade}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetDarkshade()}
+\item[\textit{Valids}] Jede ganze Zahl
+\item[\textit{Default}] keiner
+\item[\textit{Description}] Dunkler Abbschattierungskoeefizient
+\item[\textit{Parametre}] \wancicode{shade}
+\end{enumerate}
+
+\item \wancicode{self.\_\_mode}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init()}, \wancicode{SetMode()}
+\item[\textit{Valids}] 
+\wancicode{``RGB'', ``RGBA'', ``CMYK'', ``1'', ``P'', ``L'', ``XYZ''}
+\item[\textit{Default}] \wancicode{``RGB''}
+\item[\textit{Description}] Der Farbmodus f\"ur 
+\wancicode{self.\_\_light, self.\_\_medium, self.\_\_dark}
+\item[\textit{Parametre}] \wancicode{mode}
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%% Sekundaere Attribute %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Sekund\"are Attribute}
+\begin{itemize}
+
+\item \wancicode{self.\_\_medium}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetMedium()}
+\item[\textit{Valids}] Jede Liste von Farben, die 
+\wancicode{self.\_\_mode} entsprechen
+\item[\textit{Description}] Die Farbliste mittlerer Helligkeit
+\end{enumerate}
+
+\item \wancicode{self.\_\_dark}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetDark()}
+\item[\textit{Valids}] Jede Liste von Farben, die 
+\wancicode{self.\_\_mode} entsprechen
+\item[\textit{Description}] Die dunkelste Farbliste
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%%%% Methoden %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Methoden}
+\begin{itemize}
+
+\item \wancicode{Init()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{list}, \wancicode{mode}
+\item[\textit{Description}] Initialisiert ein 
+Farblistenobjekt
+\item[\textit{Results}] \wancicode{self.\_\_light, 
+self.\_\_mediumshade = 0, self.\_\_darshade = 0}
+\end{enumerate}
+
+\item \wancicode{SetLight()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{list}
+\item[\textit{Description}] Setzt die Liste \wancicode{self.\_\_light}
+\item[\textit{Results}] \wancicode{self.\_\_light}
+\end{enumerate}
+
+\item \wancicode{SetMode()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{mode}
+\item[\textit{Description}] Setzt den Farbmodus der Listen
+\item[\textit{Results}] \wancicode{self.\_\_mode}
+\end{enumerate}
+
+\item \wancicode{SetMediumshade()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{shade}
+\item[\textit{Description}] Setzt den mittleren 
+Abschattierungskoeffizienten
+\item[\textit{Results}] \wancicode{self.\_\_mediumshade}
+\end{enumerate}
+
+\item \wancicode{SetDarkshade()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{shade}
+\item[\textit{Description}] Setzt den dunklen 
+Abschattierungskoeffizienten 
+\item[\textit{Results}] \wancicode{self.\_\_darkshade}
+\end{enumerate}
+
+\item \wancicode{SetMedium()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Setzt die 
+mittlere Farbliste
+\item[\textit{Results}] \wancicode{self.\_\_medium}
+\end{enumerate}
+
+\item \wancicode{SetDark()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Setzt die 
+dunkle Farbliste
+\item[\textit{Results}] \wancicode{self.\_\_dark}
+\end{enumerate}
+
+\item \wancicode{GetLight()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Liefert die helle 
+Farbliste
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{GetMedium()} 
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Liefert die mittlere
+Farbliste
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{GetDark()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Liefert die dunkle
+Farbliste
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\end{itemize}
+
+\newpage
+
+\subparagraph{Objektfunktionalit\"at}
+
+%%%%%%%% Font %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\paragraph{\wancicode{Font}}
+\subparagraph{Modul} \wancicode{file.py}
+
+%%%%%%%% Parameter %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subparagraph{Parameter}
+\begin{itemize}
+
+\item \wancicode{name}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetName(name)}
+\item[\textit{Valids}] Jeder g\"ultige Font-Dateiname
+\item[\textit{Default}] keiner
+\item[\textit{Description}] Der Name der Fontdatei
+\item[\textit{Attribute}] \wancicode{self.\_\_name}
+\end{enumerate}
+
+\item \wancicode{dir}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetDir(dir) = '/fonts/'}
+\item[\textit{Valids}] Jeder g\"ultige Verzeichnisname
+\item[\textit{Default}] \wancicode{'/fonts/'}
+\item[\textit{Description}] Der Name des Fontverzeichnisses
+\item[\textit{Attribute}] \wancicode{self.\_\_dir}
+\end{enumerate}
+
+\item \wancicode{path}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetPath(path)}
+\item[\textit{Valids}] Jeder g\"ultige Pfadname
+\item[\textit{Default}] keiner
+\item[\textit{Description}] Der komplett Pfadname, also
+die Konkatenation von Datei- und Verzeichnisname
+\item[\textit{Attribute}] \wancicode{self.\_\_path}
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%% Primaere Attribute %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Prim\"are Attribute}
+\begin{itemize}
+\item \wancicode{self.\_\_name}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetName(),
+Path2Name()}
+\item[\textit{Description}] Der Fontdateiname
+\item[\textit{Parametre}] \wancicode{name}
+\end{enumerate}
+
+\item \wancicode{self.\_\_dir}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetDir()}
+\item[\textit{Description}] Der Fontverzeichnisname
+\item[\textit{Parametre}] \wancicode{dir}
+\end{enumerate}
+
+\item \wancicode{self.\_\_path}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetPath()}
+\item[\textit{Description}] Der Fondpfadname
+\item[\textit{Parametre}] \wancicode{path}
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%% Sekundaere Attribute %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Sekund\"are Attribute}
+keine
+
+%%%%%%%%%% Methoden %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Methoden}
+\begin{itemize}
+\item \wancicode{SetName()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{name}
+\item[\textit{Description}] Setzt den Fontdateinamen
+\item[\textit{Results}] \wancicode{self.\_\_name}
+\end{enumerate}
+
+\item \wancicode{SetDir()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{dir}
+\item[\textit{Description}] Setzt den Fontverzeichnisnamen
+\item[\textit{Results}] \wancicode{self.\_\_dir}
+\end{enumerate}
+
+\item \wancicode{SetPath()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{path}
+\item[\textit{Description}] Setzt den Fontpfadnamen
+\item[\textit{Results}] \wancicode{self.\_\_path}
+\end{enumerate}
+
+\item \wancicode{Name2Path()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Konkateniert Verzeichnis- und
+Dateinamen und setzt mit dem Ergebnis den Pfadnamen
+\item[\textit{Results}] \wancicode{self.\_\_path}
+\end{enumerate}
+
+\item \wancicode{Path2NameDir()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Splittet den Pfadnamen und
+setzt mit dem Ergebnis Datei- und Verzeichnisnamen
+\item[\textit{Results}] \wancicode{self.\_\_name, 
+self.\_\_dir}
+\end{enumerate}
+
+\item \wancicode{GetName()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Liefert den Fontdateinamen
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{GetPath()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Liefert den Fontpfadnamen
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{GetSize()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{text}
+\item[\textit{Description}] Liefert Pixelbreite und -h\"ohe
+von \wancicode{text} im Font des Objektes als 2-Tupel
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%% OF %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Objektfunktionalit\"at}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\paragraph{\wancicode{File}}
+
+\subparagraph{Modul} \wancicode{file.py}
+
+%%%%%%%%% Parameter %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subparagraph{Parameter}
+\begin{itemize}
+\item \wancicode{file}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetFile()}
+\item[\textit{Valids}] jeder g\"ultige Dateiname 
+mit einem Format aus \wancicode{'jpg', 'gif', 'png', 'bmp'}
+\item[\textit{Default}] keiner
+\item[\textit{Description}] Der Dateiname 
+\item[\textit{Attribute}] \wancicode{self.\_\_file}
+\end{enumerate}
+
+\item \wancicode{dir}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetDir()}
+\item[\textit{Valids}] Jeder g\"ultige Verzeichnisname
+\item[\textit{Default}] keiner
+\item[\textit{Description}] Der Verzeichnisname
+\item[\textit{Attribute}] \wancicode{self.\_\_dir}
+\end{enumerate}
+
+\item \wancicode{path}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetPath()}
+\item[\textit{Valids}] entsprechend \wancicode{dir} und
+\wancicode{file}
+\item[\textit{Default}] keiner
+\item[\textit{Description}] Der komplette Pfadname
+\item[\textit{Attribute}] \wancicode{self.\_\_path}
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%% Primaere Attribute %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage 
+
+\subparagraph{Prim\"are Attribute}
+\begin{itemize}
+
+\item \wancicode{self.\_\_file}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetFile()},
+\wancicode{Path2File()}
+\item[\textit{Description}] Der Dateiname
+\item[\textit{Parametre}] \wancicode{file}
+\end{enumerate}
+
+\item \wancicode{self.\_\_dir}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetDir()}
+\item[\textit{Description}] Der Verzeichnisname
+\item[\textit{Parametre}] \wancicode{dir}
+\end{enumerate}
+
+\item \wancicode{self.\_\_path}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetPath()}, 
+\wancicode{File2Path()}
+\item[\textit{Description}] Der komplette Pfadname
+\item[\textit{Parametre}] \wancicode{path}
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%%%% Sekundaere Attribute %%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Sekund\"are Attribute}
+keine
+
+%%%%%%%%%% Methoden %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Methoden}
+
+\begin{itemize}
+
+\item \wancicode{SetFile()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{file}
+\item[\textit{Description}] Setzt den Dateinamen
+\item[\textit{Results}] \wancicode{self.\_\_file}
+\end{enumerate}
+
+\item \wancicode{SetDir()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{dir}
+\item[\textit{Description}] Setzt den Verzeichnisnamen
+\item[\textit{Results}] \wancicode{self.\_\_dir}
+\end{enumerate}
+
+\item \wancicode{SetPath()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{path}
+\item[\textit{Description}] Setzt den Pfadnamen
+\item[\textit{Results}] \wancicode{self.\_\_path}
+\end{enumerate}
+
+\item \wancicode{File2Path()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Konkateniert Datei-
+und Verzeichnisnamen und setzt mit dem Ergebnis
+Den Pfadnamen
+\item[\textit{Results}] \wancicode{self.\_\_path}
+\end{enumerate}
+
+\item \wancicode{Path2File()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine 
+\item[\textit{Description}] Splittet den Pfadnamen und 
+setzt mit den Ergebnissen den Datei- und Verzeichnisnamen
+\item[\textit{Results}] \wancicode{self.\_\_file}, 
+\wancicode{self.\_\_dir}
+\end{enumerate}
+
+\item \wancicode{GetFile()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Liefert den Dateinamen
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{GetPath()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine 
+\item[\textit{Description}] Liefert den Pfadnamen
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{GetDir()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Liefert den Verzeichnisnamen
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\end{itemize}
+
+
+%%%%%%%%%% OF %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Objektfunktionalit\"at}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\paragraph{\wancicode{Title}}
+\subparagraph{Modul} \wancicode{title.py}
+
+%%%%%%%%%% Parameter %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subparagraph{Parameter}
+\begin{itemize}
+
+\item \wancicode{size}
+\begin{enumerate}
+\item[\textit{Methods}]
+\wancicode{Init(..., size, ...)}, 
+\wancicode{SetSize(size)}
+\item[\textit{Valids}] Jedes g\"ultige Gr\"o"sen- 2-Tupel
+\item[\textit{Default}] keiner
+\item[\textit{Description}] Die Gr\"o"senangabe
+f\"ur das Titel- Bildelement
+\item[\textit{Attribute}] \wancicode{self.\_\_size}
+\end{enumerate}
+
+\item \wancicode{colormode}
+\begin{enumerate}
+\item[\textit{Methods}] 
+\wancicode{Init(...,colormode = ``RGB'', ...)},
+\wancicode{SetColormode(colormode = ``RGB'')}
+\item[\textit{Valids}] \wancicode{``RGB'', ``RGBA'', ``CMYK'',
+``1'', ``L'', ``P'', ``XYZ''}
+\item[\textit{Default}] \wancicode{``RGB''}
+\item[\textit{Description}] Das Farbformat f\"ur das
+Titel- Bildelement
+\item[\textit{Attribute}] \wancicode{colormode}
+\end{enumerate}
+
+\item \wancicode{text}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(...,text = '', ...)},
+\wancicode{SetText(text)}
+\item[\textit{Valids}] Jeder String
+\item[\textit{Default}] \wancicode{''}
+\item[\textit{Description}] Der Text der Titelzeile
+\item[\textit{Attribute}] \wancicode{self.\_\_text}
+\end{enumerate}
+
+\item \wancicode{font}
+\begin{enumerate}
+\item[\textit{Methods}] 
+\wancicode{Init(...,font = 'helvB12.pil', ...)},
+\wancicode{SetFont(font)}
+\item[\textit{Valids}] Jeder g\"ultige Fontpfad
+\item[\textit{Default}] \wancicode{/fonts/helvB12.pil'}
+\item[\textit{Description}] Der Font f\"ur den Titeltext
+\item[\textit{Attribute}] \wancicode{self.\_\_font}
+\end{enumerate}
+
+\item \wancicode{textcolor}
+\begin{enumerate}
+\item[\textit{Methods}] 
+\wancicode{Init(...,textcolor = (0,0,0), ...)},
+\wancicode{SetTextcolor()}
+\item[\textit{Valids}] Jede g\"ultige Farbangabe entsprechend
+\wancicode{colorformat}
+\item[\textit{Default}] \wancicode{(0,0,0)}
+\item[\textit{Description}] Die Farbe f\"ur den Titeltext
+\item[\textit{Attribute}] \wancicode{self.\_\_textcolor}
+\end{enumerate}
+
+\item \wancicode{color}
+\begin{enumerate}
+\item[\textit{Methods}] 
+\wancicode{Init(...,color = (255,255,255), ...)},
+\wancicode{SetColor(color)}
+\item[\textit{Valids}] Jede g\"ultige Farbangabe entsprechend
+\wancicode{colorformat} 
+\item[\textit{Default}] \wancicode{(255,255,255)}
+\item[\textit{Description}] Die Hintergrundfarbe des 
+Titelfeldes
+\item[\textit{Attribute}] \wancicode{self.\_\_color}
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%%% Primaere Attribute %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Prim\"are Attribute}
+\begin{itemize}
+
+\item \wancicode{self.\_\_size}
+\begin{enumerate}
+\item[\textit{Methods}] 
+\wancicode{Init(..., size, ...)}, 
+\wancicode{SetSize(size)}
+\item[\textit{Valids}] Jedes g\"ultige Gr\"o"sen- 2-Tupel
+\item[\textit{Description}] Die Gr\"o"enangabe f\"ur das 
+Titel- Bildelememt
+\item[\textit{Parametre}] \wancicode{size}
+\end{enumerate}
+
+\item \wancicode{self.\_\_colormode}
+\begin{enumerate}
+\item[\textit{Methods}]
+\wancicode{Init(...,colormode = ``RGB'', ...)},
+\wancicode{SetColormode(colormode = ``RGB'')}
+\item[\textit{Valids}] 
+\wancicode{``RGB'', ``RGBA'', ``CMYK'',
+``1'', ``L'', ``P'', ``XYZ''}
+\item[\textit{Description}] Der Farbformat f\"ur das
+Titel- Bildelement
+\item[\textit{Parametre}] \wancicode{colormode}
+\end{enumerate}
+
+\item \wancicode{self.\_\_text}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(...,text = '', ...)},
+\wancicode{SetText(text)}
+\item[\textit{Valids}] Jeder String
+\item[\textit{Description}] Der Text der Titelzeile
+\item[\textit{Parametre}] \wancicode{self.\_\_text}
+\end{enumerate}
+
+\item \wancicode{self.\_\_color}
+\begin{enumerate}
+\item[\textit{Methods}] 
+\wancicode{Init(...,color = (255,255,255), ...)},
+\wancicode{SetColor(color)}
+\item[\textit{Valids}] Jede g\"ultige Farbangabe entsprechend
+\wancicode{colorformat} 
+\item[\textit{Description}] Die Hintergrundfarbe des 
+Titelfeldes
+\item[\textit{Parametre}] \wancicode{self.\_\_color}
+\end{enumerate}
+
+\item \wancicode{self.\_\_textcolor}
+\begin{enumerate}
+\item[\textit{Methods}] 
+\wancicode{Init(...,textcolor = (0,0,0), ...)},
+\wancicode{SetTextcolor()}
+\item[\textit{Valids}] Jede g\"ultige Farbangabe entsprechend
+\wancicode{colorformat}
+\item[\textit{Description}] Die Farbe f\"ur den Titeltext
+\item[\textit{Parametre}] \wancicode{self.\_\_textcolor}
+\end{enumerate}
+
+\item \wancicode{self.\_\_font}
+\begin{enumerate}
+\item[\textit{Methods}] 
+\wancicode{Init(...,font = 'helvB12.pil', ...)},
+\wancicode{SetFont(font)}
+\item[\textit{Valids}] Jeder g\"ultige Fontpfad
+\item[\textit{Description}] Der Font f\"ur den Titeltext
+\item[\textit{Parametre}] \wancicode{self.\_\_font}
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%% Sekundaere Attribute %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Sekund\"are Attribute}
+\begin{itemize}
+
+\item \wancicode{self.\_\_pict}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Draw()}
+\item[\textit{Valids}] keine
+\item[\textit{Description}] Das \wancicode{Image}-Objekt der KLasse
+\end{enumerate}
+
+\item \wancicode{self.\_\_pic}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Draw()}
+\item[\textit{Valids}] keine
+\item[\textit{Description}] Das \wancicode{ImageDraw}-Objekt
+zu \wancicode{self.\_\_pict}
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%% Methoden %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Methoden}
+\begin{itemize}
+  
+\item \wancicode{Init()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{size, colormode, text, font,
+    textcolor, color}
+\item[\textit{Description}] Synchrones Setzen aller prim\"aren
+  Attribute
+\item[\textit{Results}] \wancicode{self.\_\_size, self.\_\_colormode,
+    self.\_\_text, self.\_\_color, self.\_\_textcolor, self.\_\_font}
+\end{enumerate}
+
+\item \wancicode{SetSize()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{size}
+\item[\textit{Description}] Setzt die Bildgr\"o"se
+\item[\textit{Results}] \wancicode{self.\_\_size}
+\end{enumerate}
+
+\item \wancicode{SetColormode()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{colormode}
+\item[\textit{Description}] Setzt das Farbformat
+\item[\textit{Results}] \wancicode{self.\_\_colormode}
+\end{enumerate}
+
+\item \wancicode{SetText()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{text}
+\item[\textit{Description}] Setzt den Titeltext
+\item[\textit{Results}] \wancicode{self.\_\_text}
+\end{enumerate}
+
+\item \wancicode{SetColor()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{color}
+\item[\textit{Description}] Setzt die Hintergrundfarbe
+\item[\textit{Results}] \wancicode{self.\_\_color}
+\end{enumerate}
+
+\item \wancicode{SetTextcolor()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{textcolor}
+\item[\textit{Description}] Setzt die Textfarbe
+\item[\textit{Results}] \wancicode{self.\_\_textcolor}
+\end{enumerate}
+
+\item \wancicode{SetFont()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{font}
+\item[\textit{Description}] Setzt den Textfont f\"ur die Titelzeile
+\item[\textit{Results}] \wancicode{self.\_\_font}
+\end{enumerate}
+
+\item \wancicode{Draw()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Erzeugt ein PIL-Bildobjekt
+\item[\textit{Results}] \wancicode{self.\_\_pict},
+  \wancicode{self.\_\_pic}
+\end{enumerate}
+
+\item \wancicode{GetPicture()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Liefert das fertige Titel- Bilobjekt
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%%% OF %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Objektfunktionalit\"at}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Legend
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\paragraph{\wancicode{Legend}}
+\subparagraph{Modul} \wancicode{legend.py}
+
+%%%%%%%%%%%%% Parameter %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subparagraph{Parameter}
+\begin{itemize}
+  
+\item \wancicode{x}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., x = [0], ...)},
+  \wancicode{SetX(x)}
+\item[\textit{Valids}] Jede Liste von Zahlen oder Strings
+\item[\textit{Default}] \wancicode{[0]}
+\item[\textit{Description}] Die Argumentliste
+\item[\textit{Attribute}] \wancicode{self.\_\_x}
+\end{enumerate}
+
+\item \wancicode{y}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., y = [0], ...)},
+  \wancicode{SetY(y)}
+\item[\textit{Valids}] Jede Liste von Zahlen
+\item[\textit{Default}] \wancicode{[0]}
+\item[\textit{Description}] Die Werteliste
+\item[\textit{Attribute}] \wancicode{self.\_\_y}
+\end{enumerate}
+
+\item \wancicode{names}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., names = [], ...)}
+  \wancicode{SetNames(names)}
+\item[\textit{Valids}] Jede Liste von Strings
+\item[\textit{Default}] \wancicode{[]}
+\item[\textit{Description}] Die Liste von Legendennamen
+\item[\textit{Attribute}] \wancicode{self.\_\_names}
+\end{enumerate}
+
+\item \wancicode{size}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., size = (10,10), ...)},
+  \wancicode{SetSize(size)}
+\item[\textit{Valids}] Jedes g\"ultige Gr\"o"sen- 2-Tupel
+\item[\textit{Default}] \wancicode{(10,10}
+\item[\textit{Description}] Die Gr\"o"se des Legenden- Bildobjektes
+\item[\textit{Attribute}] \wancicode{self.\_\_size}
+\end{enumerate}
+
+\item \wancicode{text}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., text = '', ...)},
+  \wancicode{SetText(text)}
+\item[\textit{Valids}] Jeder String
+\item[\textit{Default}] \wancicode{''}
+\item[\textit{Description}] Optionaler Text, z.B. f\"ur eine
+  Legenden\"uberschrift
+\item[\textit{Attribute}] \wancicode{self.\_\_text}
+\end{enumerate}
+
+\item \wancicode{color}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., color = (255,255,255),
+    ...)}, \wancicode{SetColor(color)}
+\item[\textit{Valids}] Jede in \"Uberstimmung mit dem Farbformat
+  g\"ultige Farbdarstellung
+\item[\textit{Default}] \wancicode{(255,255,255)}
+\item[\textit{Description}] Die Hintergrundfarbe der Legende
+\item[\textit{Attribute}] \wancicode{self.\_\_color}
+\end{enumerate}
+
+\item \wancicode{colorlist}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., colorlist = [], ...)},
+  \wancicode{SetColorlist(colorlist)}
+\item[\textit{Valids}] Jede Liste von in \"Ubereinstimmung mit dem
+  Farbformat g\"ultige Liste von Farben
+\item[\textit{Default}] \wancicode{[]}
+\item[\textit{Description}] Die Farbliste zur farblich abgesetzten
+  Darstellung der Legendentexte
+\item[\textit{Attribute}] \wancicode{colorlist}
+\end{enumerate}
+
+\item \wancicode{font}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., font =
+    '/fonts/helvB12.pil', ...)}, \wancicode{SetFont(font)}
+\item[\textit{Valids}] Jeder g\"ultige Fontpfad
+\item[\textit{Default}] \wancicode{'/fonts/helvB12.pil'}
+\item[\textit{Description}] Der Font f\"ur den Legendentext
+\item[\textit{Attribute}] \wancicode{self.\_\_font}
+\end{enumerate}
+
+\item \wancicode{textcolor}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., textcolor = (0,0,0),
+    ...)}, \wancicode{SetTextcolor(textcolor)}
+\item[\textit{Valids}] Jede in \"Ubereinstimmung mit dem Farbformat
+  g\"ultige Farbe
+\item[\textit{Default}] \wancicode{(0,0,0)}
+\item[\textit{Description}] Die Farbe zur einheitlichen F\"arbung der
+  Legendentexte
+\item[\textit{Attribute}] \wancicode{self.\_\_textcolor}
+\end{enumerate}
+
+\item \wancicode{colormode}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., colormode, ...)},
+  \wancicode{SetColormode(colormode)}
+\item[\textit{Valids}] \wancicode{``RGB'', ``RGBA'', ``CMYK'', ``1'',
+    ``L'', ``P'', ``XYZ''}
+\item[\textit{Default}] \wancicode{``RGB''}
+\item[\textit{Description}] Der Farbmodus
+\item[\textit{Attribute}] \wancicode{self.\_\_colormode}
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%% Primaere Attribute %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Prim\"are Attribute}
+\begin{itemize}
+  
+\item \wancicode{self.\_\_x}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., x = [0], ...)},
+  \wancicode{SetX(x)}
+\item[\textit{Description}] Die Argumentliste
+\item[\textit{Parametre}] \wancicode{x}
+\end{enumerate}
+
+\item \wancicode{self.\_\_y}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., y = [0], ...)},
+  \wancicode{SetY(y)}
+\item[\textit{Description}] Die Werteliste
+\item[\textit{Parametre}] \wancicode{y}
+\end{enumerate}
+
+\item \wancicode{self.\_\_names}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., names = [], ...)}
+  \wancicode{SetNames(names)}
+\item[\textit{Description}] Die Liste von Legendennamen
+\item[\textit{Parametre}] \wancicode{names}
+\end{enumerate}
+
+\item \wancicode{self.\_\_size}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., size = (10,10), ...)},
+  \wancicode{SetSize(size)}
+\item[\textit{Description}] Die Gr\"o"se des Legenden- Bildobjektes
+\item[\textit{Parametre}] \wancicode{size}
+\end{enumerate}
+
+\item \wancicode{self.\_\_font}
+\item \wancicode{font}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., font =
+    '/fonts/helvB12.pil', ...)}, \wancicode{SetFont(font)}
+\item[\textit{Description}] Der Font f\"ur den Legendentext
+\item[\textit{Parametre}] \wancicode{font}
+\end{enumerate}
+
+\item \wancicode{self.\_\_text}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., text = '', ...)},
+  \wancicode{SetText(text)}
+\item[\textit{Description}] Optionaler Text, z.B. f\"ur eine
+  Legenden\"uberschrift
+\item[\textit{Parametre}] \wancicode{text}
+\end{enumerate}
+
+\item \wancicode{self.\_\_textcolor}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., textcolor = (0,0,0),
+    ...)}, \wancicode{SetTextcolor(textcolor)}
+\item[\textit{Description}] Die Farbe zur einheitlichen F\"arbung der
+  Legendentexte
+\item[\textit{Parametre}] \wancicode{textcolor}
+\end{enumerate}
+
+\item \wancicode{self.\_\_color}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., color = (255,255,255),
+    ...)}, \wancicode{SetColor(color)}
+\item[\textit{Description}] Die Hintergrundfarbe der Legende
+\item[\textit{Parametre}] \wancicode{color}
+\end{enumerate}
+
+\item \wancicode{self.\_\_colorlist}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., colorlist = [], ...)},
+  \wancicode{SetColorlist(colorlist)}
+\item[\textit{Description}] Die Farbliste zur farblich abgesetzten
+  Darstellung der Legendentexte
+\item[\textit{Parametre}] \wancicode{colorlist}
+\end{enumerate}
+
+\item \wancicode{self.\_\_colormode}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., colormode, ...)},
+  \wancicode{SetColormode(colormode)}
+\item[\textit{Description}] Der Farbmodus
+\item[\textit{Parametre}] \wancicode{colormode}
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%% Sekundaere Attribute %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Sekund\"are Attribute}
+\begin{itemize}
+  
+\item \wancicode{self.\_\_rows}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init()}
+\item[\textit{Valids}] keine
+\item[\textit{Description}] Die Anzahl der Text-Reihen im Legendenfeld
+\end{enumerate}
+
+\item \wancicode{self.\_\_cols}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init()}
+\item[\textit{Valids}] keine
+\item[\textit{Description}] Die Anzahl der Text-Spalten im
+  Legendenfeld
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%% Methoden %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Methoden}
+\begin{itemize}
+  
+\item \wancicode{Init()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{x, y, names, size, text,
+    colorlist, font, textcolor, colormode}
+\item[\textit{Description}] Initialisiert die Attribute auf einmal
+\item[\textit{Results}] \wancicode{self.\_\_x, self.\_\_y,
+    self.\_\_names, self.\_\_size, self.\_\_text, self.\_\_colorlist,
+    self.\_\_font, self.\_\_textcolor, self.\_\_colormode}
+\end{enumerate}
+
+\item \wancicode{SetX()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{x}
+\item[\textit{Description}] Setzt die Argumentliste
+\item[\textit{Results}] \wancicode{self.\_\_x}
+\end{enumerate}
+
+\item \wancicode{SetY()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{y}
+\item[\textit{Description}] Setzt die Werteliste
+\item[\textit{Results}] \wancicode{self.\_\_y}
+\end{enumerate}
+
+\item \wancicode{SetNames()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{names}
+\item[\textit{Description}] Setzt die Liste von Legendennamen
+\item[\textit{Results}] \wancicode{self.\_\_names}
+\end{enumerate}
+
+\item \wancicode{SetSize()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{size}
+\item[\textit{Description}] Setzt das Gr\"o"sentupel
+\item[\textit{Results}] \wancicode{self.\_\_size}
+\end{enumerate}
+
+\item \wancicode{SetText()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{text}
+\item[\textit{Description}] Setzt die optionale Textzeile
+\item[\textit{Results}] \wancicode{self.\_\_text}
+\end{enumerate}
+
+\item \wancicode{SetColor()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{color}
+\item[\textit{Description}] Setzt die Hintergrundfarbe
+\item[\textit{Results}] \wancicode{self.\_\_color}
+\end{enumerate}
+
+\item \wancicode{SetTextcolor()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{textcolor}
+\item[\textit{Description}] Setzt die Einzel-Textfarbe
+\item[\textit{Results}] \wancicode{self.\_\_textcolor}
+\end{enumerate}
+
+\item \wancicode{SetColorlist()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{colorlist}
+\item[\textit{Description}] Setzt die Farbliste
+\item[\textit{Results}] \wancicode{self.\_\_colorlist}
+\end{enumerate}
+
+\item \wancicode{SetFont()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{font}
+\item[\textit{Description}] Setzt und l\"adt den Textfont
+\item[\textit{Results}] \wancicode{self.\_\_font}
+\end{enumerate}
+
+\item \wancicode{ListDraw()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Erzeugt ein Bildobjekt und zeichnet eine
+  Legendenliste
+\item[\textit{Results}] \wancicode{self.\_\_pict}
+\end{enumerate}
+
+\item \wancicode{NameDraw()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Erzeugt ein Bildobjekt und zeichnet eine
+  Namenliste
+\item[\textit{Results}] \wancicode{self.\_\_pict}
+\end{enumerate}
+
+\item \wancicode{GetPicture()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Liefert das fertige Legenden- Bildobjekt
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%%%% OF %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Objektfunktionalit\"at}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Graphic
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\paragraph{\wancicode{Graphic}}
+\subparagraph{Modul} \wancicode{graphic.py}
+
+\subparagraph{Parameter}
+\begin{itemize}
+  
+\item \wancicode{x}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., x, ...)},
+  \wancicode{SetX(x)}
+\item[\textit{Valids}] Jede Liste von Strings oder Zahlen
+\item[\textit{Default}] keiner
+\item[\textit{Description}] Die Argumentliste
+\item[\textit{Attribute}] \wancicode{self.\_\_x}
+\end{enumerate}
+
+\item \wancicode{y}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., y, ...)},
+  \wancicode{SetY(y)}
+\item[\textit{Valids}] Jede Liste von Zahlen, die in ihrer L\"ange
+  \wancicode{x} entspricht
+\item[\textit{Default}] keiner
+\item[\textit{Description}] Die Werteliste
+\item[\textit{Attribute}] \wancicode{self.\_\_y}
+\end{enumerate}
+
+\item \wancicode{size}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., size = (10,10), ...)},
+  \wancicode{SetSize(size)}
+\item[\textit{Valids}] Jedes g\"ultige Gr\"o"sen-Tupel
+\item[\textit{Default}] \wancicode{(10,10)}
+\item[\textit{Description}] Die Gr\"o"senangabe
+\item[\textit{Attribute}] \wancicode{self.\_\_size}
+\end{enumerate}
+
+\item \wancicode{color}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., color = (255,255,255),
+    ...)}, \wancicode{SetColor()}
+\item[\textit{Valids}] Jede g\"ultige Farbangabe in \"ubereinstimmung
+  mit dem Farbformat
+\item[\textit{Default}] \wancicode{(255,255,255)}
+\item[\textit{Description}] Die Hintergrundfarbe
+\item[\textit{Attribute}] \wancicode{self.\_\_color}
+\end{enumerate}
+
+\item \wancicode{light}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., light = [], ...)},
+  \wancicode{SetLight(light)}
+\item[\textit{Valids}] Jede Farbliste in \"Ubereinstimmung mir dem
+  Farbformat
+\item[\textit{Default}] \wancicode{[]}
+\item[\textit{Description}] die helle Farbliste
+\item[\textit{Attribute}] \wancicode{self.\_\_light}
+\end{enumerate}
+
+\item \wancicode{medium}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., medium = [], ...)},
+  \wancicode{SetMedium(medium)}
+\item[\textit{Valids}] Jede Farbliste in \"Ubereinstimmung mir dem
+  Farbformat
+\item[\textit{Default}] \wancicode{[]}
+\item[\textit{Description}] Die mittlere Farbliste
+\item[\textit{Attribute}] \wancicode{self.\_\_medium}
+\end{enumerate}
+
+\item \wancicode{dark}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., dark = [], ...)},
+  \wancicode{SetDark(dark)}
+\item[\textit{Valids}] Jede Farbliste in \"Ubereinstimmung mir dem
+  Farbformat
+\item[\textit{Default}] \wancicode{[]}
+\item[\textit{Description}] Die dunkle Farbliste
+\item[\textit{Attribute}] \wancicode{self.\_\_dark}
+\end{enumerate}
+
+\item \wancicode{textcolor}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., textcolor = (0,0,0),
+    ...)}, \wancicode{SetTextcolor(textcolor)}
+\item[\textit{Valids}] Jede Farbdarstellung in \"Ubereinstimmung mit
+  dem Farbformat
+\item[\textit{Default}] \wancicode{(0,0,0)}
+\item[\textit{Description}] Die Farbe f\"ur die Beschriftungen
+\item[\textit{Attribute}] \wancicode{self.\_\_textcolor}
+\end{enumerate}
+
+\item \wancicode{font}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., font =
+    '/fonts/helvB12.pil', ...)}, \wancicode{SetFont(font)}
+\item[\textit{Valids}] Jeder g\"ultige Fontpfad
+\item[\textit{Default}] \wancicode{/fonts/helvB08.pil'}
+\item[\textit{Description}] Der Font f\"ur die Beschriftungen
+\item[\textit{Attribute}] \wancicode{self.\_\_font}
+\end{enumerate}
+
+\item \wancicode{linecolor}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., linecolor = (0,0,0),
+    ...)}, \wancicode{SetLinecolor(linecolor)}
+\item[\textit{Valids}] Jede Farbdarstellung in \"Ubereinstimmung mit
+  dem Farbformat
+\item[\textit{Default}] \wancicode{(0,0,0)}
+\item[\textit{Description}] Die Farbe f\"ur Koordinatenlinien
+\item[\textit{Attribute}] \wancicode{self.\_\_linecolor}
+\end{enumerate}
+
+\item \wancicode{backlinecolor}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., backlinecolor =
+    (150,150,150), ...)}, \wancicode{SetBacklinecolor(backlinecolor)}
+\item[\textit{Valids}] Jede Farbdarstellung in \"Ubereinstimmung mit
+  dem Farbformat
+\item[\textit{Default}] \wancicode{(150,150,150)}
+\item[\textit{Description}] Die Farbe f\"ur perspektivisch
+  zur\"uckgesetzte Koordinatenlinien
+\item[\textit{Attribute}] \wancicode{self.\_\_backlinecolor}
+\end{enumerate}
+
+\item \wancicode{mc}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., mc = 1.1, ...)},
+  \wancicode{SetMc(mc)}
+\item[\textit{Valids}] Jede positive Zahl
+\item[\textit{Default}] \wancicode{1.1}
+\item[\textit{Description}] \"Uberschu"skoeffizient f\"ur die H\"ohe
+  der y-Achse
+\item[\textit{Attribute}] \wancicode{self.\_\_mc}
+\end{enumerate}
+
+\item \wancicode{devc}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., devc = (1,1), ...)},
+  \wancicode{SetDevc(devc)}
+\item[\textit{Valids}] Jedes 2-Tupel von positiven Zahlen
+\item[\textit{Default}] \wancicode{(1,1)}
+\item[\textit{Description}] Koeefizientenpaar f\"ur die
+  perspektivische Verk\"urzung von 3D-Objekten
+\item[\textit{Attribute}] \wancicode{self.\_\_devc}
+\end{enumerate}
+
+\item \wancicode{xres}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., xres = 1, ...)},
+  \wancicode{SetXres(xres)}
+\item[\textit{Valids}] Jede positive Zahl
+\item[\textit{Default}] \wancicode{1}
+\item[\textit{Description}] Aufl\"osung der x-Achsen-Rasterung
+\item[\textit{Attribute}] \wancicode{self.\_\_xres}
+\end{enumerate}
+
+\item \wancicode{yres}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., yres = 1, ...)},
+  \wancicode{SetYres(yres)}
+\item[\textit{Valids}] Jede positive Zahl
+\item[\textit{Default}] \wancicode{1}
+\item[\textit{Description}] Aufl\"osung der y-Achsen-Rasterung
+\item[\textit{Attribute}] \wancicode{self.\_\_yres}
+\end{enumerate}
+
+\item \wancicode{xname}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., xname = '', ...)},
+  \wancicode{SetXname(xname)}
+\item[\textit{Valids}] Jeder String
+\item[\textit{Default}] \wancicode{''}
+\item[\textit{Description}] x-Achsen-Beschriftung
+\item[\textit{Attribute}] \wancicode{self.\_\_xname}
+\end{enumerate}
+
+\item \wancicode{yname}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., yname = '', ...)},
+  \wancicode{SetYname(yname)}
+\item[\textit{Valids}] Jeder String
+\item[\textit{Default}] \wancicode{''}
+\item[\textit{Description}] y-Achsen-Beschriftung
+\item[\textit{Attribute}] \wancicode{self.\_\_yname}
+\end{enumerate}
+
+\item \wancicode{colormode}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., colormode = ``RGB'',
+    ...)}, \wancicode{SetColormode(colormode)}
+\item[\textit{Valids}] \wancicode{``RGB'', ``RGBA'', ``CMYK'', ``1'',
+    ``P'', ``L'', ``XYZ''}
+\item[\textit{Default}] \wancicode{``RGB''}
+\item[\textit{Description}] Das Farbformat
+\item[\textit{Attribute}] \wancicode{self.\_\_colorformat}
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%% Primaere Attribute %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Prim\"are Attribute}
+\begin{itemize}
+  
+\item \wancicode{self.\_\_x}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., x, ...)},
+  \wancicode{SetX(x)}
+\item[\textit{Description}] Die Argumentliste
+\item[\textit{Parametre}] \wancicode{x}
+\end{enumerate}
+
+\item \wancicode{self.\_\_y}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., y, ...)},
+  \wancicode{SetY(y)}
+\item[\textit{Description}] Die Werteliste
+\item[\textit{Parametre}] \wancicode{y}
+\end{enumerate}
+
+\item \wancicode{self.\_\_size}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., size = (10,10), ...)},
+  \wancicode{SetSize(size)}
+\item[\textit{Description}] Die Gr\"o"senangabe
+\item[\textit{Parametre}] \wancicode{size}
+\end{enumerate}
+
+\item \wancicode{self.\_\_colormode}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., colormode = ``RGB'',
+    ...)}, \wancicode{SetColormode(colormode)}
+\item[\textit{Description}] Das Farbformat
+\item[\textit{Parametre}] \wancicode{colorformat}
+\end{enumerate}
+
+\item \wancicode{self.\_\_color}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., color = (255,255,255),
+    ...)}, \wancicode{SetColor()}
+\item[\textit{Description}] Die Hintergrundfarbe
+\item[\textit{Parametre}] \wancicode{color}
+\end{enumerate}
+
+\item \wancicode{self.\_\_light}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., light = [], ...)},
+  \wancicode{SetLight(light)}
+\item[\textit{Description}] die helle Farbliste
+\item[\textit{Parametre}] \wancicode{light}
+\end{enumerate}
+
+\item \wancicode{self.\_\_medium}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., medium = [], ...)},
+  \wancicode{SetMedium(medium)}
+\item[\textit{Description}] Die mittlere Farbliste
+\item[\textit{Parametre}] \wancicode{medium}
+\end{enumerate}
+
+\item \wancicode{self.\_\_dark}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., dark = [], ...)},
+  \wancicode{SetDark(dark)}
+\item[\textit{Description}] Die dunkle Farbliste
+\item[\textit{Parametre}] \wancicode{dark}
+\end{enumerate}
+
+\item \wancicode{self.\_\_textcolor}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., textcolor = (0,0,0),
+    ...)}, \wancicode{SetTextcolor(textcolor)}
+\item[\textit{Description}] Die Farbe f\"ur die Beschriftungen
+\item[\textit{Parametre}] \wancicode{textcolor}
+\end{enumerate}
+
+\item \wancicode{self.\_\_font}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., font =
+    '/fonts/helvB08.pil', ...)}, \wancicode{SetTextcolor(textcolor)}
+\item[\textit{Description}] Der Font f\"ur die Beschriftungen
+\item[\textit{Parametre}] \wancicode{font}
+\end{enumerate}
+
+\item \wancicode{self.\_\_linecolor}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., linecolor = (0,0,0),
+    ...)}, \wancicode{SetLinecolor(linecolor)}
+\item[\textit{Description}] Die Farbe f\"ur Koordinatenlinien
+\item[\textit{Parametre}] \wancicode{linecolor}
+\end{enumerate}
+
+\item \wancicode{self.\_\_backlinecolor}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., backlinecolor =
+    (150,150,150), ...)}, \wancicode{SetBacklinecolor(backlinecolor)}
+\item[\textit{Description}] Die Farbe f\"ur perspektivisch
+  zur\"uckgesetzte Koordinatenlinien
+\item[\textit{Parametre}] \wancicode{backlinecolor}
+\end{enumerate}
+
+\item \wancicode{self.\_\_mc}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., mc = 1.1, ...)},
+  \wancicode{SetMc(mc)}
+\item[\textit{Description}] \"Uberschu"skoeffizient f\"ur die H\"ohe
+  der y-Achse
+\item[\textit{Parametre}] \wancicode{mc}
+\end{enumerate}
+
+\item \wancicode{self.\_\_devc}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., devc = (1,1), ...)},
+  \wancicode{SetDevc(devc)}
+\item[\textit{Description}] Koeefizientenpaar f\"ur die
+  perspektivische Verk\"urzung von 3D-Objekten
+\item[\textit{Parametre}] \wancicode{devc}
+\end{enumerate}
+
+\item \wancicode{self.\_\_xname}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., xname = '', ...)},
+  \wancicode{SetXname(xname)}
+\item[\textit{Description}] x-Achsen-Beschriftung
+\item[\textit{Parametre}] \wancicode{xname}
+\end{enumerate}
+
+\item \wancicode{self.\_\_yname}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., yname = '', ...)},
+  \wancicode{SetYname(yname)}
+\item[\textit{Description}] y-Achsen-Beschriftung
+\item[\textit{Parametre}] \wancicode{yname}
+\end{enumerate}
+
+\item \wancicode{self.\_\_xres}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., xres = 1, ...)},
+  \wancicode{SetXres(xres)}
+\item[\textit{Description}] Aufl\"osung der x-Achsen-Rasterung
+\item[\textit{Parametre}] \wancicode{xres}
+\end{enumerate}
+
+\item \wancicode{self.\_\_yres}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init(..., yres = 1, ...)},
+  \wancicode{SetYres(yres)}
+\item[\textit{Description}] Aufl\"osung der y-Achsen-Rasterung
+\item[\textit{Parametre}] \wancicode{yres}
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%% Sekundaere Attribute %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Sekund\"are Attribute}
+\begin{itemize}
+  
+\item \wancicode{self.\_\_ymax}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{Init()}, \wancicode{SetYmax()}
+\item[\textit{Valids}] Jede positive Zahl
+\item[\textit{Description}] Maximum der dargestellten y-Werte
+\end{enumerate}
+
+\item \wancicode{self.\_\_dev}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetUp()}
+\item[\textit{Description}] Explizite perspektivische Abweichung
+\end{enumerate}
+
+\item \wancicode{self.\_\_namexmax}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetUp()}
+\item[\textit{Description}] Maximum der horizontalen Ausdehnungen der
+  y-Achsen-Beschriftungen
+\end{enumerate}
+
+\item \wancicode{self.\_\_leftmargin}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetUp()}
+\item[\textit{Description}] Offset der y-Achse vom linken Bildrand
+\end{enumerate}
+
+\item \wancicode{self.\_\_textscale}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetUp()}
+\item[\textit{Description}] Feldh\"ohe f\"ur die Textfelder unter der
+  x-Achse
+\end{enumerate}
+
+\item \wancicode{self.\_\_xwidth}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetUp()}
+\item[\textit{Description}] Zur Verf\"ugung stehende Breite
+\end{enumerate}
+
+\item \wancicode{self.\_\_xscale}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetUp()}
+\item[\textit{Description}] Einheit der x-Achsen-Rasterung
+\end{enumerate}
+
+\item \wancicode{self.\_\_yheight}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetUp()}
+\item[\textit{Description}] Gesamth\"ohe der y-Achse
+\end{enumerate}
+
+\item \wancicode{self.\_\_yscale}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetUp()}
+\item[\textit{Description}] Einheit der y-Achsen-Rasterung
+\end{enumerate}
+
+\item \wancicode{self.\_\_yunit}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetUp()}
+\item[\textit{Description}] Absolute Einheitsl\"ange der
+  x-Achsen-Rasterung
+\end{enumerate}
+
+\item \wancicode{self.\_\_ysteps}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetUp()}
+\item[\textit{Description}] y-Achsen -Rasterungsschritte
+\end{enumerate}
+
+\item \wancicode{self.\_\_xunit}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{GraphMeasures()},
+  \wancicode{ColumnMeasures()}
+\item[\textit{Description}] Absolute Einheitsl\"ange der
+  y-Achsen-Rasterung
+\end{enumerate}
+
+\item \wancicode{self.\_\_zero}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{GraphMeasures()},
+  \wancicode{ColumnMeasures()}
+\item[\textit{Description}] Koordinaten des Nullpunktes des
+  Koordinatensystems
+\end{enumerate}
+
+\item \wancicode{self.\_\_xaxis}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{GraphMeasures()},
+  \wancicode{ColumnMeasures()}
+\item[\textit{Description}] Koordinaten der Endpunkte der x-Achse
+\end{enumerate}
+
+\item \wancicode{self.\_\_xfields}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{GraphMeasures()},
+  \wancicode{ColumnMeasures()}
+\item[\textit{Description}] Koordinaten der Einheits-Rasterpunkte der
+  x-Achse
+\end{enumerate}
+
+\item \wancicode{self.\_\_xmarks}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{GraphMeasures()},
+  \wancicode{ColumnMeasures()}
+\item[\textit{Description}] Koordinaten der tats\"achlichen
+  Rasterpunkte der x-Achse
+\end{enumerate}
+
+\item \wancicode{self.\_\_xsteps}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{GraphMeasures()},
+  \wancicode{ColumnMeasures()}
+\item[\textit{Description}] ???
+\end{enumerate}
+
+\item \wancicode{self.\_\_yaxis}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{GraphMeasures()},
+  \wancicode{ColumnMeasures()}
+\item[\textit{Description}] Koordinaten der Endpunkte der y-Achse
+\end{enumerate}
+
+\item \wancicode{self.\_\_ypoints}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{GraphMeasures()},
+  \wancicode{ColumnMeasures()}
+\item[\textit{Description}] Rasterpunkte der x-Achse
+\end{enumerate}
+
+\item \wancicode{self.\_\_ysum}
+\begin{enumerate}
+\item[\textit{Methods}] \wancicode{SetYsum()}
+\item[\textit{Description}] Additionsgr\"o"se f\"ur mehrfache
+  \wancicode{ymax}
+\end{enumerate}
+
+\end{itemize}
+
+%%%%%%% Methoden %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Methoden}
+\begin{itemize}
+  
+\item \wancicode{Init()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{x, y, size, color, light, medium,
+    dark, textcolor, font, linecolor, backlinecolor, mc, devc, xres,
+    yres, xname, ynamem, colormode}
+\item[\textit{Description}] Initialisiert alle prim\"aren Attribute
+  auf einmal
+\item[\textit{Results}] \wancicode{self.\_\_x, self.\_\_y,
+    self.\_\_ymax, self.\_\_size, self.\_\_colormode, self.\_\_color,
+    self.\_\_light, self.\_\_medium, self.\_\_dark,
+    self.\_\_textcolor, self.\_\_font, self.\_\_linecolor,
+    self.\_\_backlinecolor, self.\_\_mc, self.\_\_devc,
+    self.\_\_xname, self.\_\_yname, self.\_\_xres, self.\_\_yres}
+\end{enumerate}
+
+\item \wancicode{SetUp()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Setzt verschiedene sekund\"are Attribute
+\item[\textit{Results}] \wancicode{self.\_\_dev, self.\_\_namexmax,
+    self.\_\_leftmargin, self.\_\_textscale, self.\_\_xwidth,
+    self.\_\_xscale, self.\_\_yheight, self.\_\_yscale,
+    self.\_\_yunit, self.\_\_ysteps}
+\end{enumerate}
+
+\item \wancicode{SetX()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{x}
+\item[\textit{Description}] Setzt die Argumentliste
+\item[\textit{Results}] \wancicode{self.\_\_x}
+\end{enumerate}
+
+\item \wancicode{SetY()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{y}
+\item[\textit{Description}] Setzt die Werteliste
+\item[\textit{Results}] \wancicode{self.\_\_y}
+\end{enumerate}
+
+\item \wancicode{SetSize()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{size}
+\item[\textit{Description}] Setzt die Bildgr\"o"se
+\item[\textit{Results}] \wancicode{self.\_\_size}
+\end{enumerate}
+
+\item \wancicode{SetYmax()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{ymax}
+\item[\textit{Description}] Setzt das y-Maximum abweichend vom
+  tats\"achlichen Wert
+\item[\textit{Results}] \wancicode{self.\_\_ymax}
+\end{enumerate}
+
+\item \wancicode{SetYsum()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{ysum}
+\item[\textit{Description}] Setzt die Summe mehrerer \wancicode{ymax}
+  abweichend vom tats\"achlichen Wert
+\item[\textit{Results}] \wancicode{self.\_\_ysum}
+\end{enumerate}
+
+\item \wancicode{SetColormode()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{colormode}
+\item[\textit{Description}] Setzt das Farbformat
+\item[\textit{Results}] \wancicode{self.\_\_colormode}
+\end{enumerate}
+
+\item \wancicode{SetColor()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{color}
+\item[\textit{Description}] Setzt die Hintergrundfarbe
+\item[\textit{Results}] \wancicode{self.\_\_color}
+\end{enumerate}
+
+\item \wancicode{SetLight()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{light}
+\item[\textit{Description}] Setzt die helle Farbliste
+\item[\textit{Results}] \wancicode{self.\_\_light}
+\end{enumerate}
+
+\item \wancicode{SetMedium()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{medium}
+\item[\textit{Description}] Setzt die mittlere Farbliste
+\item[\textit{Results}] \wancicode{self.\_\_medium}
+\end{enumerate}
+
+\item \wancicode{SetDark()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{dark}
+\item[\textit{Description}] Setzt die dunkle Farbliste
+\item[\textit{Results}] \wancicode{self.\_\_dark}
+\end{enumerate}
+
+\item \wancicode{SetTextcolor()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{textcolor}
+\item[\textit{Description}] Setzt die Farbe der Beschriftungen
+\item[\textit{Results}] \wancicode{self.\_\_textcolor}
+\end{enumerate}
+
+\item \wancicode{SetFont()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{font}
+\item[\textit{Description}] Setzt und l\"adt den Font der
+  Beschriftungen
+\item[\textit{Results}] \wancicode{self.\_\_font}
+\end{enumerate}
+
+\item \wancicode{SetLinecolor()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{linecolor}
+\item[\textit{Description}] Setzt die Farbe der Koordinatenlinien
+\item[\textit{Results}] \wancicode{self.\_\_linecolor}
+\end{enumerate}
+
+\item \wancicode{SetBacklinecolor()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{backlinecolor}
+\item[\textit{Description}] Setzt die Farbe der perspektivisch
+  verschobenen Koordinatenlinien
+\item[\textit{Results}] \wancicode{self.\_\_backlincolor}
+\end{enumerate}
+
+\item \wancicode{SetMc()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{mc}
+\item[\textit{Description}] Setzt der Overspill-Koeffizienten
+\item[\textit{Results}] \wancicode{self.\_\_mc}
+\end{enumerate}
+
+\item \wancicode{SetDevc()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{devc}
+\item[\textit{Description}] Setzt den Koeffizienten der
+  perspektivischen Verk\"urzung
+\item[\textit{Results}] \wancicode{self.\_\_devc}
+\end{enumerate}
+
+\item \wancicode{SetDev()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{dev}
+\item[\textit{Description}] Setzt die Perspektivische Verschiebung,
+  abweichend vom eigentlichen Wert
+\item[\textit{Results}] \wancicode{self.\_\_dev}
+\end{enumerate}
+
+\item \wancicode{SetXname()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{xname}
+\item[\textit{Description}] Setzt die Beschriftung der x-Achse
+\item[\textit{Results}] \wancicode{self.\_\_xname}
+\end{enumerate}
+
+\item \wancicode{SetYname()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{yname}
+\item[\textit{Description}] Setzt die Beschriftung der y-Achse
+\item[\textit{Results}] \wancicode{self.\_\_yname}
+\end{enumerate}
+
+\item \wancicode{SetXres()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{xres}
+\item[\textit{Description}] Setzt die Aufl\"osung der x-Achsen
+  Rasterung
+\item[\textit{Results}] \wancicode{self.\_\_xres}
+\end{enumerate}
+
+\item \wancicode{SetYres()}
+\begin{enumerate}
+\item[\textit{Arguments}] \wancicode{yres}
+\item[\textit{Description}] Setzt die Aufl\"osung der y-Achsen
+  Rasterung
+\item[\textit{Results}] \wancicode{self.\_\_yres}
+\end{enumerate}
+
+\item \wancicode{ColumnMeasures()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Setzt verschiedene sekund\"are Attribute
+  abh\"angig von der Darstellungsform
+\item[\textit{Results}] \wancicode{self.\_\_xunit, self.\_\_zero,
+    self.\_\_xaxis, self.\_\_xfields, self.\_\_xmarks,
+    self.\_\_xsteps, self.\_\_yaxis, self.\_\_ypoints}
+\end{enumerate}
+
+\item \wancicode{GraphMeasures()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Setzt verschiedene sekund\"are Attribute
+  abh\"angig von der Darstellungsform
+\item[\textit{Results}] \wancicode{self.\_\_xunit, self.\_\_zero,
+    self.\_\_xaxis, self.\_\_xfields, self.\_\_xmarks,
+    self.\_\_xsteps, self.\_\_yaxis, self.\_\_ypoints}
+\end{enumerate}
+
+\item \wancicode{Draw()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Erzeugt ein Bildobjekt
+\item[\textit{Results}] \wancicode{self.\_\_pict},
+  \wancicode{self.\_\_pic}
+\end{enumerate}
+
+\item \wancicode{GetPicture()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Liefert das fertige Bildobjekt
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{BackgroundLining()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Zeichnet die Hintergrundlinien des
+  Koordinatensystems
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{Points(col)}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Zeichnet einen Punktgraph mit Punkten in
+  der Farbe \wancicode{col}
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{Line(col)}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Zeichnet einen Kurvengraph mit der Kurve
+  in der Farbe \wancicode{col}
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{Plane(co)}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Zeichnet einen ausgef\"ullten Kurvengraph
+  in der Farbe \wancicode{col}
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{CubicColumns()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Zeichnet Quader als S\"aulendiagramm
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{CylindricColumns()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Zeichnet Zylinder als S\"aulendiagramm
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{Multicolumn()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Zeichnet eine einzelne geschichtete
+  S\"aule
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{Pie()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Zeichnet ein Tortendiagramm
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{StandardCoordinates()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Zeichnet ein Koordiatensystem f\"ur
+  Graphen
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{EnumeratedColumns()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Zeichnet ein Koordinatensystem f\"ur
+  S\"aulen und numeriert die Standpl\"atze
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{StandardColumns()}
+\begin{enumerate}
+\item[\textit{Arguments}] keine
+\item[\textit{Description}] Zeichnet ein Koordinatensystem f\"ur
+  S\"aulen und schreibt die Argumente an die Standpl\"atze
+\item[\textit{Results}] keine
+\end{enumerate}
+
+\item \wancicode{ExtendedColumns()} z.Zt. funktionslos
+%\begin{enumerate}
+%\item[\textit{Arguments}] 
+%\item[\textit{Description}] 
+%\item[\textit{Results}] 
+%\end{enumerate}
+
+\end{itemize}
+
+%%%%%%%%%% OF %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subparagraph{Objektfunktionalit\"at}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\subsection{Syntax}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Sonstiges}
+
+\paragraph{Empfohlene Einstellungen}
+
+\paragraph{Bemerkungen}
+%%  SDV REFMAN ENDE %%

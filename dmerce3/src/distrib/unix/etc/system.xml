@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project basedir="." name="dmerce System Properties">
+	
+	<!--
+		
+		 dmerce(R)
+		 
+	-->
+
+	<!-- License key -->
+	<property name="license.key" value="0123456789ABCDEFGH"/>
+
+	<!--
+
+		Start/stop of system components
+		Used in Ant target "reconfigure-settings"
+
+	-->
+	<property name="start.postgresql" value="NO"/>
+	<property name="start.oracle" value="NO"/>
+	<property name="start.eclipse" value="NO"/>
+	<property name="start.browser.phpmyadmin" value="NO"/>
+	<property name="start.browser.dmercedoc" value="NO"/>
+
+	<!-- Internal settings -->
+	<property name="dmerce.base" value="${env.DMERCE_BASE}"/>
+	<property name="jboss.wait.seconds" value="1"/>
+
+	<!-- Oracle specific settings -->
+	<property name="oracle.sid" value="dmerce"/>
+	<property name="oracle.base" value="/oracle"/>
+	<property name="oracle.home" value="9.2"/>
+	
+	<!-- XAMPP settings -->
+	<property name="start.apache" value="NO"/>
+	<property name="start.filezilla" value="NO"/>
+	<property name="start.mysql" value="NO"/>
+
+</project>

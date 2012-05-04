@@ -1,0 +1,46 @@
+#!/usr/bin/ksh
+
+. ${DMERCE_HOME}/lib/libsh
+. ${DMERCE_HOME}/lib/liboracle
+DMERCE_TMP=".tmp.$$"
+
+create() {
+    echo "`date`: ORACLE VERSION=${oracle_ver}"
+    echo "`date`: ORACLE HOME='${ORACLE_HOME}'"
+    echo "`date`: ORACLE SID='${ORACLE_SID}'"
+    echo "`date`: Creating SQL*Loader scripts"
+    cat ${DMERCE_HOME}/sql/oracle/dmerce/tablespace_dmerce_sys.sql | ${SED} "s#\$datafiledir#${DMERCE_ORACLE_DATAFILES}#g" > ${DMERCE_TMP}
+    cat ${DMERCE_HOME}/sql/oracle/dmerce/tablespace_dmerce.sql | ${SED} "s#\$datafiledir#${DMERCE_ORACLE_DATAFILES}#g" >> ${DMERCE_TMP}
+    echo "exit;" >> ${DMERCE_TMP}
+    echo
+    cat ${DMERCE_TMP}
+    echo
+    echo "`date`: Is this ok? (y/n)"
+    read key
+    if [ x"${key}" = x"y" -o x"${key}" = x"Y" ]; then
+	$ORACLE_HOME/bin/sqlplus "sys/${DMERCE_ORACLE_SYSDBAPWD} as sysdba" @${DMERCE_TMP}
+    else
+	echo "`date`: User canceled."
+	exit 1
+    fi
+    echo
+}
+
+clean() {
+    echo "`date`: Cleaning"
+    ${RM} -f ${DMERCE_TMP}
+    unset dfd key sysdbapwd DMERCE_TMP
+}
+
+trap 'clean; exit 1' INT KILL
+copyr
+echo "CREATING SQL*Loader SCRIPTS FOR ORACLE FOR DMERCE TABLESPACE CREATION"
+echo
+discover_env
+discover_devenv
+ask_oracle_env
+oracle_ver=`get_oracle_version`
+ask_oracle_datafiles
+ask_oracle_sysdbapwd
+create
+clean

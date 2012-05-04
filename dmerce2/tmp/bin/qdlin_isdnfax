@@ -1,0 +1,62 @@
+#!/bin/sh
+
+IC="/usr/sbin/isdnctrl"
+FAX="/usr/bin/c2faxrecv"
+NUMBERS="100 222 444"
+IPPP=0
+
+start_faxif() {
+	ippp=$1
+	no=$2
+	$IC addif $ippp > /dev/null
+	$IC l2_prot $ippp hdlc > /dev/null
+	$IC eaz $ippp $no > /dev/null
+	$IC huptimeout $ippp 5 > /dev/null
+	$IC dialmode $ippp off > /dev/null
+	$FAX -C /etc/hylafax/config.faxCAPI$no > /dev/null &
+}
+
+stop_faxif() {
+	ippp=$1
+	$IC delif $ippp 2> /dev/null
+}
+
+lookfor_faxd() {
+	faxd=`ps -ef | grep -v grep | grep -c $FAX`
+	echo "`date`: $faxd fax receiver processes running"
+}
+
+case "$1" in
+	start)
+		for no in $NUMBERS
+		do
+			ippp="ippp$IPPP"
+			echo "`date`: Starting fax number $no on interface $ippp"
+			start_faxif $ippp $no
+			IPPP=`expr $IPPP + 1`
+		done
+		lookfor_faxd
+	;;
+
+	stop)
+		for no in $NUMBERS
+		do
+			ippp="ippp$IPPP"
+			echo "`date`: Stopping fax number $no on interface $ippp"
+			stop_faxif $ippp $no
+			IPPP=`expr $IPPP + 1`
+		done
+		/usr/bin/killall c2faxrecv 2> /dev/null
+		lookfor_faxd
+	;;
+
+	restart)
+		$0 stop
+		$0 start
+	;;
+
+	*)
+	;;
+esac
+
+exit 0

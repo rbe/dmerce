@@ -1,0 +1,81 @@
+#!/bin/sh
+
+. ${DMERCE_HOME}/lib/libsh
+
+usage() {
+    echo "ERROR: wrong arguments!
+
+$0 [arguments]
+arguments ::=
+
+              fromtime*        time
+                               format: CCYYMMDDhhmm
+
+              type             type of patchfile
+                               full = all files
+                               dist = files needed for
+                                      distribution
+
+"
+}
+
+check_args() {
+    if [ x"${fromtime}" = x"" ]; then
+	fromtime=`date +%Y%m%d0000`
+    fi
+    if [ x"${type}" = x"" ]; then
+	type="dist"
+    fi
+    if [ x"${type}" = x"dist" ]; then
+	files="*.pyc bin"
+    elif [ x"${type}" = x"full" ]; then
+	files="."
+    fi
+}
+
+genptf() {
+    ptffl="ptf-filelist-$fromtime"
+    echo "`date`: Generating file name list for PTF"
+    touch -t $fromtime $tmp
+    if [ $? -eq 1 ]; then
+	exit 1
+    fi
+    touch -t $fromtime $ptffl
+    if [ $? -eq 1 ]; then
+	exit 1
+    fi
+    find . -type f -newer $tmp -print | grep -v CVS | xargs echo >> $ptffl
+    touch -t $fromtime $ptffl
+
+    ptffn="ptf-$fromtime.cpio"
+    echo "`date`: Generating PTF '$ptffn'"
+    find `cat $ptffl` | cpio -ocO $ptffn
+    if [ $? -eq 1 ]; then
+	exit 1
+    fi
+}
+
+cleanall() {
+    echo "`date`: Cleaning all files"
+    rm ptf-*$fromtime*
+}
+
+clean() {
+    echo "`date`: Cleaning"
+    rm $tmp
+}
+
+trap 'cleanall; clean; exit 1' INT KILL
+
+copyr
+echo "PTF - CREATE DMERCE PATCHFILE"
+echo
+tmp=".tmp.$$"
+eval $*
+check_args
+echo "`date`: Creating PTF from timestamp '$fromtime'"
+genptf
+clean
+echo "`date`: Contents of PTF '$fromtime':"
+cat $ptffl
+exit 0

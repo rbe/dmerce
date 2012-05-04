@@ -1,0 +1,259 @@
+#!/bin/ksh
+
+#################################################
+#
+# Copyright 2000-2003 1Ci GmbH, http://www.1ci.de
+#
+# $Id: etc-init.d-dmerce,v 1.11 2003/07/03 16:50:31 rb Exp $
+# $Author: rb $
+# $Revision: 1.11 $
+#
+# Start/stop dmerce
+#
+#################################################
+
+. /opt/dmerce/dmercerc
+[ "$DMERCE_ST" != "YES" ] && exit 0
+
+export LD_LIBRARY_PATH
+export PGDATA
+
+DATE=`date +%Y%m%d%H%M%S`
+LOG="$DMERCE_HOME/log/dmerce-$DATE.log"
+: > $LOG
+
+MSG_APACHE1312="Apache 1.3.12/PyApache webserver for dmerce 2.4.0"
+MSG_APACHE13="Apache 1.3.x/mod_python webserver for dmerce 2.5.0"
+MSG_MYSQL="MySQL database"
+MSG_PGSQL="PostgreSQL database"
+MSG_ORACLE="ORACLE database"
+MSG_COURIER_IMAP="Courier IMAP server"
+MSG_EXIM="Exim mail server"
+
+UNAME_OS="`uname -s`"
+
+e() {
+    echo "* $*"
+}
+
+w() {
+    echo "* WARNING:  $*"
+}
+
+copyr() {
+	e
+	e "1Ci(R) GmbH, http://www.1ci.com"
+	e "Copyright (C) 2000-2003"
+	e
+}
+
+envdump() {
+	e
+	e "Environment:"
+	e "------------"
+	e "PATH=$PATH"
+	e "DMERCE_HOME=$DMERCE_HOME"
+	e "PYTHON_HOME=$PYTHON_HOME"
+	e "PYTHONPATH=$PYTHONPATH"
+	e
+}
+
+msg() {
+	[ "$1" = "start" ] && mode="Starting" || mode="Stopping"
+	shift
+	[ "$1" = "" ] && what="???" || what=$*
+	e "$mode dmerce/$what"
+}
+
+disp() {
+    copyr
+    e "See logfile '$LOG'"
+    e
+}
+
+is_running() {
+    PROC=$1
+    case "$UNAME_OS" in
+	SunOS)
+	    NR=`ps -ef | grep -v grep | grep -c $PROC`
+	    ;;
+	FreeBSD|Linux)
+	    NR=`ps ax | grep -v grep | grep -c $PROC`
+	    ;;
+    esac
+    echo $NR
+}
+
+# Courier IMAP
+start_courier_imap() {
+    msg start $MSG_COURIER_IMAP
+    $COURIER_IMAP_HOME/libexec/imapd.rc start >> $LOG 2>> $LOG
+}
+
+stop_courier_imap() {
+    msg stop $MSG_COURIER_IMAP
+    $COURIER_IMAP_HOME/libexec/imapd.rc stop >> $LOG 2>> $LOG
+}
+
+# Exim
+start_exim() {
+    msg start $MSG_EXIM
+    $EXIM_HOME/bin/exim -bd -q$EXIM_QUEUE_TIME >> $LOG 2>> $LOG
+}
+
+stop_exim() {
+    msg stop $MSG_EXIM
+    case "$UNAME_OS" in
+	SunOS)
+	    PID=`ps -ef | grep $EXIM_HOME/bin/exim | awk '{print $2}'`
+	    ;;
+	FreeBSD|Linux)
+	    PID=`ps ax | grep $EXIM_HOME/bin/exim | awk '{print $1}'`
+	    ;;
+    esac
+    kill $PID
+}
+
+# Apache
+start_apache1312() {
+	msg start $MSG_APACHE1312
+	qd_set24_env
+	$APACHE1312_HOME/bin/apachectl start >> $LOG 2>> $LOG
+}
+
+stop_apache1312() {
+	msg stop $MSG_APACHE1312
+	$APACHE1312_HOME/bin/apachectl stop >> $LOG 2>> $LOG
+}
+
+start_apache13() {
+	msg start $MSG_APACHE13
+	qd_set25_env
+	$APACHE13_HOME/bin/apachectl start >> $LOG 2>> $LOG
+}
+
+stop_apache13() {
+	msg stop $MSG_APACHE13
+	$APACHE13_HOME/bin/apachectl stop >> $LOG 2>> $LOG
+}
+
+start_apache() {
+    if [ "${APACHE1312_ST}" = "YES" ]; then
+	start_apache1312
+	sleep 2
+	[ `is_running $APACHE1312_HOME` -gt 0 ] || w "$MSG_APACHE1312 DID NOT START WITHIN 2 SECONDS"
+    fi
+    if [ "${APACHE13_ST}" = "YES" ]; then
+	start_apache13
+	sleep 2
+	[ `is_running $APACHE13_HOME` -gt 0 ] || w "$MSG_APACHE13 DID NOT START WITHIN 2 SECONDS"
+    fi
+}
+
+stop_apache() {
+    if [ "${APACHE1312_ST}" = "YES" ]; then
+	stop_apache1312
+	sleep 5
+	[ `is_running $APACHE1312_HOME` -eq 0 ] || w "$MSG_APACHE1312 DID NOT STOP WITHIN 5 SECONDS"
+    fi
+    if [ "${APACHE13_ST}" = "YES" ]; then
+	stop_apache13
+	sleep 5
+	[ `is_running $APACHE13_HOME` -eq 0 ] || w "$MSG_APACHE13 DID NOT STOP WITHIN 5 SECONDS"
+    fi
+}
+
+# MySQL
+start_mysql() {
+	msg start "MySQL database engine"
+	su - $MYSQL_USER -c "$MYSQL_HOME/bin/safe_mysqld" >> $LOG 2>> $LOG &
+}
+
+stop_mysql() {
+	msg stop "MySQL database engine"
+	su - $MYSQL_USER -c "$MYSQL_HOME/bin/mysqladmin -u root --password=$MYSQL_ROOTPWD shutdown" >> $LOG 2>> $LOG
+}
+
+# PostgreSQL
+start_postgresql() {
+	msg start "PostgreSQL database engine"
+	su - $PGSQL_USER -c "PGDATA=$PGDATA; export PGDATA; $PGSQL_HOME/bin/pg_ctl start" >> $LOG 2>> $LOG
+}
+
+stop_postgresql() {
+	msg stop "PostgreSQL database engine"
+	su - $PGSQL_USER -c "PGDATA=$PGDATA; export PGDATA; $PGSQL_HOME/bin/pg_ctl stop" >> $LOG 2>> $LOG
+}
+
+# ORACLE
+start_oracle() {
+	msg start "ORACLE database engine"
+	$DMERCE_HOME/bin/orclst start >> $LOG 2>> $LOG
+}
+
+stop_oracle() {
+	msg stop "ORACLE database engine"
+	$DMERCE_HOME/bin/orclst stop >> $LOG 2>> $LOG
+}
+
+start_databases() {
+    if [ "${MYSQL_ST}" = "YES" ]; then
+	start_mysql
+	sleep 2
+	[ `is_running $MYSQL_HOME` -gt 0 ] || w "$MSG_MYSQL DID NOT START WITHIN 2 SECONDS"
+    fi
+    if [ "${PGSQL_ST}" = "YES" ]; then
+	start_postgresql
+	sleep 5
+	[ `is_running $PGSQL_HOME` -gt 0 ] || w "$MSG_PGSQL DID NOT START WITHIN 5 SECONDS"
+    fi
+    if [ "${ORACLE_ST}" = "YES" ]; then
+	start_oracle
+    fi
+}
+
+stop_databases() {
+    if [ "${MYSQL_ST}" = "YES" ]; then
+	stop_mysql
+	sleep 5
+	[ `is_running $MYSQL_HOME` -eq 0 ] || w "$MSG_MYSQL DID NOT STOP WITHIN 5 SECONDS"
+    fi
+    if [ "${PGSQL_ST}" = "YES" ]; then
+	stop_postgresql
+	sleep 5
+	[ `is_running $PGSQL_HOME` -eq 0 ] || w "$MSG_PGSQL DID NOT STOP WITHIN 5 SECONDS"
+    fi
+    if [ "${ORACLE_ST}" = "YES" ]; then
+	stop_oracle
+    fi
+}
+
+case $1 in
+    start)
+	disp
+	[ $# -eq 1 -o "$2" == "database" ] && start_databases
+	[ $# -eq 1 -o "$2" == "apache" ] && start_apache
+	e
+	;;
+    stop)
+	disp
+	[ $# -eq 1 -o "$2" == "apache" ] && stop_apache
+	[ $# -eq 1 -o "$2" == "database" ] && stop_databases
+	e
+	;;
+    restart)
+	prg=$0
+	shift
+	$prg stop $*
+	e "Sleeping for 5 seconds"
+	sleep 5
+	echo
+	$prg start $*
+	;;
+    *)
+	echo "usage: $0 {start|stop|restart}"
+	;;
+esac
+
+echo
+exit 0

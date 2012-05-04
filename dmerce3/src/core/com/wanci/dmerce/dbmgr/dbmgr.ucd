@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" size="935,1296" id="wspgpgdmerce30" metadata="nsuml-1.4" initialized="true" showWireOptions="1" scrolledX="-2" scrolledY="-2">
+  <children xsi:type="editmodel:ClassEditModel" location="690,517" size="131,103" targetConnections="//@children.6/@sourceConnections.1" id="wspgpgdmerce31" runTimeClassModel="wspgpgdmerce312;wspgpgdmerce310;wspgpgdmerce32;wspgpgdmerce314;wspgpgdmerce34">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="99,54">
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce34"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce310"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce314"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showPublicMethods="true" showPackageMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" location="654,652" size="190,85" targetConnections="//@children.6/@sourceConnections.2" id="wspgpgdmerce360" runTimeClassModel="wspgpgdmerce367;wspgpgdmerce363;wspgpgdmerce361;wspgpgdmerce376">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="143,72">
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce367"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce376"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" connectionRouterKind="Manual" source="//@children.1" target="//@children.3" targetEnd="//@children.1/@sourceConnections.0/@children.1" sourceEnd="//@children.1/@sourceConnections.0/@children.0">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="85,-1" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="84,84"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showPublicMethods="true" showPackageMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" location="606,112" size="64,29" targetConnections="//@children.4/@sourceConnections.2" id="wspgpgdmerce3112" runTimeClassModel="wspgpgdmerce3117;wspgpgdmerce3113">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showPublicMethods="true" showPackageMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" location="676,796" size="150,85" targetConnections="//@children.1/@sourceConnections.0" id="wspgpgdmerce397" runTimeClassModel="wspgpgdmerce3200;wspgpgdmerce3198;wspgpgdmerce3201;wspgpgdmerce3199;wspgpgdmerce3206">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="112,36">
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3201"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3206"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showPublicMethods="true" showPackageMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" location="359,44" size="157,229" targetConnections="//@children.6/@sourceConnections.6" id="wspgpgdmerce362" runTimeClassModel="wspgpgdmerce3323;wspgpgdmerce3301;wspgpgdmerce3294;wspgpgdmerce3290;wspgpgdmerce32659;wspgpgdmerce3313;wspgpgdmerce3306;wspgpgdmerce3317;wspgpgdmerce3308;wspgpgdmerce3299;wspgpgdmerce32657;wspgpgdmerce3297;wspgpgdmerce32646">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="134,180">
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3299"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3317"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3301"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3308"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3297"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3313"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3306"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3294"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce32659"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce32657"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" connectionRouterKind="Manual" source="//@children.4" target="//@children.5" targetEnd="//@children.4/@sourceConnections.0/@children.1" sourceEnd="//@children.4/@sourceConnections.0/@children.0">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="-2,145" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="158,80"/>
+    </sourceConnections>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" connectionRouterKind="Manual" source="//@children.4" target="//@children.7" targetEnd="//@children.4/@sourceConnections.1/@children.1" sourceEnd="//@children.4/@sourceConnections.1/@children.0">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="157,0" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="55,29"/>
+    </sourceConnections>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" connectionRouterKind="Manual" source="//@children.4" target="//@children.2" targetEnd="//@children.4/@sourceConnections.2/@children.1" sourceEnd="//@children.4/@sourceConnections.2/@children.0">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="157,115" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="-1,12"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showPublicMethods="true" showPackageMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" location="52,52" size="158,427" targetConnections="//@children.4/@sourceConnections.0 //@children.6/@sourceConnections.0" id="wspgpgdmerce3348" runTimeClassModel="wspgpgdmerce3429;wspgpgdmerce3355;wspgpgdmerce3381;wspgpgdmerce3392;wspgpgdmerce3349;wspgpgdmerce3386;wspgpgdmerce3414;wspgpgdmerce3371;wspgpgdmerce3417;wspgpgdmerce3365;wspgpgdmerce3411;wspgpgdmerce3357;wspgpgdmerce3390;wspgpgdmerce3426;wspgpgdmerce3361;wspgpgdmerce3373;wspgpgdmerce3384;wspgpgdmerce3423;wspgpgdmerce3351;wspgpgdmerce3378;wspgpgdmerce3367;wspgpgdmerce3420;wspgpgdmerce3402;wspgpgdmerce3388;wspgpgdmerce3359;wspgpgdmerce3363;wspgpgdmerce3396;wspgpgdmerce3375;wspgpgdmerce3398;wspgpgdmerce3353;wspgpgdmerce3400;wspgpgdmerce3369;wspgpgdmerce3394;wspgpgdmerce3405;wspgpgdmerce3408">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="130,378">
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3384"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3386"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3388"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3390"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3392"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3394"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3396"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3398"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3400"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3378"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3375"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3402"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3405"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3408"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3411"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3414"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3417"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3420"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3423"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3426"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3381"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showPublicMethods="true" showPackageMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" location="367,416" size="146,157" id="wspgpgdmerce3451" runTimeClassModel="wspgpgdmerce32676;wspgpgdmerce3453;wspgpgdmerce3463;wspgpgdmerce32664;wspgpgdmerce3457;wspgpgdmerce3452;wspgpgdmerce3467;wspgpgdmerce3489;wspgpgdmerce3465;wspgpgdmerce3454;wspgpgdmerce3458;wspgpgdmerce3477;wspgpgdmerce3461;wspgpgdmerce3473;wspgpgdmerce3459;wspgpgdmerce3456;wspgpgdmerce3470;wspgpgdmerce3475;wspgpgdmerce3492;wspgpgdmerce32678;wspgpgdmerce3485">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="123,108">
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3467"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3489"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3485"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3475"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce32678"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce32676"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" connectionRouterKind="Manual" source="//@children.6" target="//@children.5" targetEnd="//@children.6/@sourceConnections.0/@children.1" sourceEnd="//@children.6/@sourceConnections.0/@children.0">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="-2,21" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="158,272"/>
+    </sourceConnections>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" connectionRouterKind="Manual" source="//@children.6" target="//@children.0" targetEnd="//@children.6/@sourceConnections.1/@children.1" sourceEnd="//@children.6/@sourceConnections.1/@children.0">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="146,147" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="-2,35"/>
+    </sourceConnections>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" connectionRouterKind="Manual" source="//@children.6" target="//@children.1" targetEnd="//@children.6/@sourceConnections.2/@children.1" sourceEnd="//@children.6/@sourceConnections.2/@children.0">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="146,128" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="7,-1"/>
+    </sourceConnections>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" connectionRouterKind="Manual" source="//@children.6" target="//@children.8" targetEnd="//@children.6/@sourceConnections.3/@children.1" sourceEnd="//@children.6/@sourceConnections.3/@children.0">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="-2,128" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="166,-2"/>
+    </sourceConnections>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" connectionRouterKind="Manual" source="//@children.6" target="//@children.10" targetEnd="//@children.6/@sourceConnections.4/@children.1" sourceEnd="//@children.6/@sourceConnections.4/@children.0">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="115,155" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="66,-1"/>
+    </sourceConnections>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" connectionRouterKind="Manual" source="//@children.6" target="//@children.11" targetEnd="//@children.6/@sourceConnections.5/@children.1" sourceEnd="//@children.6/@sourceConnections.5/@children.0">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="2,155" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="162,-1"/>
+    </sourceConnections>
+    <sourceConnections xsi:type="editmodel:AssociationEditModel" id="wspgpgdmerce32633" connectionRouterKind="Manhattan" source="//@children.6" target="//@children.4" targetEnd="//@children.6/@sourceConnections.6/@children.1" label="//@children.6/@sourceConnections.6/@children.2" sourceEnd="//@children.6/@sourceConnections.6/@children.0">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="62,0" id="wspgpgdmerce32634" attachSource="true" navigable="true" flags="2" multiplicityLabel="//@children.6/@sourceConnections.6/@children.0/@children.1" roleLabel="//@children.6/@sourceConnections.6/@children.0/@children.0">
+        <children xsi:type="editmodel:LabelEditModel" size="56,14" fontInfo="Arial-8-0" anchorKind="FirstPart"/>
+        <children xsi:type="editmodel:LabelEditModel" size="19,14" fontInfo="Arial-8-0" anchorKind="FirstPart"/>
+      </children>
+      <children xsi:type="editmodel:AssociationEndEditModel" id="wspgpgdmerce32635" navigable="true" flags="2" multiplicityLabel="//@children.6/@sourceConnections.6/@children.1/@children.1" roleLabel="//@children.6/@sourceConnections.6/@children.1/@children.0">
+        <children xsi:type="editmodel:LabelEditModel" size="39,14" fontInfo="Arial-8-0" anchorKind="LastPart"/>
+        <children xsi:type="editmodel:LabelEditModel" size="7,14" fontInfo="Arial-8-0" anchorKind="LastPart"/>
+      </children>
+      <children xsi:type="editmodel:WireLabelEditModel" size="1,14" fontInfo="Arial-8-0" anchorKind="MiddlePart"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showPublicMethods="true" showPackageMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" location="551,34" size="162,29" targetConnections="//@children.4/@sourceConnections.1" id="wspgpgdmerce3550" runTimeClassModel="wspgpgdmerce3552;wspgpgdmerce3555">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showPublicMethods="true" showPackageMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" location="61,642" size="166,85" targetConnections="//@children.6/@sourceConnections.3" id="wspgpgdmerce3544" runTimeClassModel="wspgpgdmerce3606;wspgpgdmerce3605;wspgpgdmerce3618;wspgpgdmerce3609">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="127,72">
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3609"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3618"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" connectionRouterKind="Manual" source="//@children.8" target="//@children.9" targetEnd="//@children.8/@sourceConnections.0/@children.1" sourceEnd="//@children.8/@sourceConnections.0/@children.0">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="76,-2" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="118,144"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showPublicMethods="true" showPackageMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" location="26,800" size="224,144" targetConnections="//@children.8/@sourceConnections.0" id="wspgpgdmerce3623" runTimeClassModel="wspgpgdmerce3660;wspgpgdmerce3654;wspgpgdmerce3643;wspgpgdmerce3651;wspgpgdmerce3647;wspgpgdmerce3645;wspgpgdmerce3640">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="110,54">
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3647"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3654"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce3651"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="201,31">
+      <children xsi:type="editmodel:ClassEditModel" location="354,248" size="201,29" id="wspgpgdmerce3660" runTimeClassModel="wspgpgdmerce3662">
+        <children xsi:type="editmodel:CompartmentEditModel"/>
+        <children xsi:type="editmodel:CompartmentEditModel"/>
+        <children xsi:type="editmodel:CompartmentEditModel"/>
+        <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference"/>
+      </children>
+    </children>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showPublicMethods="true" showPackageMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" location="464,658" size="179,85" targetConnections="//@children.6/@sourceConnections.4 //@children.12/@sourceConnections.0" id="wspgpgdmerce32409" runTimeClassModel="wspgpgdmerce32418;wspgpgdmerce32422;wspgpgdmerce32411">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="133,72">
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce32418"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce32422"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" connectionRouterKind="Manual" source="//@children.10" target="//@children.13" targetEnd="//@children.10/@sourceConnections.0/@children.1" sourceEnd="//@children.10/@sourceConnections.0/@children.0">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="97,85" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="61,-1"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showPublicMethods="true" showPackageMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" location="262,655" size="183,85" targetConnections="//@children.6/@sourceConnections.5" id="wspgpgdmerce32445" runTimeClassModel="wspgpgdmerce32448;wspgpgdmerce32447;wspgpgdmerce32449;wspgpgdmerce32454">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="139,36">
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce32449"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce32454"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" connectionRouterKind="Manual" source="//@children.11" target="//@children.12" targetEnd="//@children.11/@sourceConnections.0/@children.1" sourceEnd="//@children.11/@sourceConnections.0/@children.0">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="80,85" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="82,-1"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showPublicMethods="true" showPackageMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" location="302,801" size="143,85" targetConnections="//@children.11/@sourceConnections.0" id="wspgpgdmerce32464" runTimeClassModel="wspgpgdmerce32473;wspgpgdmerce32476;wspgpgdmerce32482;wspgpgdmerce32477;wspgpgdmerce32474;wspgpgdmerce32475">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="110,36">
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce32477"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce32482"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" connectionRouterKind="Manual" source="//@children.12" target="//@children.10" targetEnd="//@children.12/@sourceConnections.0/@children.1" sourceEnd="//@children.12/@sourceConnections.0/@children.0">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="121,-1" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="39,85"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showPublicMethods="true" showPackageMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" location="503,800" size="139,85" targetConnections="//@children.10/@sourceConnections.0" id="wspgpgdmerce32428" runTimeClassModel="wspgpgdmerce32526;wspgpgdmerce32533;wspgpgdmerce32522;wspgpgdmerce32515;wspgpgdmerce32518;wspgpgdmerce32511;wspgpgdmerce32529;wspgpgdmerce32509;wspgpgdmerce32514;wspgpgdmerce32525;wspgpgdmerce32510;wspgpgdmerce32521;wspgpgdmerce32527;wspgpgdmerce32513;wspgpgdmerce32524;wspgpgdmerce32516;wspgpgdmerce32519;wspgpgdmerce32523;wspgpgdmerce32520;wspgpgdmerce32512;wspgpgdmerce32517;wspgpgdmerce32528">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="110,36">
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce32529"/>
+      <children xsi:type="editmodel:MethodEditModel" id="wspgpgdmerce32533"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showPublicMethods="true" showPackageMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true"/>
+  </children>
+  <classDiagramPreferences xsi:type="editmodel:UMLClassDiagramPreference" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showPublicMethods="true" showPackageMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showInterfaceStereotype="true" showClassStereotype="true" showPackageStereotype="true"/>
+</editmodel:ClassDiagramEditModel>

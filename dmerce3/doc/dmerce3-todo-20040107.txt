@@ -1,0 +1,76 @@
+bei anlegen eines datensatzes ohne eine datei hochzuladen: ungültiger spaltentyp
+
+nullpointer exception, wenn bei q:uploadres-tag falscher feldname angegeben wurd
+
+bei qform:text wird GregorianCalender nicht richtig angezeigt!
+
+
+raus aus distrib: callproc, date, simple, multiple, fileupload (erstmal alles per welcome!)
+
+sql von welcome mit in distrib
+bei create-welcome-tables: user.sql.dir ersetzen!
+
+doc: bei setup fehlt set DMERCE_BASE ...
+
+vwclubms -> 1cs
+
+welcome/am inkl. "listbox"
+
+
+
+
+20040224:
+
+warum bei qsql:field file=true und nicht auch date="true" sondern qsql:datefield?
+
+fileupload in verbindung mit callproc
+
+
+HowTo:
+- Wie lege ich eine neue Applikation an?
+- Wie konfiguriere ich ...
+  ... Datenbankverbindungen im Webservice?
+  ... den Webservice, den eine Applikation nutzt?
+  ... Fileupload?
+- Wie/wo entwickle ich was? (etc/, applications/etc, applications/web)
+- Wie deploye ich eine Applikation?
+  ... lokal
+  ... remote
+- Wie erstelle ich ein Backup?
+- Wie spiele ich ein Backup wieder ein (Restore)?
+
+1 webservice pro applikation
+
+überflüssige libs im webservice:
+- j2ssh
+- jmagick (nicht unbedingt, dann gibts resizing on the fly)
+- ftp
+
+einstellungen für webservice: properties.xml enthält nur datenbankverbindung
+und wird beim deploy aus der applicationproperties.xml generiert
+
+einstellungen für applikation: angabe des webservices, filupload, db-verbindung
+(für webservice)
+
+<fixcrlf/>
+<mail/>
+<buildNumber/>
+
+
+20040214:
+
+formfield ist typ list, wird nicht von JAXBTypeMap unterstützt: aber, wenn ich 
+ein feld - welces sinnigerweise den gleichen namen tragen soll - an eine 
+callproc-action übergeben will und keine list ist, wird es trotzdem aufgrund 
+der defintionen in forms.xml angemeckert... Beispiel: 1cs_advert
+
+!!!werden an workflow.do parameterwerte übergeben, so sind diese nicht per q:var holbar!!! ---> q:contextvar tuts
+
+qform:hidden holt nicht automatisch den wert, der übergeben wurde
+
+werden formular-werte nicht per q-taglib gesetzt, so werden sie nicht erkannt
+und an prozeduren übergeben. beispiel: man nutzt nicht qform:hidden sondern
+schreibt input type="hidden"
+
+!!Bei qsql:datefield Anzeige "unbekanntes feld" wenn feld leer!! alternative:
+mann muss qsql:fieldempty benutzen

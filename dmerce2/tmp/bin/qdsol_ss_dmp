@@ -1,0 +1,94 @@
+#!/bin/ksh
+
+#################################################
+#
+# Copyright 2000-2002 1Ci GmbH, http://www.1ci.de
+#
+# $Id: qdsol_ss_dmp,v 1.1 2003/04/20 12:56:48 rb Exp $
+# $Author: rb $
+# $Revision: 1.1 $
+#
+# Show SunScreen(TM) Configuration
+# 
+#################################################
+
+. ${DMERCE_HOME}/lib/libsh
+. ${DMERCE_HOME}/lib/libsolaris
+
+find_ssadm() {
+    DMERCE_SSADM_FOUND=0
+    ss3x_SUNWicgSS=`sol_checkpkginst SUNWicgSS`
+    ss32_SUNWsfwf=`sol_checkpkginst SUNWsfwf`
+    ss32_SUNWsfwr=`sol_checkpkginst SUNWsfwr`
+    ss32_SUNWsfwu=`sol_checkpkginst SUNWsfwu`
+    if [ ${ss3x_SUNWicgSS} -eq 1 ]; then
+	DMERCE_SSADM="/opt/SUNWicg/SunScreen/bin/ssadm"
+	DMERCE_SSADM_FOUND=1
+    elif [ ${ss32_SUNWsfwf} -eq 1 -a ${ss32_SUNWsfwr} -eq 1 -a ${ss32_SUNWsfwu} -eq 1 ]; then
+	DMERCE_SSADM="/usr/sbin/ssadm"
+	DMERCE_SSADM_FOUND=1
+    fi
+    export DMERCE_SSADM DMERCE_SSADM_FOUND
+}
+
+ssadm_cmd () {
+    cmd="$*"
+    if [ ${DMERCE_SSADM_FOUND} -eq 1 ]; then
+	${DMERCE_SSADM} edit ${policy} <<EOF > .tmp.$$
+list $cmd
+EOF
+	cat .tmp.$$ | awk '{print "add "cmd" "$0;}' cmd=${cmd} >> $f
+	echo ": found `cat .tmp.$$ | wc -l | sed 's# ##g'` entries"
+	${RM} .tmp.$$
+    else
+	echo ": COMMAND ssadm FOUND"
+    fi
+}
+
+main() {
+    c=`ssadm_cmd SCREEN`
+    e "Dumping screen$c"
+
+    c=`ssadm_cmd INTERFACE`
+    e "Dumping interface$c"
+
+    c=`ssadm_cmd CERTIFICATE`
+    e "Dumping certificate$c"
+
+    c=`ssadm_cmd ACCESSLOCAL`
+    e "Dumping accesslocal$c"
+
+    c=`ssadm_cmd ACCESSREMOTE`
+    e "Dumping accessremote$c"
+
+    c=`ssadm_cmd SERVICE`
+    e "Dumping service$c"
+
+    c=`ssadm_cmd ADDRESS`
+    e "Dumping address$c"
+
+    c=`ssadm_cmd RULE`
+    e "Dumping rule$c"
+
+    c=`ssadm_cmd NAT`
+    e "Dumping NAT$c"
+
+    e "STOP"
+}
+
+copyr
+echo "DUMP SunScreen(TM) CONFIGURATION"
+echo
+discover_env
+eval $*
+e "START"
+find_ssadm
+if [ ${DMERCE_SSADM_FOUND} -eq 1 ]; then
+    [ -z "$policy" ] && policy="Initial"
+    f="policy.${policy}"
+    main
+    [ -n "$show" ] && ( echo; e "Showing configuration"; echo; cat $f )
+else
+    e "NO SunScreen(TM) FOUND"
+fi
+e "STOP"

@@ -1,0 +1,173 @@
+%%  DGP API BEGINN %%
+\chapter{1{[}DGP{]} - Damn Good Privacy: Verschl\"usselung}
+
+dmerce 1{[}DGP{]} stellt Ihnen eine umfangreiche
+Library zur Verschl\"usselung von Daten zur Verf\"ugung.
+Siehe Kapitel \vref{KryptographieParanoia}
+
+\newpage
+\section{Referenz}
+
+Die f\"ur \textbf{dmerce-DGP} ben\"otigten Module sind:
+
+\begin{itemize}
+\item \wancicode{mainlib.py}
+\item \wancicode{cipher.py}
+\item \wancicode{des.py}
+\item \wancicode{deslib.py}
+\item \wancicode{idea.py}
+\item \wancicode{idealib.py}
+\item \wancicode{rijndael.py}
+\item \wancicode{rijndaellib.py}
+\end{itemize}
+
+Dabei sind bei den Dateien f\"ur DES, IDEA, bzw. Rijndael
+nur diejenigen n\"otig, deren Algorithmus benutzt werden soll.
+In diesem Sinne ist dmerce-DGP v\"ollig modular.
+
+\subsection{Algorithmen}
+
+\subsubsection{Symmetrische Blockalgorithmen}
+
+\paragraph{DES}
+
+DES ist ein symmetrischer Blockalgorithmus mit folgenden Daten:
+
+\begin{description}
+
+\item[Blockl\"ange] 64 Bit in 1 Wort
+
+\item[Wortl\"ange] 64 Bit
+
+\item[Schl\"ussell\"ange] 64 Bit (effektiv 56 Bit)
+
+\item[Rundenzahl] 16
+
+\end{description}
+
+\paragraph{IDEA}
+
+IDEA ist ein symmetrischer Blockalgorithmus mit folgenden Daten:
+
+\begin{description}
+
+\item[Blockl\"ange] 64 Bit in 4 Worten
+
+\item[Wortl\"ange] 16 Bit
+
+\item[Schl\"ussell\"ange] 128 Bit
+
+\item[Rundenzahl] frei w\"ahlbar (\textit{default}: 8)
+
+\end{description}
+\textbf{IDEA darf nur f\"ur nicht gewerbliche Zwecke frei genutzt
+werden, f\"ur kommerzielle Nutzung ist eine kostenpflichtige
+Lizensierung notwendig!}
+
+\paragraph{Rijndael/AES}
+
+Rijndael ist ein symmetrischer Blockalgorithmus mit folgenden Daten:
+
+\begin{description}
+
+\item[Blockl\"ange] $n\times32$ Bit in $n$ Worten und $n$ frei w\"ahlbar aus:
+$\{4, 5, 6, 7, 8\}$ (\textit{default}: $n = 4$)
+
+\item[Wortl\"ange] 32 Bit
+
+\item[Schl\"ussell\"ange] $n\times32$ Bit in $n$ Worten $n$ frei w\"ahlbar 
+aus: $\{4, 5, 6, 7, 8\}$ (\textit{default}: $n = 4$)
+
+\item[Rundenzahl] frei w\"ahlbar. \textit{default} und dringend empfohlen:
+$$\mbox{max}(\mbox{Schl\"ussell\"ange, Blockl\"ange}) + 6$$ (also nicht 
+kleiner als 10)
+\end{description}
+
+\textbf{AES} ist eine Spezialisierung des urspr\"unglichen 
+Rijndael-Algorithmus in folgendem Sinne: \\
+Zugelassen ist nur die Blockl\"ange von 128 Bit, und die 
+Schl\"ussell\"angen 128 (AES oder AES-128), 192 (AES-192) und 
+256 (AES-256) Bit.
+
+\subsection{Syntax}
+
+Die Kryptographischen Algorithmen sind als Klassen implementiert.
+D.h., man instantiiert ein Objekt zum betreffenden Algorithmus
+und fuehrt Ver- und Entschluesselung dann als Methoden dieses
+Objektes aus.
+
+Z.B. fuer den Algorithmus DES: 
+
+\wancicode{plain = '<klartext>'\\
+  key = '<rohschluessel>'\\
+  obj = des.DES()} \\
+
+\wancicode{p = main\_lib.String\_Fillup(plain, obj.Blocklen()) \\
+  obj.NewData(p) \\
+
+  obj.E\_Key\_Create(key) \\
+
+  x = obj.ECB\_Encrypt() \\
+  cipher = obj.OutFormat(x)} \\
+
+Dabei ist plain der zu verschluesselnde Klartext als String,
+key der Roh-Schluessel als eine ganze Zahl zwischen 0 und
+der maximalen Schluessellaenge (die Daten der einzelnen Algorithmen s.u.)
+und obj das DES-Objekt (im Standardbetrieb: weitere Optionen werden
+weiter unten beschrieben).
+
+Mit der Funktion String\_Fillup aus dem Modul main\_lib.py wird der
+Klartext auf die volle Blocklaenge des Algorithmus gebracht und dann
+mit der Methode NewData dem DES-Objekt als Eingabe zugefuehrt.
+
+Die Methode E\_Key\_Create erzeugt aus dem Rohschluessel einen 
+fertigen Rundenschluessel.
+
+Die Methode ECB\_Encrypt verschluesselt den Klartext, OutFormat
+formatiert den resultierenden Chiffretext in einen String.
+
+Die Entschluesselung verlaueft fast parallel:
+
+\wancicode{cipher = <chiffretext>\\
+  key = <schluessel> \\
+
+  obj = des.DES() \\
+  obj.NewData(cipher) \\
+  obj.D\_Key\_Create(key) \\
+  y = obj.ECB\_Decrypt() \\
+  x = obj.OutFormat(y) \\
+  plain = main\_lib.String\_Filldown(x)} \\
+
+mit dem Unterschied, dass der Chiffretext zunaechst entschluesselt,
+dann formatiert und zum Schluss die Auffuellung rueckgaengig gemacht
+wird. Das ergebnis ist der urspruengliche Klartext als String.
+
+
+\subsection{Chiffrier-Modi}
+
+\subsubsection{ECB (Electronic Code Book)}
+
+Benutzung durch Aufruf der Ver-/Entschluesselungsmethode: \\
+ 
+\texttt{<kryptoobjekt>.ECB\_Encrypt()} \\
+
+\wancicode{<kryptoobjekt>.ECB\_Decrypt()} \\
+
+
+\subsubsection{CBC (Cipher Block Chaining)}
+
+CBC benoetigt einen Initialisierungsvektor (IV). Dieser wird vor 
+der Ver-/ Entschluesselung initialisiert: \\
+
+\wancicode{<kryptoobjekt>.IVinit(<IV>)} \\
+
+Da ein IV einen zusaetzlichen Block darstellt, wird er als positive
+ganze Zahl angegeben, wobei $0 \leq IV < 2^b$
+ist ($b$ = Blockl\"ange). \\
+
+Danach wird parallel zu ECB verfahren: \\
+
+\wancicode{<kryptoobjekt>.CBC\_Encrypt()} \\
+
+\wancicode{<kryptoobjekt>.CBC\_Decrypt()} \\
+%%  DGP API ENDE %%

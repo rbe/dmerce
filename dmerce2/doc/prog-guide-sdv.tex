@@ -1,0 +1,272 @@
+%%  SDV UserDoc BEGINN %%
+\chapter{1{[}SDV{]}: Statistical Data Viewer}
+
+\section{Ein \"Uberblick}
+
+Zum schnellen Zurechtfinden geben wir einen Beispielaufruf, wie er in
+einem Python-Script zur Benutzung der SDV-API gegeben werden k\"onnte:
+
+\begin{small}
+\begin{quote}
+\begin{verbatim}
+
+##############################################################
+# Ein dmerce-SDV Beispielaufruf
+##############################################################
+
+\end{verbatim}
+\end{quote}
+\end{small}
+
+Erzeuge eine Farbliste (z.B. im RGB-Format) (nicht obligatorisch - man
+kann selbstverst\"andlich jede andere geeignete Liste verwenden)
+
+\begin{small}
+\begin{quote}
+\begin{verbatim}
+
+bglist = []
+for i in range(0, 50, 2):
+    bglist.append((0, 0, 200))
+    bglist.append((150, 150, 150))
+
+\end{verbatim}
+\end{quote}
+\end{small}
+
+Erzeuge Listen von x- und y-Werten (die Listen sollten dieselbe Laenge
+haben - andernfalls erzeugt der folgende Schritt eine Fehlermeldung)
+
+\begin{small}
+\begin{quote}
+\begin{verbatim}
+
+x = ['x-Wert 1', 'x-Wert 1, 'x-Wert 1, 'x-Wert 1, 'x-Wert 1,
+     'x-Wert 1', 'x-Wert 1, 'x-Wert 1, 'x-Wert 1, 'x-Wert 1,]
+
+y1 = [26, 5, 15, 7, 6, 9, 12, 8, 6, 6]
+
+\end{verbatim}
+\end{quote}
+\end{small}
+
+Initialisiere ein Datenobjekt, die Liste erhaelt man mit den Methoden
+\wancicode{GetX()}, bzw. \wancicode{GetY()} zur\"uck:
+
+\begin{small}
+\begin{quote}
+\begin{verbatim}
+
+d = data.Data()
+d.Init()     
+d.SetX(x)                          
+d.SetY(y1)                         
+
+\end{verbatim}
+\end{quote}
+\end{small}
+
+Initialisiere verschiedene Farbobjekte, wieder erh\"alt man mit
+\wancicode{GetValue()} die Werte, in diesem Fall im RGB-Format,
+zur\"uck:
+
+\begin{small}
+\begin{quote}
+\begin{verbatim}
+
+bgc = colors.Color()               
+bgc.Init()
+bgc.SetValue((200,200,200))         
+                                    
+tc = colors.Color()                
+tc.Init()
+tc.SetValue((200,200,200))
+
+lc = colors.Color()
+lc.Init()
+lc.SetValue((200,200,200))
+
+\end{verbatim}
+\end{quote}
+\end{small}
+
+Initialisiere ein Farblistenobjekt und erzeuge Abschattierungen.  Das
+Objekt erhaelt mit \wancicode{SetMediumshade()} und
+\wancicode{SetDarkshade()} Schattierungswerte (hier 50 und 100) aus
+denen es mit \wancicode{SetMedium()} und \wancicode{SetDark()} Listen
+mittlerer und starker Schattierung erzeugt.
+  
+\begin{small}
+\begin{quote}
+\begin{verbatim}
+
+cl = colors.Colorlist()      
+cl.Init(bglist)
+cl.SetMediumshade(50)              
+cl.SetDarkshade(100)               
+cl.SetMedium()                     
+cl.SetDark()
+
+\end{verbatim}
+\end{quote}
+\end{small}
+
+Initialisiere Fontobjekte: mit \wancicode{SetDir()} (default:
+\wancicode{/fonts/}) wird das Verzeichnis der Fontfiles angegeben, mit
+\wancicode{SetPath()} der gesamte Pfad samt Dateiname,
+\wancicode{SetName()} setzt den Dateinamen alleine.
+\wancicode{Name2Path()} setzt das Verzeichnis und den Dateinamen zu
+einem kompletten Pfad zusammen.
+
+\begin{small}
+\begin{quote}
+\begin{verbatim}
+
+tf = font.Font()          
+tf.SetDir()               
+tf.SetName('helvB12.pil') 
+tf.Name2Path()            
+                          
+lf = font.Font()          
+lf.SetDir()
+lf.SetName('helvB08.pil')
+lf.Name2Path()
+
+\end{verbatim}
+\end{quote}
+\end{small}
+
+Inititialisiere ein SDV-Objekt.  \wancicode{Init()} uebergibt alle
+gewuenschten Einstellungen, die auch mit den Set-Methoden einzeln
+gegeben werden koennen.  \wancicode{SetUp()} veranlasst SDV zur
+Ermittlung interner Parameter \wancicode{TopTitle()} erzeugt ein
+Titelfeld (alternativ: \wancicode{BottomTitle()})
+\wancicode{SetWallpaper()} setzt eine geeignete Datei als
+Hintergrundbild.  \wancicode{BottomLegend()} erzeugt eine Legende am
+unteren Rand (alternativ: \wancicode{LeftLegend()},
+\wancicode{RightLegend()} \wancicode{Graphic()} plaziert eine Graphik
+im verbleibenden freien Platz
+
+\begin{small}
+\begin{quote}
+\begin{verbatim}
+
+tf = font.Font()          
+tf.SetDir()               
+tf.SetName('helvB12.pil') 
+tf.Name2Path()            
+
+sdv = sdv.SDV()                    
+sdv.Init()                         
+sdv.SetSize((640,480))             
+sdv.Setup()                        
+sdv.SetColor(bgc.GetValue())       
+sdv.TopTitle(tf.GetPath())
+sdv.SetWallpaper('hannibal1.jpg')
+sdv.BottomLegend(d.GetX(), d.GetY(0), lf.GetPath())  
+sdv.Graphic()                                        
+                                                     
+\end{verbatim}
+\end{quote}
+\end{small}
+
+Initialisiere ein Titel-Objekt: \wancicode{GetTitlesize()} \"ubergibt
+die Gr\"o"se des Titelfeldes, Fontpfad und Farbwerte werden ebenfalls
+mit \wancicode{Get}-Methoden ermittelt.  \wancicode{Draw()} veranlasst
+das Objekt zum Erzeugen des eigentlichen Bildes.
+
+\begin{small}
+\begin{quote}
+\begin{verbatim}
+
+t = title.Title()
+t.Init()
+t.SetSize(sdv.GetTitlesize())
+t.SetText('Schaeden durch Kannibalismus an Koerperteilen (in Prozent)')
+t.SetFont(tf.GetPath())
+t.SetColor(tc.GetValue())
+t.Draw()
+
+\end{verbatim}
+\end{quote}
+\end{small}
+
+Initialisiere ein Legenden-Objekt, parallel zum Titelobjekt:
+
+\begin{small}
+\begin{quote}
+\begin{verbatim}
+
+#l = legend.Legend()
+#l.Init(d.GetX(), d.GetY(0), size = sdv.GetLegendsize())
+#l.SetFont(lf.GetPath())
+#l.SetColor(lc.GetValue())
+#l.SetColorlist(cl.GetMedium())
+#l.ListDraw()
+
+\end{verbatim}
+\end{quote}
+\end{small}
+
+
+Initialisiere ein Graphik-Objekt wieder unter Zuhilfenahme von
+\wancicode{Get}-Methoden \wancicode{SetDevc()} erm\"oglicht die
+Einstellung des Koeffizienten der perspektivischen Verschiebung,
+\wancicode{SetDev()} erzeugt die Verschiebung.  \wancicode{SetUp()}
+erzeugt interne Einstellungen.  \wancicode{ColumnsMeasures()} erzeugt
+weitere Einstellungen speziell f\"ur S\"aulendiagramme (alternativ:
+\wancicode{GraphMeasures()} f\"ur
+Graphen). \\
+In diesem Beispiel wird ein 3-dimensionales S\"aulendiagramm
+(\wancicode{CubicColumns()} mit Hintergrundlinien
+\wancicode{BackgroundLining()} in einem Standardkoordiantensystem
+f\"ur S\"aulendiagramme (\wancicode{StandardColumns()} erzeugt. Man
+beachte, da"s zuerst die \wancicode{Draw()}-Anweisung erfolgen mu"s.
+
+\begin{small}
+\begin{quote}
+\begin{verbatim}
+
+g = graphic.Graphic()
+g.Init(d.GetX(), d.GetY(0), sdv.GetGraphicsize())
+g.SetColor((200,200,200))
+g.SetLight(cl.GetLight())
+g.SetMedium(cl.GetMedium())
+g.SetDark(cl.GetDark())
+g.SetDevc((0.5,0.5))
+g.SetDev()
+g.SetUp()
+g.SetYname('Schaeden')
+g.SetXname('Schadenort')
+g.ColumnMeasures()
+g.Draw()
+g.BackgroundLining()
+g.CubicColumns()
+g.StandardColumns()
+
+\end{verbatim}
+\end{quote}
+\end{small}
+
+Fuege die Teile zusammen und unterlege einen Hintergrund Mit der
+\wancicode{SDV}-Methode \wancicode{Paste()} werden die Bildelemente in
+das Grundbild eingef\"ugt, mit \wancicode{AttachWallpaper()} kann ggf.
+das Hintergrundbild unterlegt werden.  Mit \wancicode{Show()} wird das
+Bild angezeigt, oder auch mit \wancicode{Save()} gespeichert.
+
+\begin{small}
+\begin{quote}
+\begin{verbatim}
+
+sdv.Draw()
+
+sdv.Paste(t.GetPicture(), sdv.GetTitlelocation())
+sdv.Paste(l.GetPicture(), sdv.GetLegendlocation())
+sdv.Paste(g.GetPicture(), sdv.GetGraphiclocation())
+sdv.AttachWallpaper(0.4)
+sdv.Show()
+
+\end{verbatim}
+\end{quote}
+\end{small}
+%%  SDV UserDoc ENDE %%

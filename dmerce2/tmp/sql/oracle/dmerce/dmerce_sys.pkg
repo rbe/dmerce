@@ -1,0 +1,98 @@
+CREATE OR REPLACE PACKAGE dmerce_sys
+    AS
+	PROCEDURE p_colpermcounts(s IN VARCHAR2, tn IN VARCHAR2, ur IN VARCHAR2);
+	PROCEDURE p_all_colpermcounts(s IN VARCHAR2, ur IN VARCHAR2);
+END dmerce_sys;
+/
+
+CREATE OR REPLACE PACKAGE BODY dmerce_sys
+    AS
+
+	PROCEDURE p_colpermcounts(s IN VARCHAR2, tn IN VARCHAR2, ur IN VARCHAR2)
+	AS
+		schema		VARCHAR2(30);
+		role		VARCHAR2(30);
+		tablename	VARCHAR2(30);
+		columnname	VARCHAR2(30);
+		uxsrole		VARCHAR2(30);
+		select_count	NUMBER;
+		insert_count	NUMBER;
+		update_count	NUMBER;
+
+		CURSOR c IS
+			SELECT column_name
+			  FROM coldefs
+			 WHERE table_name = tablename
+			   AND owner = schema;
+
+	BEGIN
+		dmerce.p_copyright();
+
+		schema := UPPER(s);
+		tablename := UPPER(tn);
+		role := UPPER(ur);
+
+		OPEN c;
+
+		DBMS_OUTPUT.PUT_LINE('-');
+		DBMS_OUTPUT.PUT_LINE('* UXS UPDATE');
+		DBMS_OUTPUT.PUT_LINE('* SCHEMA: ' || schema || ' ROLE: ' || role || ' TABLE: ' || tablename);
+		DBMS_OUTPUT.PUT_LINE('-');
+
+		LOOP
+			FETCH c INTO columnname;
+			EXIT WHEN c%NOTFOUND;
+
+			DELETE FROM colpermcounts
+			 WHERE uxsrole = role
+			   AND table_schema = schema
+			   AND table_name = tablename
+			   AND column_name = columnname;
+
+			SELECT COUNT(*) INTO select_count
+			  FROM colperms
+			 WHERE table_schema = schema
+			   AND table_name = tablename
+			   AND column_name = columnname
+			   AND uxsrole = role
+			   AND privilege = 'SELECT';
+
+			SELECT COUNT(*) INTO insert_count
+			  FROM colperms
+			 WHERE table_schema = schema
+			   AND table_name = tablename
+			   AND column_name = columnname
+			   AND uxsrole = role
+			   AND privilege = 'INSERT';
+
+			SELECT COUNT(*) INTO update_count
+			  FROM colperms
+			 WHERE table_schema = schema
+			   AND table_name = tablename
+			   AND column_name = columnname
+			   AND uxsrole = role
+			   AND privilege = 'UPDATE';
+
+			INSERT INTO colpermcounts
+			(uxsrole, table_schema, table_name, column_name, s, i, u)
+		       	VALUES
+			(role, schema, tablename, columnname, select_count, insert_count, update_count);
+		END LOOP;
+
+		CLOSE c;
+	END;
+
+	PROCEDURE p_all_colpermcounts(s IN VARCHAR2, ur IN VARCHAR2)
+	AS
+		schema	VARCHAR2(30);
+		uxsrole	VARCHAR2(30);
+	BEGIN
+		schema := UPPER(s);
+		uxsrole := UPPER(ur);
+		FOR rc1 IN (SELECT table_name FROM tabdefs WHERE owner = schema) LOOP
+			p_colpermcounts(s, rc1.table_name, uxsrole);
+		END LOOP;
+	END;
+
+END dmerce_sys;
+/

@@ -1,0 +1,4 @@
+CONNECT SYS/$DMERCE_ORACLE_SYSDBAPWD AS SYSDBA;
+@$ORACLE_HOME/rdbms/admin/utlxplan.sql
+GRANT SELECT ON sys.plan_table TO public;
+EXIT;

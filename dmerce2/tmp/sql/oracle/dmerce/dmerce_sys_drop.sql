@@ -1,0 +1,1 @@
+ALTER TABLE samsessions ENABLE TABLE LOCK;

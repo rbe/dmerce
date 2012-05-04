@@ -1,0 +1,69 @@
+#!/bin/sh
+
+tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+
+mainmenu()
+{
+ dialog --clear --title 'Dmerce Installation Utility' \
+	--menu "" 20 60 10\
+	'<1>' 'Make Directories' '<2>' 'Install MySQL' \
+	'<3>' 'Install Apache' '<4>' 'Install Dmerce' \
+	'<5>' 'Extract Examples' '<6>' 'Exit'\
+	2>$tempfile
+ retval=$?
+ 
+ choice=`cat $tempfile`
+ case $retval in
+	0)
+	case $choice in
+	    '<1>') 
+		clear
+		make_dirs
+		sleep 5
+		mainmenu
+		;;
+	    '<2>')
+		clear
+		install_mysql
+		sleep 5
+		mainmenu
+		;;
+	    '<3>')
+		clear
+		install_apache
+		sleep 5
+		mainmenu
+		;;
+	    '<4>')
+		clear
+		install_dmerce
+		sleep 5
+		mainmenu
+		;;
+	    '<5>')
+		clear
+		example
+		sleep 5
+		mainmenu
+		;;
+	    '<6>')
+		dialog --title "Exit Dmerce Installing Utility" --clear \
+		    --msgbox "\n Thank You for Using Dmerce!" 7 34
+		clear
+		set_perms
+		echo "${DATE}: Ready."
+		deinit_discover_env
+		exit
+		;;
+	esac
+	;;
+     1)
+	 clear
+	 exit
+	 ;;
+     255)
+	 clear
+	 exit
+	 ;;
+ esac
+}

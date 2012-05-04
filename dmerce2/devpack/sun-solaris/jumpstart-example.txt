@@ -1,0 +1,604 @@
+ok boot net - install
+Res
+LOM event: +3h58m26s host reset
+etting ... 
+
+
+Sun Netra X1 (UltraSPARC-IIe 500MHz), No Keyboard
+OpenBoot 4.0, 512 MB memory installed, Serial #51370015.
+Ethernet address 0:3:ba:f:d8:1f, Host ID: 830fd81f.
+
+
+
+Executing last command: boot net - install                            
+Boot device: /pci@1f,0/ethernet@c  File and args: - install
+Timeout waiting for ARP/RARP packet
+SunOS Release 5.8 Version Generic_108528-13 64-bit
+Copyright 1983-2001 Sun Microsystems, Inc.  All rights reserved.
+NOTICE: dmfe0: PHY 1 link up 100 Mbps Full-Duplex
+NOTICE: dmfe1: PHY 1 link down
+whoami: no domain name
+Configuring /dev and /devices
+Using RPC Bootparams for network configuration information.
+Skipping interface dmfe1
+Configured interface dmfe0
+Searching for configuration file(s)...
+Using sysid configuration file 10.48.35.3:/export/instsrv/jumpstart/sysidcfg
+syslog service starting.
+savecore: no dump device configured
+Running in command line mode
+syslogd: /tmp/disk0_install.log: No such file or directory
+syslogd: /tmp/disk0_install.log: No such file or directory
+syslogd: /tmp/disk0_install.log: No such file or directory
+
+Please wait while the system information is loaded... /
+
+
+Please wait while the system is configured with your settings...
+Generating software table of contents [this may take a few minutes...]
+Table of contents complete.
+Starting Solaris installation program...
+Searching for JumpStart directory...
+Using rules.ok from 10.48.35.3:/export/instsrv/jumpstart.
+Checking rules.ok file...
+Using profile: 1ci
+Executing JumpStart preinstall phase...
+Searching for SolStart directory...
+Checking rules.ok file...
+Using begin script: install_begin
+Using finish script: patch_finish
+Executing SolStart preinstall phase...
+Executing begin script "install_begin"...
+Begin script install_begin execution completed.
+
+Processing default locales
+
+Processing profile
+        - Selecting cluster (SUNWCprog)
+
+Installing 64 bit Solaris packages
+        - Selecting locale (en_US)
+        - Selecting all disks
+        - Configuring boot device
+        - Using disk (c0t0d0) for "rootdisk"
+        - Configuring overlap (c0t0d0s2)
+        - Configuring / (c0t0d0s0)
+        - Configuring swap (c0t0d0s1)
+        - Configuring /var (c0t0d0s3)
+        - Configuring /opt (c0t0d0s5)
+        - Configuring /usr (c0t0d0s6)
+        - Configuring /export/home (c0t0d0s7)
+
+Verifying disk configuration
+
+Verifying space allocation
+        - Total software size:  784.08 Mbytes
+
+Preparing system for Solaris install
+
+Configuring disk (c0t0d0)
+        - Creating Solaris disk label (VTOC)
+
+Creating and checking UFS file systems
+        - Creating / (c0t0d0s0)
+        - Creating /var (c0t0d0s3)
+        - Creating /opt (c0t0d0s5)
+        - Creating /usr (c0t0d0s6)
+        - Creating /export/home (c0t0d0s7)
+
+Beginning Solaris software installation
+
+Starting software installation
+        SUNWrdm.....done.  784.06 Mbytes remaining.
+        SUNWpmowr...done.  784.05 Mbytes remaining.
+        SUNWlclx....done.  783.74 Mbytes remaining.
+        SUNWlcl.....done.  783.48 Mbytes remaining.
+        SUNWkiu8x...done.  782.25 Mbytes remaining.
+        SUNWkiu8....done.  781.26 Mbytes remaining.
+        SUNWi9rf....done.  780.17 Mbytes remaining.
+        SUNWi8rf....done.  778.47 Mbytes remaining.
+        SUNWi7rf....done.  777.90 Mbytes remaining.
+        SUNWi5rf....done.  777.37 Mbytes remaining.
+        SUNWi4rf....done.  776.79 Mbytes remaining.
+        SUNWi2rf....done.  775.81 Mbytes remaining.
+        SUNWi15rf...done.  775.72 Mbytes remaining.
+        SUNWi13rf...done.  774.21 Mbytes remaining.
+        SUNWhiu8x...done.  771.78 Mbytes remaining.
+        SUNWhiu8....done.  770.12 Mbytes remaining.
+        SUNWglt.....done.  769.97 Mbytes remaining.
+        SUNWfdl.....done.  767.84 Mbytes remaining.
+        SUNWeuxwe...done.  767.52 Mbytes remaining.
+        SUNWeusru...done.  767.49 Mbytes remaining.
+        SUNWeulux...done.  766.37 Mbytes remaining.
+        SUNWeuluf...done.  764.97 Mbytes remaining.
+        SUNWeugrf...done.  764.88 Mbytes remaining.
+        SUNWeuezt...done.  764.74 Mbytes remaining.
+        SUNWeudmg...done.  764.65 Mbytes remaining.
+        SUNWeudlg...done.  764.24 Mbytes remaining.
+        SUNWeudiv...done.  764.22 Mbytes remaining.
+        SUNWeudis...done.  764.21 Mbytes remaining.
+        SUNWeudhs...done.  764.18 Mbytes remaining.
+        SUNWeudhr...done.  764.16 Mbytes remaining.
+        SUNWeudda...done.  764.06 Mbytes remaining.
+        SUNWeudbd...done.  764.03 Mbytes remaining.
+        SUNWeudba...done.  763.99 Mbytes remaining.
+        SUNWebnfs...done.  762.79 Mbytes remaining.
+        SUNWkvmx.u..done.  762.45 Mbytes remaining.
+        SUNWkvm.u...done.  761.52 Mbytes remaining.
+        SUNWcarx.u..done.  745.92 Mbytes remaining.
+        SUNWdtct....done.  745.82 Mbytes remaining.
+        SUNWcar.u...done.  737.57 Mbytes remaining.
+        SUNWxwrtx...done.  737.53 Mbytes remaining.
+        SUNWxwrtl...done.  737.48 Mbytes remaining.
+        SUNWctplx...done.  737.44 Mbytes remaining.
+        SUNWctpls...done.  737.39 Mbytes remaining.
+        SUNWctlu....done.  737.27 Mbytes remaining.
+        SUNWcsu.....done.  722.82 Mbytes remaining.
+        SUNWxwhl....done.  722.80 Mbytes remaining.
+        SUNWcsr.....done.  707.59 Mbytes remaining.
+        SUNWcslx....done.  696.86 Mbytes remaining.
+        SUNWcsl.....done.  687.62 Mbytes remaining.
+        SUNWciu8x...done.  683.95 Mbytes remaining.
+        SUNWciu8....done.  681.89 Mbytes remaining.
+        SUNWarrf....done.  680.73 Mbytes remaining.
+        SUNWwbapi...done.  680.22 Mbytes remaining.
+        SUNWulocf...done.  680.13 Mbytes remaining.
+        SUNWulcfx...done.  680.08 Mbytes remaining.
+        SUNWulcf....done.  676.41 Mbytes remaining.
+        SUNWuium....done.  676.38 Mbytes remaining.
+        SUNWuiu8x...done.  673.08 Mbytes remaining.
+        SUNWuiu8....done.  666.30 Mbytes remaining.
+        SUNW1251f...done.  664.08 Mbytes remaining.
+        SUNWtiu8x...done.  664.00 Mbytes remaining.
+        SUNWtiu8....done.  663.92 Mbytes remaining.
+        SUNWcsd.....done.  663.88 Mbytes remaining.
+        SUNWdtcor...done.  663.87 Mbytes remaining.
+        SUNWxwdv....done.  663.84 Mbytes remaining.
+        SUNWtltk....done.  661.71 Mbytes remaining.
+        SUNWxwfnt...done.  654.49 Mbytes remaining.
+        SUNWesu.....done.  653.03 Mbytes remaining.
+        SUNWxilrl...done.  651.98 Mbytes remaining.
+        SUNWxildh...done.  647.96 Mbytes remaining.
+        SUNWxilow...done.  647.77 Mbytes remaining.
+        SUNWxwice...done.  647.60 Mbytes remaining.
+        SUNWlibms...done.  647.48 Mbytes remaining.
+        SUNWxwplt...done.  617.48 Mbytes remaining.
+        SUNWxwcft...done.  610.67 Mbytes remaining.
+        SUNWxwmod...done.  610.64 Mbytes remaining.
+        SUNWxwopt...done.  609.07 Mbytes remaining.
+        SUNWmfrun...done.  602.66 Mbytes remaining.
+        SUNWdtbas...done.  598.37 Mbytes remaining.
+        SUNWj2rt....done.  571.38 Mbytes remaining.
+        SUNWocfr....done.  571.36 Mbytes remaining.
+        SUNWocf.....done.  570.82 Mbytes remaining.
+        SUNWdtdte...done.  568.71 Mbytes remaining.
+        SUNWdtlog...done.  568.69 Mbytes remaining.
+        SUNWlibC....done.  568.14 Mbytes remaining.
+        SUNWfns.....done.  565.82 Mbytes remaining.
+        SUNWsregu...done.  565.40 Mbytes remaining.
+        SUNWwsr2....done.  565.05 Mbytes remaining.
+        SUNWwsrv....done.  564.80 Mbytes remaining.
+        SUNWmibii...done.  564.62 Mbytes remaining.
+        SUNWsasnm...done.  564.13 Mbytes remaining.
+        SUNWsadmi...done.  563.41 Mbytes remaining.
+        SUNWxwacx...done.  563.27 Mbytes remaining.
+        SUNWmdb.....done.  562.51 Mbytes remaining.
+        SUNWmdbx....done.  561.60 Mbytes remaining.
+        SUNWdtdmn...done.  560.88 Mbytes remaining.
+        SUNWdticn...done.  556.66 Mbytes remaining.
+        SUNWdtjxt...done.  556.12 Mbytes remaining.
+        SUNWscgui...done.  554.60 Mbytes remaining.
+        NSCPcom.....done.  530.14 Mbytes remaining.
+        SUNWwbdev...done.  529.29 Mbytes remaining.
+        SUNWadmj....done.  529.13 Mbytes remaining.
+        SUNWj2dev...done.  522.39 Mbytes remaining.
+        SUNWmccom...done.  521.94 Mbytes remaining.
+        SUNWmcc.....done.  520.46 Mbytes remaining.
+        SUNWmc......done.  519.27 Mbytes remaining.
+        SUNWmcdev...done.  513.55 Mbytes remaining.
+        SUNWsadmx...done.  513.23 Mbytes remaining.
+        SUNWwbcor...done.  513.18 Mbytes remaining.
+        SUNWadmc....done.  511.36 Mbytes remaining.
+        SUNWwbcou...done.  494.51 Mbytes remaining.
+        SUNWwbmc....done.  494.42 Mbytes remaining.
+        SUNWmga.....done.  490.32 Mbytes remaining.
+        SUNWdclnt...done.  490.26 Mbytes remaining.
+        SUNWadmr....done.  490.22 Mbytes remaining.
+        SUNWadmap...done.  488.89 Mbytes remaining.
+        SUNWsasnx...done.  488.52 Mbytes remaining.
+        SUNWcttf....done.  484.80 Mbytes remaining.
+        SUNWscpu....done.  484.04 Mbytes remaining.
+        SUNWbcp.....done.  482.90 Mbytes remaining.
+        SUNWscbcp...done.  481.29 Mbytes remaining.
+        SUNWj2pi....done.  480.53 Mbytes remaining.
+        SUNWscmos...done.  480.44 Mbytes remaining.
+        SUNWjcom....done.  480.37 Mbytes remaining.
+        SUNWscmsc...done.  480.34 Mbytes remaining.
+        SUNWpcr.....done.  480.31 Mbytes remaining.
+        SUNWpcu.....done.  480.08 Mbytes remaining.
+        SUNWscplp...done.  480.00 Mbytes remaining.
+        SUNWscpr....done.  479.97 Mbytes remaining.
+        SUNWpsf.....done.  479.70 Mbytes remaining.
+        SUNWscpux...done.  479.33 Mbytes remaining.
+        SUNWses.....done.  479.27 Mbytes remaining.
+        SUNWsesx....done.  479.21 Mbytes remaining.
+        SUNWspl.....done.  478.26 Mbytes remaining.
+        SUNWslpr....done.  478.23 Mbytes remaining.
+        SUNWslpu....done.  477.71 Mbytes remaining.
+        SUNWslpx....done.  477.55 Mbytes remaining.
+        SUNWsndmr...done.  477.40 Mbytes remaining.
+        SUNWsndmu...done.  475.56 Mbytes remaining.
+        SUNWsprot...done.  473.97 Mbytes remaining.
+        SUNWsprox...done.  473.94 Mbytes remaining.
+        SUNWsra.....done.  473.64 Mbytes remaining.
+        SUNWsrh.....done.  473.47 Mbytes remaining.
+        SUNWssad....done.  473.25 Mbytes remaining.
+        SUNWssadx...done.  472.97 Mbytes remaining.
+        SUNWstcx....done.  472.93 Mbytes remaining.
+        SUNWdtab....done.  463.68 Mbytes remaining.
+        SUNWswmt....done.  463.26 Mbytes remaining.
+        SUNWdtscm...done.  463.24 Mbytes remaining.
+        SUNWdtdst...done.  455.71 Mbytes remaining.
+        SUNWter.....done.  454.15 Mbytes remaining.
+        SUNWdthe....done.  453.09 Mbytes remaining.
+        SUNWdthed...done.  451.09 Mbytes remaining.
+        SUNWdthev...done.  438.88 Mbytes remaining.
+        SUNWdtezt...done.  436.38 Mbytes remaining.
+        SUNWtltkd...done.  436.04 Mbytes remaining.
+        SUNWtltkm...done.  435.06 Mbytes remaining.
+        SUNWtltkx...done.  434.16 Mbytes remaining.
+        SUNW5xmft...done.  430.76 Mbytes remaining.
+        SUNWtnfc....done.  430.50 Mbytes remaining.
+        SUNWtnfcx...done.  430.19 Mbytes remaining.
+        SUNWtnfd....done.  430.11 Mbytes remaining.
+        SUNWtoo.....done.  429.17 Mbytes remaining.
+        SUNWtoox....done.  428.30 Mbytes remaining.
+        SUNWtxfnt...done.  427.11 Mbytes remaining.
+        SUNWusb.....done.  426.72 Mbytes remaining.
+        SUNWaudd....done.  426.35 Mbytes remaining.
+        SUNWuaud....done.  426.26 Mbytes remaining.
+        SUNWuaudh...done.  426.23 Mbytes remaining.
+        SUNWusbx....done.  425.73 Mbytes remaining.
+        SUNWauddx...done.  425.26 Mbytes remaining.
+        SUNWuaudx...done.  425.15 Mbytes remaining.
+        SUNWucbt....done.  424.83 Mbytes remaining.
+        SUNWucbtx...done.  424.50 Mbytes remaining.
+        SUNWudfr....done.  424.35 Mbytes remaining.
+        SUNWudf.....done.  424.13 Mbytes remaining.
+        SUNWudfrx...done.  423.95 Mbytes remaining.
+        SUNWusbu....done.  423.86 Mbytes remaining.
+        SUNWfctl....done.  423.72 Mbytes remaining.
+        SUNWadmfw...done.  423.08 Mbytes remaining.
+        SUNWfctlx...done.  422.88 Mbytes remaining.
+        SUNWxi18n...done.  422.53 Mbytes remaining.
+        SUNWxim.....done.  421.33 Mbytes remaining.
+        SUNWuxlcf...done.  420.80 Mbytes remaining.
+        SUNWxwicx...done.  420.64 Mbytes remaining.
+        SUNWlmsx....done.  420.50 Mbytes remaining.
+        SUNWxwplx...done.  417.19 Mbytes remaining.
+        SUNWxi18x...done.  416.79 Mbytes remaining.
+        SUNWximx....done.  416.31 Mbytes remaining.
+        SUNWuxlcx...done.  416.25 Mbytes remaining.
+        SUNWvld.....done.  416.22 Mbytes remaining.
+        SUNWvldu....done.  416.18 Mbytes remaining.
+        SUNWcsxu....done.  414.25 Mbytes remaining.
+        SUNWvldx....done.  414.22 Mbytes remaining.
+        SUNWvolu....done.  413.41 Mbytes remaining.
+        SUNWaudio...done.  413.04 Mbytes remaining.
+        SUNWolrte...done.  407.29 Mbytes remaining.
+        SUNWoldcv...done.  404.16 Mbytes remaining.
+        SUNWoldte...done.  403.54 Mbytes remaining.
+        SUNWvolg....done.  403.49 Mbytes remaining.
+        SUNWvolr....done.  403.47 Mbytes remaining.
+        SUNWamir....done.  403.44 Mbytes remaining.
+        SUNWami.....done.  402.19 Mbytes remaining.
+        SUNWvolux...done.  401.90 Mbytes remaining.
+        SUNWdthez...done.  396.83 Mbytes remaining.
+        SUNWamix....done.  395.96 Mbytes remaining.
+        SUNWdtim....done.  395.38 Mbytes remaining.
+        SUNWdtwm....done.  393.72 Mbytes remaining.
+        SUNWbtool...done.  392.85 Mbytes remaining.
+        SUNWpl5u....done.  387.66 Mbytes remaining.
+        SUNWapct....done.  387.39 Mbytes remaining.
+        SUNWarc.....done.  377.06 Mbytes remaining.
+        SUNWwbdoc...done.  375.00 Mbytes remaining.
+        SUNWxwman...done.  374.05 Mbytes remaining.
+        SUNWpmu.....done.  373.94 Mbytes remaining.
+        SUNWpmr.....done.  373.90 Mbytes remaining.
+        SUNWpmowu...done.  373.82 Mbytes remaining.
+        SUNWxcu4....done.  372.73 Mbytes remaining.
+        SUNWowbcp...done.  368.51 Mbytes remaining.
+        SUNWxcu4t...done.  368.06 Mbytes remaining.
+        SUNWxcu4x...done.  368.05 Mbytes remaining.
+        SUNWdtrme...done.  368.03 Mbytes remaining.
+        SUNWarcx....done.  362.91 Mbytes remaining.
+        SUNWcxmft...done.  361.10 Mbytes remaining.
+        SUNWxwoft...done.  356.56 Mbytes remaining.
+        SUNWhea.....done.  348.63 Mbytes remaining.
+        SUNWjxmft...done.  339.59 Mbytes remaining.
+        SUNWxilh....done.  339.52 Mbytes remaining.
+        SUNWatfsr...done.  339.45 Mbytes remaining.
+        SUNWatfsu...done.  339.19 Mbytes remaining.
+        SUNWauda....done.  339.16 Mbytes remaining.
+        SUNWaudh....done.  338.80 Mbytes remaining.
+        SUNWolaud...done.  338.01 Mbytes remaining.
+        SUNWlpmsg...done.  337.99 Mbytes remaining.
+        SUNWppm.....done.  337.71 Mbytes remaining.
+        SUNWpsr.....done.  337.64 Mbytes remaining.
+        SUNWpsu.....done.  336.20 Mbytes remaining.
+        SUNWmp......done.  335.97 Mbytes remaining.
+        SUNWoldst...done.  331.22 Mbytes remaining.
+        SUNWolinc...done.  329.67 Mbytes remaining.
+        SUNWxilvl...done.  327.50 Mbytes remaining.
+        SUNWbtoox...done.  327.20 Mbytes remaining.
+        SUNWbzip....done.  326.99 Mbytes remaining.
+        SUNWj2man...done.  326.68 Mbytes remaining.
+        SUNWj3man...done.  326.37 Mbytes remaining.
+        SUNWjvman...done.  326.23 Mbytes remaining.
+        SUNWcea.....done.  326.18 Mbytes remaining.
+        SUNWdoc.....done.  322.95 Mbytes remaining.
+        SUNWman.....done.  279.72 Mbytes remaining.
+        SUNWceax....done.  279.67 Mbytes remaining.
+        SUNWcedu....done.  279.57 Mbytes remaining.
+        SUNWcg6h....done.  279.55 Mbytes remaining.
+        SUNWpmowm...done.  279.52 Mbytes remaining.
+        SUNWcpcu....done.  279.28 Mbytes remaining.
+        SUNWcpcux...done.  279.05 Mbytes remaining.
+        SUNWxwcsl...done.  278.43 Mbytes remaining.
+        SUNWjmfp....done.  274.41 Mbytes remaining.
+        SUNWjvrt....done.  263.69 Mbytes remaining.
+        SUNWjvdev...done.  249.79 Mbytes remaining.
+        SUNWkcsrt...done.  245.71 Mbytes remaining.
+        SUNWxwdvx...done.  245.67 Mbytes remaining.
+        SUNWolimt...done.  244.60 Mbytes remaining.
+        SUNWolman...done.  244.06 Mbytes remaining.
+        SUNWpdas....done.  242.02 Mbytes remaining.
+        SUNWlur.....done.  241.28 Mbytes remaining.
+        SUNWluu.....done.  240.21 Mbytes remaining.
+        SUNWloc.....done.  239.87 Mbytes remaining.
+        SUNWxwfs....done.  239.57 Mbytes remaining.
+        SUNWxwinc...done.  237.49 Mbytes remaining.
+        SUNWxwkey...done.  237.33 Mbytes remaining.
+        SUNWxwmox...done.  237.30 Mbytes remaining.
+        SUNWolbk....done.  235.24 Mbytes remaining.
+        SUNWxwpmn...done.  229.99 Mbytes remaining.
+        SUNWcstl....done.  220.71 Mbytes remaining.
+        SUNWplow....done.  220.65 Mbytes remaining.
+        SUNWplow1...done.  220.62 Mbytes remaining.
+        SUNWcstlx...done.  211.57 Mbytes remaining.
+        SUNWeuodf...done.  209.91 Mbytes remaining.
+        SUNWkxmft...done.  206.62 Mbytes remaining.
+        SUNWdfbh....done.  206.55 Mbytes remaining.
+        SUNWdpl.....done.  204.68 Mbytes remaining.
+        SUNWxwpsr...done.  204.46 Mbytes remaining.
+        SUNWxwslb...done.  188.76 Mbytes remaining.
+        SUNWdplx....done.  187.43 Mbytes remaining.
+        SUNWxwslx...done.  179.52 Mbytes remaining.
+        SUNWxwsrc...done.  175.17 Mbytes remaining.
+        SUNWnisr....done.  175.14 Mbytes remaining.
+        SUNWnisu....done.  173.77 Mbytes remaining.
+        SMEvplr.u...done.  173.72 Mbytes remaining.
+        SMEvplu.u...done.  173.68 Mbytes remaining.
+        SUNWdtbax...done.  167.91 Mbytes remaining.
+        SUNWdtdem...done.  167.34 Mbytes remaining.
+        SUNWced.u...done.  167.19 Mbytes remaining.
+        SUNWcedx.u..done.  167.00 Mbytes remaining.
+        SUNWcg6.u...done.  166.96 Mbytes remaining.
+        SUNWcg6x.u..done.  166.91 Mbytes remaining.
+        SUNWcpc.u...done.  166.88 Mbytes remaining.
+        SUNWcpcx.u..done.  166.85 Mbytes remaining.
+        SUNWcpr.u...done.  166.65 Mbytes remaining.
+        SUNWcprx.u..done.  166.47 Mbytes remaining.
+        SUNWdfb.u...done.  166.42 Mbytes remaining.
+        SUNWdmfex.u.done.  166.35 Mbytes remaining.
+        SUNWensqr.u.done.  166.28 Mbytes remaining.
+        SUNWensqx.u.done.  166.21 Mbytes remaining.
+        SUNWglmr.u..done.  166.16 Mbytes remaining.
+        SUNWglmx.u..done.  166.11 Mbytes remaining.
+        SUNWi2cr.u..done.  166.03 Mbytes remaining.
+        SUNWi2cx.u..done.  165.93 Mbytes remaining.
+        SUNWidecr.u.done.  165.78 Mbytes remaining.
+        SUNWidecx.u.done.  165.67 Mbytes remaining.
+        SUNWider.u..done.  165.53 Mbytes remaining.
+        SUNWigsr.u..done.  165.48 Mbytes remaining.
+        SUNWigsx.u..done.  165.41 Mbytes remaining.
+        SUNWkmp2r.u.done.  165.29 Mbytes remaining.
+        SUNWkmp2x.u.done.  165.15 Mbytes remaining.
+        SUNWluxdx.u.done.  165.05 Mbytes remaining.
+        SUNWm64.u...done.  164.97 Mbytes remaining.
+        SUNWm64x.u..done.  164.88 Mbytes remaining.
+        SUNWpstl.u..done.  164.68 Mbytes remaining.
+        SUNWpstlx.u.done.  164.46 Mbytes remaining.
+        SUNWsior.u..done.  164.21 Mbytes remaining.
+        SUNWsiox.u..done.  163.88 Mbytes remaining.
+        SUNWdtinc...done.  163.71 Mbytes remaining.
+        SUNWdtma....done.  162.31 Mbytes remaining.
+        SUNWdtmad...done.  161.50 Mbytes remaining.
+        SUNWdtmaz...done.  161.42 Mbytes remaining.
+        SUNWdtnsc...done.  161.38 Mbytes remaining.
+        SUNWeridx...done.  161.26 Mbytes remaining.
+        SUNWesxu....done.  161.04 Mbytes remaining.
+        SUNWrsmox...done.  161.02 Mbytes remaining.
+        SUNWfbc.....done.  160.99 Mbytes remaining.
+        SUNWfcip....done.  160.93 Mbytes remaining.
+        SUNWfcipx...done.  160.86 Mbytes remaining.
+        SUNWfcp.....done.  160.78 Mbytes remaining.
+        SUNWfcpx....done.  160.67 Mbytes remaining.
+        SUNWfnsx....done.  153.39 Mbytes remaining.
+        SUNWged.....done.  153.04 Mbytes remaining.
+        SUNWlibCx...done.  152.49 Mbytes remaining.
+        SUNWftdur...done.  152.42 Mbytes remaining.
+        SUNWftduu...done.  152.35 Mbytes remaining.
+        SUNWftdux...done.  152.26 Mbytes remaining.
+        SUNWftpr....done.  152.24 Mbytes remaining.
+        SUNWftpu....done.  152.16 Mbytes remaining.
+        SUNWgedm....done.  152.13 Mbytes remaining.
+        SUNWgedu....done.  152.00 Mbytes remaining.
+        SUNWgssc....done.  151.98 Mbytes remaining.
+        SUNWgss.....done.  151.81 Mbytes remaining.
+        SUNWgssx....done.  151.67 Mbytes remaining.
+        SUNWrsgx....done.  151.61 Mbytes remaining.
+        SUNWgsdhx...done.  151.48 Mbytes remaining.
+        SUNWrsg.....done.  151.43 Mbytes remaining.
+        SUNWgssdh...done.  151.32 Mbytes remaining.
+        SUNWgssk....done.  151.15 Mbytes remaining.
+        SUNWgsskx...done.  150.95 Mbytes remaining.
+        SUNWhmd.....done.  150.79 Mbytes remaining.
+        SUNWhmdu....done.  150.66 Mbytes remaining.
+        SUNWhmdx....done.  150.44 Mbytes remaining.
+        SUNWi1of....done.  145.48 Mbytes remaining.
+        SUNWluxop...done.  144.60 Mbytes remaining.
+        SUNWigsu....done.  144.45 Mbytes remaining.
+        SUNWinst....done.  144.07 Mbytes remaining.
+        SUNWipc.....done.  144.03 Mbytes remaining.
+        SUNWipcx....done.  144.00 Mbytes remaining.
+        SUNWiscr....done.  143.95 Mbytes remaining.
+        SUNWiscrx...done.  143.91 Mbytes remaining.
+        SUNWislcc...done.  143.88 Mbytes remaining.
+        SUNWislcx...done.  143.85 Mbytes remaining.
+        SUNWisolc...done.  143.47 Mbytes remaining.
+        SUNWisolx...done.  142.99 Mbytes remaining.
+        SUNWj2dem...done.  138.63 Mbytes remaining.
+        SUNW5ttf....done.  127.77 Mbytes remaining.
+        SUNWkttf....done.  118.52 Mbytes remaining.
+        SUNWj3rt....done.   79.84 Mbytes remaining.
+        SUNWj3dev...done.   69.31 Mbytes remaining.
+        SUNWj3dmo...done.   63.47 Mbytes remaining.
+        SUNWjib.....done.   63.37 Mbytes remaining.
+        SUNWocfx....done.   63.26 Mbytes remaining.
+        SUNWjcomx...done.   63.21 Mbytes remaining.
+        SUNWjiu8....done.   62.16 Mbytes remaining.
+        SUNWjiu8x...done.   61.04 Mbytes remaining.
+        SUNWjsnmp...done.   60.78 Mbytes remaining.
+        SUNWjvdem...done.   60.69 Mbytes remaining.
+        SUNWjvjit...done.   59.42 Mbytes remaining.
+        SUNWjxcft...done.   49.73 Mbytes remaining.
+        SUNWkcspf...done.   44.33 Mbytes remaining.
+        SUNWkcspg...done.   36.38 Mbytes remaining.
+        SUNWi15cs...done.   36.31 Mbytes remaining.
+        SUNWkcsrx...done.   31.89 Mbytes remaining.
+        SUNWkcspx...done.   31.79 Mbytes remaining.
+        SUNWi1cs....done.   31.70 Mbytes remaining.
+        SUNWkey.....done.   31.37 Mbytes remaining.
+        SUNWlccom...done.   31.35 Mbytes remaining.
+        SUNWlibCf...done.   31.23 Mbytes remaining.
+        SUNWlibm....done.   30.90 Mbytes remaining.
+        SUNWllc.....done.   30.52 Mbytes remaining.
+        SUNWllcr....done.   30.50 Mbytes remaining.
+        SUNWllcx....done.   30.14 Mbytes remaining.
+        SUNWlmx.....done.   30.12 Mbytes remaining.
+        SUNWlocx....done.   30.04 Mbytes remaining.
+        SUNWluxox...done.   29.78 Mbytes remaining.
+        SUNWmcex....done.   29.23 Mbytes remaining.
+        SUNWmdbdm...done.   29.19 Mbytes remaining.
+        SUNWmdi.....done.   29.18 Mbytes remaining.
+        SUNWmdix....done.   29.17 Mbytes remaining.
+        SUNWmfdev...done.   28.29 Mbytes remaining.
+        SUNWmfman...done.   26.10 Mbytes remaining.
+        SUNWnamdt...done.   26.09 Mbytes remaining.
+        SUNWnamos...done.   25.89 Mbytes remaining.
+        SUNWnamow...done.   25.81 Mbytes remaining.
+        SUNWnamox...done.   25.62 Mbytes remaining.
+        SUNWmgapp...done.   25.25 Mbytes remaining.
+        SUNWntpr....done.   25.22 Mbytes remaining.
+        SUNWntpu....done.   24.73 Mbytes remaining.
+        SUNWocfh....done.   24.69 Mbytes remaining.
+        SUNWolslb...done.   12.47 Mbytes remaining.
+        SUNWolsrc...done.   10.28 Mbytes remaining.
+        SUNWosdem...done.   10.02 Mbytes remaining.
+        SUNWpamsc...done.    9.99 Mbytes remaining.
+        SUNWpamsx...done.    9.94 Mbytes remaining.
+        SUNWpd......done.    9.72 Mbytes remaining.
+        SUNWtleu....done.    9.15 Mbytes remaining.
+        SUNWtleux...done.    8.95 Mbytes remaining.
+        SUNWpdu.....done.    8.88 Mbytes remaining.
+        SUNWpdx.....done.    8.59 Mbytes remaining.
+        SUNWpl5p....done.    6.59 Mbytes remaining.
+        SUNWpl5m....done.    2.12 Mbytes remaining.
+        SUNWsolnm...done.    2.10 Mbytes remaining.
+        SUNWpmux....done.    2.04 Mbytes remaining.
+        SUNWqfed....done.    1.89 Mbytes remaining.
+        SUNWqfedu...done.    1.84 Mbytes remaining.
+        SUNWqfedx...done.    1.66 Mbytes remaining.
+        SUNWrmodu...done.    1.65 Mbytes remaining.
+        SUNWrsgk....done.    1.56 Mbytes remaining.
+        SUNWrsmo....done.    1.54 Mbytes remaining.
+        SUNWrsm.....done.    1.41 Mbytes remaining.
+        SUNWrsmx....done.    1.24 Mbytes remaining.
+        SUNWsacom...done.    1.00 Mbytes remaining.
+
+Completed software installation
+
+Solaris 8 software installation succeeded
+
+Customizing system files
+        - Mount points table (/etc/vfstab)
+        - Network host addresses (/etc/hosts)
+
+Cleaning devices
+
+Customizing system devices
+        - Physical devices (/devices)
+        - Logical devices (/dev)
+
+Installing boot information
+        - Installing boot blocks (c0t0d0s0)
+
+Installation log location
+        - /a/var/sadm/system/logs/install_log (before reboot)
+        - /var/sadm/system/logs/install_log (after reboot)
+
+Installation complete
+Executing SolStart postinstall phase...
+Executing finish script "patch_finish"...
+
+
+Finish script patch_finish execution completed.
+Executing JumpStart postinstall phase...
+
+The begin script log 'begin.log'
+is located in /var/sadm/system/logs after reboot.
+
+The finish script log 'finish.log'
+is located in /var/sadm/system/logs after reboot.
+
+Jun 28 07:07:11 rpcbind: rpcbind terminating on signal.
+syncing file systems... done
+rebooting...
+Res
+LOM event: +4h25m11s host reset
+etting ... 
+
+
+Sun Netra X1 (UltraSPARC-IIe 500MHz), No Keyboard
+OpenBoot 4.0, 512 MB memory installed, Serial #51370015.
+Ethernet address 0:3:ba:f:d8:1f, Host ID: 830fd81f.
+
+
+
+Executing last command: boot                                          
+Boot device: disk  File and args: 
+SunOS Release 5.8 Version Generic_108528-13 64-bit
+Copyright 1983-2001 Sun Microsystems, Inc.  All rights reserved.
+configuring IPv4 interfaces: dmfe0.
+Hostname: mole
+NOTICE: dmfe0: PHY 1 link up 100 Mbps Full-Duplex
+NOTICE: dmfe1: PHY 1 link down
+Configuring /dev and /devices
+Configuring the /dev directory (compatibility devices)
+The system is coming up.  Please wait.
+checking ufs filesystems
+/dev/rdsk/c0t0d0s5: is clean.
+/dev/rdsk/c0t0d0s7: is clean.
+Configuring network interface addresses: dmfe0 dmfe1.
+starting rpc services: rpcbind done.
+Setting netmask of dmfe0 to 255.255.255.0
+Setting default IPv4 interface for multicast: add net 224.0/4: gateway mole
+syslog service starting.
+Print services started.
+volume management starting.
+Jun 28 16:08:56 mole sendmail[344]: My unqualified host name (mole) unknown; sleeping for retry
+The system is ready.
+
+mole console login: Jun 28 16:09:56 mole sendmail[344]: unable to qualify my own domain name (mole) -- using short name
+

@@ -1,0 +1,400 @@
+dmerce-NCC
+
+Modul
+-----
+user-account.py
+
+Das Skript dient zu Erstellung der passwd und der group Datei von Unix/Linux
+Systemen. Dabei werden die Systemeinstellungen nicht berührt und beibehalten,
+d.h. alle User und Gruppen mit der UID/GID unter 1000 werden so gelassen, wie
+sie bei der installation des Systems angelegt wurden.
+
+Werden per NCC User und/oder Gruppen angelegt, so werde ID's nur oberhalb von 1000
+angelegt um keinen Konflikt hervozurufen.
+
+Ablauf
+------
+Wie bei den meisten Skripten des NCC's wird als erstes die MAC Adresse und die ServerID
+ermittelt. Dann wird überprüft, für welche Dienste der aktuelle Server zuständug ist.
+Sind dann die Dienste ermittelt, so werden alle User und Gruppen angelegt, die für
+diesen Dienst eingetragen sind.
+Sinn und Zweck dieser Prüfung ist es, nur die User anzulegen, die die Berechtigung haben,
+diesen Dienst zu managen.
+Je nach System werden die entsprechenden Dateien angelegt.
+
+Modul
+-----
+create-default.py
+
+Ein Shell-Skript, dass eine Tabelle innerhalb einer dmerce-Datenbank 
+mit default Felder anlegt.
+Aufruf in der Shell:
+
+create-default.py --
+
+	CreateDefault
+	-------------
+	Legt eine Tabelle fuer eine dmerce-Datenbank an
+	mit Standard Feldern (ID, CreatedDateTime, CreatedBy,
+	ChangedDateTime, ChangedBy, active)
+	
+
+
++------------+
++ dmerce-ncc +
++------------+
+
+Modul
+-----
+http.py
+
+Generiert aus der Datenbank dmerc_ncc eine komplette vhost.conf
+
+DBData
+
+	  GetVhost
+	  --------
+	  Liefert eine Liste mit den allen konfigurierten VirtualHost
+	  aus den Tabellen DnsZones, DnsRecords, DnsRrtypes, SrvWebsrvVhosts,
+	  SrvWebsrvALT.
+
+	  GetSrvAlias
+	  -----------
+	  Holt die Alias Liste zu den entsprechenden VirtualHost.
+	  -> Uebergabe ist die ID
+
+	  GetIP
+	  -----
+	  Sucht per Rekursion die passende IP Adresse zum hostname und
+	  setzt setzt die innerhalb der Klasse.
+	  -> Uebergabe zone, name
+
+	  ReturnIP
+	  --------
+	  Gibt den Wert der IP Adresse zurueck, die durch die Methode GetIP
+	  gesetzt wurde.
+
+
+Vhost
+-----
+	SetNameVirtHost
+	---------------
+	Der NameVirtualHost wird gesetzt.
+	-> Uebergabe der IP
+	
+	SetListen
+	---------
+	Die Listen Direktive wird gesetzt.
+	-> Uebergabe IP
+	
+	SetVhost
+	--------
+	Der VirtualHost wird gesetzt.
+	-> Uebergabe ip
+
+	SetDocRoot
+	----------
+	Das Document Root Verzeichnis wird gesetzt.
+	-> Uebergabe des Webserververzeichnisses, Projektverzeichnis
+
+	SetAliases
+	----------
+	Die ServerAliases werden gesetzt.
+	-> Uebergabe einer List der Aliases
+
+	SetSrvName
+	----------
+	Der ServerName wird gesetzt.
+	-> Uebergabe vom ServerName (string)
+
+	SetServerAdmin
+	--------------
+	Der ServerAdmin wird gesetzt.
+	-> Uebergabe der ServerAdmin (string)
+
+	SetAccLog
+	---------
+	Der AccessLog Dateiname wird gesetzt.
+	-> Uebergabe Dateiname (string)
+
+	SetAccLogType
+	-------------
+	Der AccessLog Typ wird gesetzt
+	-> Uebergabe des Typs (string)
+
+	SetErrLog
+	---------
+	Der ErrorLog Dateiname wird gesetzt.
+	-> Uebergabe Dateinname
+
+	SetFoot
+	-------
+	Die Fusszeile wird gesetzt.
+
+	SetAddCfg
+	---------
+	Die zustzliche Konfiguration wird gesetzt.
+	-> Uebergabe (string)
+
+File
+	AddLine
+	-------
+	Fuegt der Datei eine Zeile hinzu.
+	-> Uebergabe der Zeile in Form eines Strings
+
+	Write
+	-----
+	Schreibt den Inhalt in eine Datei
+	Pfad und Dateiname sind z.Zt. noch fest eingestellt.
+
+Function
+	ChangeElement
+	-------------
+	Ersetzt ein Element einer List an der angegebenen
+	Stelle durch einen anderen Wert.
+	-> Uebergabe der Liste, des neuen Wertes, der Stelle
+
+	CreateList
+	----------
+	Erzeugt aus einer Liste mit Tupeln einen durch den angegebenen Seperator
+	getrennten String, bestehend aus dem Element an der angegebenen Stelle
+	-> Uebergabe list, Seperator, Element Nummer
+
+
+Ablauf
+------
+Im ersten Schritt wird die dmerce.cfg ausgelesen und die Verbindung zur dmerce_sys
+Datenbank hergestellt. Ist dann die Verbindung zur Projektdatenbank erfolgreich,
+wird die Verbindung zur Projektdatenbank hergestellt. Anhander der durch SnmpMac.GetServer
+ermittelten ServerID und nach der Überprüfung, ob der Server den Dienst als Webserver
+besitzt, wird das Hauptprogramm angestoßen.
+
+Im Hauptprogramm werden als erstes die nötigen Instanziierungen vorgenommen.
+Danach werde alle für den Server eingetragenen vhost Konfigurationen aus der Datenbank
+ausgelesen. Sollte es sich bei dem Vhosteintrag nicht um eine IP Adresse handeln, so wird
+durch eine Funktion diese anhand der DNS Einträge ermittelt. 
+
+Die Daten werden dann in der Klasse Vhost zu einem gültigen Datensatz zusammengesetzt.
+
+        Vhost.SetNameVirtHost(ip) -> Setzt die NameVirtualHost Einstellung
+        Vhost.SetListen(ip)	  -> Setzt die Listen Einstellung
+        Vhost.SetVhost(ip)	  -> Setzt die <VirtualHost <ip>> Einstellung
+        Vhost.SetDocRoot(result[i]['DocumentRoot']) -> Setzt die DocumentRoot Einstellung
+        Vhost.SetAliases(aliases) -> Fügt, wenn welche vorhanden, ServerAlias hinzu
+        Vhost.SetSrvName(result[i]['RecordName'] + '.' + result[i]['ZoneName']) -> Erzeugt den ServerNamen
+        Vhost.SetServerAdmin(result[i]['ServerAdmin']) -> Trägt den ServerAdmin ein
+        Vhost.SetAccLog('access_log') -> definiert den access_log Namen
+        Vhost.SetAccLogType(result[i]['AccLogType']) -> Legt den access_log Typen fest
+        Vhost.SetErrLog('error_log')		     -> Definiert den error_log Name
+        Vhost.SetFoot()				     -> Schließt die Konfigurationsdatei
+        Vhost.SetAddCfg(result[i]['AdditionalConfigs']) -> Fügt manuelle Konfigurationselement hinzu
+
+Sind alle Daten generiert und der Klasse File(), die als Container für die gesamte Konfigurationsdatei
+dient, hinzugefügt, so wird die Konfigurationsdatei im der dem Hauptprogramm übergebenen Pfad mit dem
+Dateinamen vhost.conf geschrieben.
+
+
++-------------+
++mail_alias.py+
++-------------+
+
+Modul zu Erstellung der sendmail alias datei.
+
+DBData
+	GetAliases
+	----------
+	Liefert alle Aliases in Form einer Liste.
+	Die Aliase-List wird mit Alias, Zone, AccUser gespeichert.
+
+	GetServerInfo
+	-------------
+	Liest das Feld "SQL" zu einem FQHN aus und gibt den Wert zurueck.
+	-> Uebergabe FQHN
+
+
+GenerateAliasLine
+
+	SetAlias
+	--------
+	Der Aliasname wird gesetzt
+	-> Uebergabe AliasName
+	
+	SetZone
+	-------
+	Die Zone wird festgelegt
+	-> Uebergabe ZoneName
+
+	SetLogin
+	--------
+	Der AccountName wird festgelegt
+	-> Uebergabe Login
+
+GenerateAliasFile
+
+	AddLine
+	-------
+	Fuegt dem Zeilen Container eine Zeile hinzu.
+	-> Uebergabe ist ein String
+
+	Write
+	-----
+	Erzeugt die Datei virtusertable.txt in /etc/mail
+
+	GenVirtDB
+	---------
+	Generiert aus der erzeugten virtusertable.txt eine
+	hash-Datenbank per Systemkommando
+
++--------------+
++ mail_conf.py +
++--------------+
+
+Modul zu Erstellung der sendmail.cf Konfigurationsdatei
+
+Shell Aufruf:
+
+mail_conf.py --serverID="<ID des Servers>"
+	     --mcFile="<Konfigurations-Text-Datei>"
+	     --cfFile="<sendmail cf Datei>"
+
+System
+
+	GetOS
+	-----
+	Gibt den OperationSystem Namen des Systems wieder.
+
+	SetcfDir
+	--------
+	Mit der Methode GetOS wird das System ermittelt und anhand
+	dessen das Verzeichnis fuer die Sendmailkonfigurationsdatei
+	gesetzt.
+	
+DBData
+
+	GetMacros
+	---------
+	Liefert eine Liste mit den fuer die ServerID eingetragenen
+	Macros fuer sendmail
+	-> Uebergabe Macroname, ServerID
+
+BuildConfFile
+
+	SetMacro
+	--------
+	Macroname wird gesetzt.
+	-> Uebergabe Macroname
+
+	SetValue
+	--------
+	Der Inhalt des Macros wird gesetzt.
+	-> Uebergabe Macroinhalt
+
+	__str__
+	-------
+	Rueckgabe des kompletten Strings
+
+SetConfFile
+
+	AddLine
+	-------
+	Zeile wird dem "File-Container" hinzugefuegt.
+	-> Uebergabe Zeile(string)
+
+	Write
+	-----
+	Schreibt die erstellte Konfigurstionsdatei.
+	->Uebergabe des Dateinamens	
+
+	ConvertConfFile
+	---------------
+	Auf dem System wird der m4 Befehl abgesetzt, um die
+	erstellte Konfigurationsdatei zu konvertieren.
+	-> Uebergabe directory, mcFile, cfFile (Verzeichnis, erstellte Datei,
+	   konvertierte Datei)
+
++--------+
++ dns.py +
++--------+
+
+Erzeugt die Konfiguration für den Nameserver.
+Die Verzeichnisstruktur ist in eine Struktur gegliedert.
+So wird für jeden Agent ein Verzeichnis angelegt und darunter
+die Verzeichnisse seiner Nameserver. In den Nameserververzeichnissen
+sind dann die zone files und named.conf vorhanden.
+
+Benötigte Module
+----------------
+	DMS.SQL -> Datenbank Vebindungen
+	DMS.SysTbl -> Analyse des Sys-Strings in der dmerce.cfg
+	Guardian.Config -> ConfigParser
+	DNSArpa -> Revers Mapping Modul, hält die Einträge für's ReverseMapping
+	DNSNS -> Datenkontainer für Nameserver Informationen
+	DNSZone.ZoneData -> ZoneInformationen Werden in diesem Modul gehalten
+	DMS.SnmpMac -> Die MAC-Adresse und die ServerID für den Server werden ausgelesen
+
+
+DBData
+	
+	GetNSList
+	---------
+	Liefert alle Nameserver, die in einer zone angegeben sind.
+	-> Übergabe der zone (string)
+
+	GetZones
+	--------
+	Liefert Daten über Zones, die zu einem speziellen Agent gehören.
+	Dies sind u.a. SOA_Expire TTL Zone-C etc.
+	-> Übergabe AgentID, ServerID
+
+	GetAgents
+	---------
+	Liefert eine Liste der gesamten Agents
+
+	GetForwarders
+	-------------
+	Liefert alle Forwarder IP für den angegebenen Nameserver
+	-> Übergabe Nameserver ID
+
+	GetReverse
+	----------
+	Holt alle ReverseMappings aus der Datenbank zum entsprechenden
+	Nameserver
+	-> Übergabe Nameserver ID
+
+Ablauf
+------
+
+Die dmerce.cfg wird ausgelesen und analysiert. Dadurch wird die Verbindung zur
+dmerce_sys Datenbank hergestellt und die Einträge für das Projekt (z.B. hellfire.ms0.1ci.net)
+ausgelesen. Mit dem für das Projekt gültigen SQL-String wird die dmerce_ncc Datenbank
+konnektiert. Anhand der ServerID wird festgestellt, ob der aktuelle Server für den DNS Dienst
+konfiguriert ist. Wenn dem so ist wird die NameserverID für den Server ermittelt.
+Mit der NameserverID wird das Hauptprogramm angestoßen, das anhand der NS_ID und einem 
+übergebenen Pfad die für den Server spezifischen Daten aus der Datenbank holt und in Konfigurations-
+dateien schreibt. 
+
+Hauptprogramm
+-------------
+Als erstes werden Instanzen allgemein benötigter Klassen und Module erzeugt.
+
+    db = DBData() -> beinhaltet Methoden mit DB-Abfragen
+    func = Function() -> Klasse mit allgemein benötigten Funktionen
+    DNSArpa.ReverseMap() -> Modul das das Handling mit ReverseMapping ermöglicht
+
+Anhand der NameserverID werden folgende Dinge aus der Datenbank im ersten Schritt ausgelesen.
+DBData.GetNsData(<db-instance>, <ns-server-id>) liefert folgende Daten:
+
+       DnsNs.ID		AS NS_ID
+       DnsNs.Name	AS NS_Name
+       DnsNs.IP		AS NS_IP
+       Agent.ID		AS AgentID
+       Agent.Name	AS AgentName
+       Agent.Vorname	AS AgentVorname
+
+Zusätzlich werden Daten bezüglich der SlaveReverseMapping ermittelt.
+Man erhält durch DBData.GetSlaveReverse(<db-instance>, <ns-server-id>).
+
+       DnsReverse.arpa
+       DnsNs.IP		AS MasterIP
+
+

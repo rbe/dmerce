@@ -1,0 +1,79 @@
+#!/bin/sh
+
+. ${DMERCE_HOME}/lib/libsh
+. ${DMERCE_HOME}/lib/libfreebsd
+
+srcdir="/export/data"
+destdev="/dev/da3a"
+destdevmount="/export/bkrm"
+destdevscsibus="0" # bus
+destdevscsiid="0:13:0" # bus:target:lun
+destdir="/export/bkrm"
+
+startdestdev() {
+	echo "`date`: Starting device '$destdev' on SCSI ID '$destdevscsiid'"
+	startscsidev $destdevscsibus $destdevscsiid
+}
+
+stopdestdev() {
+	echo "`date`: Stopping device '$destdev' on SCSI ID '$destdevscsiid'"
+	stopscsidev $destdevscsiid
+}
+
+rescan() {
+	echo "***********************************************************************************"
+	echo "`date`: PRESS RETURN WHEN YOU HAVE INSERTED OR REMOVED THE DRIVE"
+	echo "***********************************************************************************"
+	readkeywe
+	echo "`date`: Rescanning SCSI bus '$destdevscsibus'"
+	rescanscsibus $destdevscsibus
+}
+
+mountdestdev() {
+	echo "`date`: Mounting device '$destdev' to mount point '$destdevmount'"
+	mount $destdev $destdevmount
+	if [ $? != 0 ]; then
+		echo "`date`: COULD NOT MOUNT SCSI DEVICE '$destdevscsiid' TO MOUNT POINT '$destdevmount'"
+		exit 1
+	fi
+}
+
+umountdestdev() {
+	echo "`date`: Unmounting device '$destdev' from mount point '$destdevmount'"
+	umount $destdev
+	if [ $? != 0 ]; then
+		echo "`date`: COULD NOT UNMOUNT DEVICE '$destdev' FROM MOUNT POINT '$destdevmount'"
+		exit 1
+	fi
+}
+
+bk() {
+	echo "`date`: Going to directory '$srcdir'"
+	cd $srcdir
+	echo "`date`: Copying entire dir '$srcdir' to '$destdir'"
+	find . | cpio -pdum $destdir
+	if [ $? != 0 ]; then
+		echo "`date`: COULD NOT BACKUP SOURCE DIRECTORY '$srcdir' TO '$destdir'"
+		exit 1
+	fi
+}
+
+clean() {
+	umountdestdev
+	stopdestdev
+	rescan
+}
+
+trap "clean" INT
+
+copyr
+echo "BACKUP TO REMOVABLE MEDIA"
+echo
+echo "`date`: STARTING BACKUP"
+rescan
+startdestdev
+mountdestdev
+bk
+clean
+echo "`date`: STOPPING BACKUP"
+exit 0

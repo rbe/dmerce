@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="help"
+	name="dmerce Standalone Projects and Customers">
+	
+	<!--
+		
+		1[wan]Ci dmerce(R)
+		
+	-->
+	
+	<property file="etc/core/build.properties"/>
+	
+	<path id="core.classpath">
+		<fileset dir="${lib.core}">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="${lib.shared}">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="${lib}">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	<target name="help">
+		<echo message="Please supply target/customer: dmerce, ncc, whois, callando, bvk, igga, vsv"/>
+	</target>
+	
+	<target name="create-dist">
+		<mkdir dir="${dist}"/>
+	</target>
+	
+	<!--
+		
+		dmerce(R)
+		
+		dmercend = dmerce needed: all minimum needed classes
+		
+	-->
+	
+	<property name="dmercend.build" value="${build}/dmercend"/>
+	<property name="dmercend.jar" value="${dist}/dmercend.jar"/>
+
+	<target name="dmercend-prepare">
+		<delete file="${dmercend.jar}"/>
+		<delete dir="${dmercend.build}"/>
+		<mkdir dir="${dmercend.build}"/>
+		<mkdir dir="${dist}"/>
+	</target>
+	
+	<target name="dmercend-compile" depends="dmercend-prepare"
+		description="Compile _needed_ dmerce classes">
+		<javac source="1.4" destdir="${dmercend.build}" srcdir="${src.core}">
+			<include name="com/wanci/java/**"/>
+			<include name="com/wanci/dmerce/exceptions/**"/>
+			<include name="com/wanci/dmerce/kernel/**"/>
+			<include name="com/wanci/dmerce/res/ClassLoaderDummy.java"/>
+			<include name="com/wanci/dmerce/dmf/**"/>
+			<include name="com/wanci/dmerce/jdbcal/**"/>
+			<classpath refid="core.classpath"/>
+		</javac>
+	</target>
+	
+	<target name="dmercend-jar" depends="dmercend-compile">
+		<jar jarfile="dmercend.jar">
+			<fileset dir="${dmercend.build}"/>
+		</jar>
+	</target>
+	
+	<target name="dmercend-clean" depends="dmercend-jar">
+		<delete dir="${dmercend.build}"/>
+	</target>
+	
+	<!--
+		
+		dmerce(R)
+		
+	-->
+	
+	<property name="dmerce.build" value="${build}/dmerce"/>
+	<property name="dmerce.jar" value="dmerce.jar"/>
+	
+	<target name="dmerce-prepare">
+		<delete file="${dmerce.jar}"/>
+		<delete dir="${dmerce.build}"/>
+		<mkdir dir="${dmerce.build}"/>
+		<mkdir dir="${dist}"/>
+	</target>
+	
+	<target name="dmerce-compile" depends="dmerce-prepare">
+		<javac source="1.4" destdir="${dmerce.build}" srcdir="${src.core}">
+			<exclude name="com/wanci/dmerce/comm/**"/>
+			<exclude name="com/wanci/dmerce/dbmgr/**"/>
+			<exclude name="com/wanci/dmerce/impl/**"/>
+			<exclude name="com/wanci/dmerce/test/**"/>
+			<exclude name="com/wanci/dmerce/webservice/**"/>
+			<classpath refid="core.classpath"/>
+		</javac>
+	</target>
+
+	<target name="dmerce-jar" depends="dmerce-compile">
+		<jar jarfile="${dmerce.jar}">
+			<fileset dir="${dmerce.build}"/>
+		</jar>
+	</target>
+	
+	<target name="dmerce-clean" depends="dmerce-jar">
+		<delete dir="${dmercend.build}"/>
+	</target>
+	
+	<target name="dmerce" depends="dmercend-clean, dmerce-clean"
+		description="Create dmerce(R) Distribution"/>
+	
+	<!--
+		
+		dmerce(R) 1[PAYMENT]
+		
+	-->
+	
+	<property name="payment.build" value="${build}/payment"/>
+	<property name="payment.jar" value="${dist}/payment.jar"/>
+	
+	<target name="payment-prepare">
+		<delete file="${payment.jar}"/>
+		<delete dir="${payment.build}"/>
+		<mkdir dir="${payment.build}"/>
+		<mkdir dir="${dist}"/>
+	</target>
+	
+	<target name="payment-compile" depends="payment-prepare">
+		<javac source="1.4" destdir="${payment.build}" srcdir="${src.core}">
+			<include name="com/wanci/java/**"/>
+			<include name="com/wanci/dmerce/exceptions/**"/>
+			<include name="com/wanci/dmerce/kernel/Boot.java"/>
+			<include name="com/wanci/dmerce/cli/ArgumentParser.java"/>
+			<classpath refid="core.classpath"/>
+		</javac>
+		<javac source="1.4" destdir="${payment.build}" srcdir="${src.ire}">
+			<include name="com/wanci/dmerce/jdbcal/**"/>
+			<classpath refid="core.classpath"/>
+		</javac>
+		<javac source="1.4" destdir="${payment.build}" srcdir="${src.payment}">
+			<include name="com/wanci/payment/dns/validator/**"/>
+			<include name="com/wanci/payment/dns/**"/>
+		</javac>
+	</target>
+
+	<target name="payment-jar" depends="payment-compile">
+		<jar jarfile="${payment.jar}">
+			<fileset dir="${payment.build}"/>
+		</jar>
+	</target>
+	
+	<target name="payment-clean" depends="payment-jar">
+		<delete dir="${payment.build}"/>
+	</target>
+
+	<target name="payment" depends="payment-clean" description="Create 1[PAYMENT] Distrbution"/>
+	
+	<!--
+		
+		dmerce(R) 1[NCC]
+		
+	-->
+	
+	<property name="ncc.build" value="${build}/ncc"/>
+	<property name="ncc.jar" value="${dist}/ncc.jar"/>
+	
+	<target name="ncc-prepare">
+		<delete file="${ncc.jar}"/>
+		<delete dir="${ncc.build}"/>
+		<mkdir dir="${ncc.build}"/>
+		<mkdir dir="${dist}"/>
+	</target>
+	
+	<target name="ncc-compile" depends="ncc-prepare">
+		<javac source="1.4" destdir="${ncc.build}" srcdir="${src.core}">
+			<include name="com/wanci/java/**"/>
+			<include name="com/wanci/dmerce/exceptions/**"/>
+			<include name="com/wanci/dmerce/kernel/Boot.java"/>
+			<include name="com/wanci/dmerce/jdbcal/**"/>
+			<include name="com/wanci/dmerce/cli/ArgumentParser.java"/>
+			<classpath refid="core.classpath"/>
+		</javac>
+		<javac source="1.4" destdir="${ncc.build}" srcdir="${src.ncc}">
+			<include name="com/wanci/ncc/dns/validator/**"/>
+			<include name="com/wanci/ncc/dns/**"/>
+		</javac>
+	</target>
+
+	<target name="ncc-jar" depends="ncc-compile">
+		<jar jarfile="${ncc.jar}">
+			<fileset dir="${ncc.build}"/>
+		</jar>
+	</target>
+	
+	<target name="ncc-clean" depends="ncc-jar">
+		<delete dir="${ncc.build}"/>
+	</target>
+
+	<target name="ncc" depends="ncc-clean" description="Create 1[NCC] Distribution"/>
+	
+	<!--
+		
+		Whois
+		
+	-->
+	
+	<property name="whois.build" value="${build}/whois"/>
+	<property name="whois.jar" value="${dist}/whois.jar"/>
+	
+	<target name="whois-prepare">
+		<delete file="${whois.jar}"/>
+		<delete dir="${whois.build}"/>
+		<mkdir dir="${whois.build}"/>
+		<mkdir dir="${dist}"/>
+	</target>
+	
+	<target name="whois-compile" depends="whois-prepare">
+		<javac source="1.4" destdir="${whois.build}" srcdir="${src.core}">
+			<include name="com/wanci/java/LangUtil.java"/>
+			<include name="com/wanci/dmerce/exceptions/DmerceException.java"/>
+			<include name="com/wanci/dmerce/exceptions/WhoisServerNotFoundException.java"/>
+			<include name="com/wanci/dmerce/kernel/Boot.java"/>
+			<include name="com/wanci/dmerce/cli/ArgumentParser.java"/>
+			<classpath refid="core.classpath"/>
+		</javac>
+		<javac source="1.4" destdir="${whois.build}" srcdir="${src.ncc}">
+			<include name="com/wanci/ncc/whois/WhoisAnswerHandler.java"/>
+			<include name="com/wanci/ncc/whois/Internic.java"/>
+			<include name="com/wanci/ncc/whois/WhoisQuery.java"/>
+		</javac>
+		<javac source="1.4" destdir="${whois.build}" srcdir="${src.core}">
+			<include name="com/wanci/dmerce/cli/Whois.java"/>
+		</javac>
+	</target>
+	
+	<target name="whois-jar" depends="whois-compile">
+		<jar jarfile="${whois.jar}">
+			<fileset dir="${whois.build}"/>
+		</jar>
+	</target>
+	
+	<target name="whois-clean" depends="whois-jar">
+		<delete dir="${whois.build}"/>
+	</target>
+
+	<target name="whois-standalone-win" depends="create-dist, whois-clean"
+		description="Build standalone whois client for Windows">
+		<zip destfile="${dist}/whois.zip">
+			<fileset dir=".">
+				<include name="${whois.jar}"/>
+			</fileset>
+			<fileset dir="${src.distribwin}/standalone-bin">
+				<include name="whois.bat"/>
+			</fileset>
+		</zip>
+		<delete file="${whois.jar}"/>
+	</target>
+	
+	<target name="whois" depends="whois-clean" description="Build whois client">
+	</target>
+	
+	<!--
+		
+		Dummy
+		
+	<property name="dummy.build" value="${build}/dummy"/>
+	<property name="dummy.jar" value="${dist}/dummy.jar"/>
+	
+	<target name="dummy-prepare">
+		<delete file="${dummy.jar}"/>
+		<delete dir="${dummy.build}"/>
+		<mkdir dir="${dummy.build}"/>
+		<mkdir dir="${dist}"/>
+	</target>
+	
+	<target name="dummy-compile" depends="dummy-prepare">
+		<javac source="1.4" destdir="${dummy.build}" srcdir="${src.core}">
+			<include name=""/>
+			<classpath refid="core.classpath"/>
+		</javac>
+	</target>
+
+	<target name="dummy-jar" depends="dummy-compile">
+		<jar jarfile="${dummy.jar}">
+			<fileset dir="${dummy.build}"/>
+		</jar>
+	</target>
+
+	<target name="dummy-clean" depends="dummy-jar">
+		<delete dir="${dummy.build}"/>
+	</target>
+
+	<target name="dummy" depends="dummy-clean"/>
+	-->
+
+	<!--
+		
+		BVK e.V., Bonn
+		
+	-->
+	<property name="bvk.build" value="${build}/bvk"/>
+	<property name="bvk.jar" value="${dist}/dmerce3-customer-bvk.jar"/>
+
+	<path id="bvk.classpath">
+		<path refid="core.classpath"/>
+	</path>
+
+	<target name="bvk-prepare">
+		<delete file="${bvk.jar}"/>
+		<delete dir="${bvk.build}"/>
+		<mkdir dir="${bvk.build}"/>
+		<mkdir dir="${dist}"/>
+	</target>
+	
+	<target name="bvk-compile" depends="bvk-prepare">
+		<javac source="1.4" destdir="${bvk.build}" srcdir="${src.core}">
+			<include name="com/wanci/dmerce/res/ClassLoaderDummy.java"/>
+			<include name="com/wanci/dmerce/exceptions/**"/>
+			<include name="com/wanci/java/**"/>
+			<include name="com/wanci/dmerce/kernel/**"/>
+			<classpath refid="core.classpath"/>
+		</javac>
+		<javac source="1.4" destdir="${bvk.build}" srcdir="${src.ire}">
+			<include name="com/wanci/dmerce/csv/**"/>
+			<include name="com/wanci/dmerce/jdbcal/**"/>
+			<classpath refid="core.classpath"/>
+		</javac>
+		<javac source="1.4" destdir="${bvk.build}" srcdir="${src.jobs}">
+			<include name="com/wanci/dmerce/imageprocessing/**"/>
+			<classpath refid="core.classpath"/>
+		</javac>
+		<javac source="1.4" destdir="${bvk.build}" srcdir="${src.core}">
+			<include name="com/wanci/dmerce/cli/Csv.java"/>
+			<include name="com/wanci/dmerce/cli/ResizeImages.java"/>
+			<classpath refid="core.classpath"/>
+		</javac>
+		<javac source="1.4" destdir="${bvk.build}" srcdir="${src.jobs}">
+			<include name="com/wanci/dmerce/imageprocessing/**"/>
+			<classpath refid="core.classpath"/>
+		</javac>
+		<javac source="1.4" destdir="${bvk.build}" srcdir="${src.customer}">
+			<include name="com/wanci/customer/bvk/**"/>
+			<classpath refid="bvk.classpath"/>
+		</javac>
+	</target>
+	
+	<target name="bvk-jar" depends="create-dist, bvk-compile">
+		<jar jarfile="${bvk.jar}">
+			<fileset dir="${bvk.build}"/>
+		</jar>
+	</target>
+	
+	<target name="bvk-clean" depends="bvk-jar">
+		<delete dir="${bvk.build}"/>
+	</target>
+	
+	<target name="bvk" depends="bvk-clean" description="Build BVK e.V. distribution">
+	</target>
+	
+	<!--
+		
+		callando GmbH, Wiesbaden
+		
+	-->
+	<property name="callando.build" value="${build}/callando"/>
+	<property name="callando.jar" value="${dist}/dmerce3-customer-callando.jar"/>
+	
+	<target name="callando-prepare">
+		<delete file="${callando.jar}"/>
+		<delete dir="${callando.build}"/>
+		<mkdir dir="${callando.build}"/>
+		<mkdir dir="${dist}"/>
+	</target>
+	
+	<target name="callando-compile" depends="callando-prepare">
+		<javac source="1.4" destdir="${callando.build}" srcdir="${src.core}">
+			<include name="com/wanci/java/**"/>
+			<include name="com/wanci/dmerce/exceptions/**"/>
+			<include name="com/wanci/dmerce/kernel/**"/>
+			<include name="com/wanci/dmerce/cli/ArgumentParser.java"/>
+			<include name="com/wanci/dmerce/cli/Cli.java"/>
+			<include name="com/wanci/dmerce/res/ClassLoaderDummy.java"/>
+			<include name="com/wanci/dmerce/mail/SendMail.java"/>
+			<classpath refid="core.classpath"/>
+		</javac>
+		<javac source="1.4" destdir="${callando.build}" srcdir="${src.ire}">
+			<include name="com/wanci/java/**"/>
+			<include name="com/wanci/dmerce/jdbcal/**"/>
+			<classpath refid="core.classpath"/>
+		</javac>
+		<javac source="1.4" destdir="${callando.build}" srcdir="${src.customer}">
+			<include name="com/wanci/customer/callando/**"/>
+			<classpath refid="core.classpath"/>
+		</javac>
+	</target>
+
+	<target name="callando-jar" depends="create-dist, callando-compile">
+		<jar jarfile="${callando.jar}">
+			<fileset dir="${callando.build}"/>
+		</jar>
+	</target>
+
+	<target name="callando-clean" depends="callando-jar">
+		<delete dir="${callando.build}"/>
+	</target>
+
+	<target name="callando" depends="callando-clean" description="Build callando GmbH distribution">
+	</target>
+	
+	<!--
+		
+		IGGA e.V.
+		
+	-->
+	<property name="igga.build" value="${build}/igga"/>
+	<property name="igga.jar" value="${dist}/dmerce3-customer-igga.jar"/>
+	
+	<target name="igga-prepare">
+		<delete file="${igga.jar}"/>
+		<delete dir="${igga.build}"/>
+		<mkdir dir="${igga.build}"/>
+		<mkdir dir="${dist}"/>
+	</target>
+	
+	<target name="igga-compile" depends="igga-prepare">
+		<javac source="1.4" destdir="${igga.build}" srcdir="${src.core}">
+			<include name="com/wanci/dmerce/res/ClassLoaderDummy.java"/>
+			<include name="com/wanci/java/**.java"/>
+			<include name="com/wanci/dmerce/exceptions/XmlPropertiesFormatException.java"/>
+			<include name="com/wanci/dmerce/kernel/**"/>
+			<classpath refid="core.classpath"/>
+		</javac>
+		<javac source="1.4" destdir="${igga.build}" srcdir="${src.ire}">
+			<include name="com/wanci/dmerce/jdbcal/**.java"/>
+			<classpath refid="core.classpath"/>
+		</javac>
+		<javac source="1.4" destdir="${igga.build}" srcdir="${src.core}">
+			<include name="com/wanci/dmerce/payment/**.java"/>
+			<classpath refid="core.classpath"/>
+		</javac>
+		<javac source="1.4" destdir="${igga.build}" srcdir="${src.jobs}">
+			<include name="com/wanci/dmerce/filemanager/DeleteFilesJob.java"/>
+			<classpath refid="core.classpath"/>
+		</javac>
+	</target>
+
+	<target name="igga-jar" depends="create-dist, igga-compile">
+		<jar jarfile="${igga.jar}">
+			<fileset dir="${igga.build}"/>
+		</jar>
+	</target>
+
+	<target name="igga-clean" depends="igga-jar">
+		<delete dir="${igga.build}"/>
+	</target>
+
+	<target name="igga" depends="igga-clean" description="Build IGGA e.V. distribution"/>
+
+	<!--
+		
+		VSV e.V.
+		
+	-->
+	<property name="vsv.build" value="${build}/vsv"/>
+	<property name="vsv.jar" value="${dist}/dmerce3-customer-vsv.jar"/>
+	
+	<target name="vsv-prepare">
+		<delete file="${vsv.jar}"/>
+		<delete dir="${vsv.build}"/>
+		<mkdir dir="${vsv.build}"/>
+		<mkdir dir="${dist}"/>
+	</target>
+	
+	<target name="vsv-compile" depends="vsv-prepare">
+		<javac source="1.4" destdir="${vsv.build}" srcdir="${src.core}">
+			<include name="com/wanci/dmerce/res/ClassLoaderDummy.java"/>
+			<include name="com/wanci/dmerce/exceptions/XmlPropertiesFormatException.java"/>
+			<include name="com/wanci/dmerce/kernel/**"/>
+			<include name="com/wanci/dmerce/payment/**"/>
+			<include name="com/wanci/java/**"/>
+			<classpath refid="core.classpath"/>
+		</javac>
+		<javac source="1.4" destdir="${vsv.build}" srcdir="${src.ire}">
+			<include name="com/wanci/dmerce/jdbcal/**"/>
+			<classpath refid="core.classpath"/>
+		</javac>
+		<javac source="1.4" destdir="${vsv.build}" srcdir="${src.customer}">
+			<include name="com/wanci/customer/vsv/**"/>
+			<classpath refid="core.classpath"/>
+		</javac>
+	</target>
+
+	<target name="vsv-jar" depends="vsv-compile">
+		<jar jarfile="${vsv.jar}">
+			<fileset dir="${vsv.build}"/>
+		</jar>
+	</target>
+
+	<target name="vsv-clean" depends="vsv-jar">
+		<delete dir="${vsv.build}"/>
+	</target>
+
+	<target name="vsv" depends="vsv-clean" description="Build VSV e.V. distribution"/>
+
+	<!--
+		
+		Build all
+		
+	-->
+	<target name="world" depends="dmerce, ncc, whois, bvk, callando, igga, vsv"
+		description="Build all .jar files"/>
+	
+</project>

@@ -1,0 +1,8 @@
+package com.wanci.dmerce.impl
+
+requires:
+
+namespace.jar
+jaxrpc-api.jar
+jaxrpc-impl.jar
+jax-qname.jar

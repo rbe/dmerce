@@ -1,0 +1,25 @@
+#!/usr/bin/env perl -w
+
+use strict;
+use File::stat;
+use Time::Local;
+
+my $patch;
+my $path = "/var/sadm/patch/";
+my @patches = `ls -ogtr $path | awk '{ print \$7; }'`;
+my @months = ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
+
+foreach $patch (@patches)
+{
+  chop($patch);
+  if ($patch ne "") {
+    my $patchtime = stat($path . $patch)->mtime;
+    my ($sec, $min, $hour, $mday, $mon, $year) = (localtime($patchtime))[0, 1, 2, 3, 4, 5];
+    $year += 1900;
+    my $synopsis = `head ${path}${patch}/README.$patch | grep -h "Synopsis: " 2>/dev/null | sed 's/Synopsis: //'`;
+    chop($synopsis);
+    if ($synopsis) {
+      printf("%2d %s %.4d %.2d:%.2d:%.2d %s %s\n", $mday, $months[$mon], $year, $hour, $min, $sec, $patch, $synopsis);
+    }
+  }
+}

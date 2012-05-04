@@ -1,0 +1,67 @@
+#!/usr/bin/ksh
+
+. /opt/dmerce/dmercerc
+. $DMERCE_LIB/libdmerce
+[ $? -gt 0 ] && exit 2
+. $DMERCE_LIB/libsh
+[ $? -gt 0 ] && exit 2
+
+export LD_LIBRARY_PATH
+export PYTHONPATH
+export DMERCE_HOME
+
+STOP_FILE="$DMERCE_HOME/.qdncc_distrib_apache.stop"
+SSHAGENT_PID="$DMERCE_HOME/.qdncc_distrib_apache.sshagent.pid"
+export SSHAGENT_PID
+SEC=14400
+NCCDATA=/opt/dmerce/NCC
+APACHEDATA=$NCCDATA/dagobert.compoint2000.de/http/opt/dmerce/product/apache
+WEBALIZERDATA=$DMERCE_HOME/webalizer
+DAGOBERTIP=213.203.245.7
+
+generate_files() {
+	e "Generating Apache data"
+	python $DMERCE_HOME/product/dmerce/2.5.0/Prod/NCC/http.pyc
+}
+
+restart_apache() {
+	e "Restarting apache on $DAGOBERTIP"
+	ssh root@$DAGOBERTIP "/etc/init.d/dmerce restart apache"
+}
+
+distribute_data() {
+	e "Copying Apache data to $DAGOBERTIP"
+	scp -r $APACHEDATA/* $DAGOBERTIP:/opt/dmerce/product/apache
+	scp -r $WEBALIZERDATA/* $DAGOBERTIP:$WEBALIZERDATA
+}
+
+run_as_daemon() {
+        e "Starting data distribution every $SEC seconds"
+        while [ ! -f $STOP_FILE ]; do
+                generate_files
+                e "Distributing data to $DAGOBERTIP"
+                distribute_data #>> $DMERCE_LOG/qdncc_distrib_apache.log
+                restart_apache
+                sleep $SEC
+        done
+        e "Done"
+}
+
+create_stop_file() {
+        e "Creating stop file $STOP_FILE"
+        touch $STOP_FILE
+}
+
+cleanup() {
+        [ -f . $SSHAGENT_PID ] && kill -9 `cat $SSHAGENT_PID | awk '{print $3}'`
+        [ -f . $SSHAGENT_PID ] && rm -f $SSHAGENT_PID
+        rm -f $STOP_FILE
+}
+
+trap 'create_stop_file' 1 2 3 15
+libdmerce_copyr
+echo "DISTRIBUTING APACHE DATA"
+echo
+libdmerce_check_sshagent
+run_as_daemon
+cleanup

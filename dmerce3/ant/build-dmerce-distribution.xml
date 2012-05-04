@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project basedir="." default="build-solsparc64" name="dmerce Distribution">
+	
+	<property environment="env"/>
+	<property file="etc/core/build.properties"/>
+
+	<!--
+		
+		Initialize properties for software components
+		
+	-->
+	<target name="preinit">
+		<property name="swrepository" value="/export/swdocs/program/java"/>
+        <property name="jboss" value="${swrepository}/jboss/jboss-3.2.1"/>
+        <property name="ant" value="${swrepository}/ant/apache-ant-1.6.0"/>
+        <property name="j2sdk.winia32.path"
+        	value="${swrepository}/sdk/j2sdk-1_4_2-winia32-dmercepack.zip"/>
+        <property name="j2sdk.solsparc64.path"
+        	value="${swrepository}/sdk/j2sdk-1_4_2_03-solsparc64-dmercepack.zip"/>
+        <property name="j2sdk.solsparc32.path"
+        	value="${swrepository}/sdk/j2sdk-1_4_2_03-solsparc32-dmercepack.zip"/>
+        <property name="j2sdk.solia32.path"
+        	value="${swrepository}/sdk/j2sdk-1_4_2_03-solia32-dmercepack.zip"/>
+        <property name="j2sdk.linuxia32.path"
+        	value="${swrepository}/sdk/j2sdk-1_4_2_03-linuxia32-dmercepack.zip"/>
+	</target>
+	
+	<target name="preinit-rblap">
+		<property name="swrepository" value="/dmerce/swrep"/>
+        <property name="jboss" value="${swrepository}/jboss-3.2.1"/>
+        <property name="ant" value="${swrepository}/apache-ant-1.6.0"/>
+        <property name="j2sdk.winia32.path"
+        	value="${swrepository}/j2sdk-1_4_2-winia32-dmercepack.zip"/>
+        <property name="j2sdk.solsparc64.path"
+        	value="${swrepository}/j2sdk-1_4_2_03-solsparc64-dmercepack.zip"/>
+        <property name="j2sdk.solsparc32.path"
+        	value="${swrepository}/j2sdk-1_4_2_03-solsparc32-dmercepack.zip"/>
+        <property name="j2sdk.solia32.path"
+        	value="${swrepository}/j2sdk-1_4_2_03-solia32-dmercepack.zip"/>
+        <property name="j2sdk.linuxia32.path"
+        	value="${swrepository}/j2sdk-1_4_2_03-linuxia32-dmercepack.zip"/>
+	</target>
+
+
+	<!--
+		
+		Build webservice, webservice client, webengine to include
+		into dmerce distribution
+		
+	-->
+    <target name="prebuild">
+    	<ant antfile="build-dmerce-webservice.xml" target="build-service"
+    		inheritall="false"/>
+    	<ant antfile="build-dmerce-webservice.xml" target="build-client"
+    		inheritall="false"/>
+    	<ant antfile="build-dmerce-webengine.xml" target="build-engine"
+    		inheritall="false"/>
+    	<ant antfile="build-dmerce-doc.xml" target="build-user"
+    		inheritall="false"/>
+        <ant antfile="build-dmerce.xml" target="whois" inheritall="false"/>
+    </target>
+    
+
+	<!--
+		
+		dmerce platform independent basis distribution
+		(without platform specific JDK, scripts, ...)
+		
+	-->
+    <target name="build-base" depends="preinit, prebuild"
+    	description="Platform independent distribution">
+    	
+        <!--
+        	ZIP-File mit allen benötigten Komponenten erzeugen
+        -->
+		<zip destfile="dmerce-distrib.zip">
+			<!--
+				Jboss
+			-->
+            <zipfileset dir="${jboss}" prefix="product/jboss">
+                <exclude name="server/default/log/**/*"/>
+                <exclude name="server/default/tmp/**/*"/>
+            </zipfileset>
+            <!--
+            	Ant
+            -->
+            <zipfileset dir="${ant}" prefix="product/ant"/>
+            <zipfileset dir="${lib.core}" includes="ant-contrib-0.6.jar"
+            	prefix="product/ant/lib"/>
+            <!--
+            	dmerce Konfigurationsdateien
+            -->
+            <zipfileset dir="${src.distrib.etc}" prefix="etc"/>
+            <!--
+            	ClassLoaderDummy: Dummy-Klasse für com.wanci.dmerce.res Paket
+            -->
+            <zipfileset dir="${src.core}" includes="com/wanci/dmerce/res/ClassLoaderDummy.java"
+            	prefix="${dist.sys}/src"/>
+            <!--
+            	TLDs und web.xml
+            -->
+            <zipfileset dir="${etc.webclient}" prefix="${dist.sys}/etc">
+                <include name="dmerce*.tld"/>
+                <include name="web.xml"/>
+            </zipfileset>
+			<!--
+				dmerce Webservice
+			-->
+			<zipfileset dir="${dist}" includes="dmercews.war"
+				prefix="product/dmerce/sys/lib"/>
+			<zipfileset dir="${dist}" includes="dmercews.war"
+				prefix="product/jboss/server/default/deploy"/>
+			<!--
+				dmerce Webengine
+			-->
+			<zipfileset dir="${dist}" prefix="${dist.sys}/lib/webengine">
+				<include name="${wsclient.jar}"/>
+				<include name="${engine.jar}"/>
+			</zipfileset>
+            <zipfileset dir="${lib.webengine}" prefix="${dist.sys}/lib/webengine">
+                <include name="*.jar"/>
+            </zipfileset>
+            <zipfileset dir="${lib.shared}" prefix="${dist.sys}/lib/shared">
+                <include name="*.jar"/>
+            </zipfileset>
+            <!--
+            	dmerce SQL Skripte
+            -->
+            <zipfileset dir="${src.distrib.sys}" prefix="product/dmerce/sys">
+            	<exclude name="sql/oracle/templates"/>
+           	</zipfileset>            
+			<!--
+				Dokumentation
+			-->
+			<zipfileset dir="${dist}" includes="dmerce-doc.war"
+				prefix="product/jboss/server/default/deploy"/>			
+			<!--
+				1[NCC]: whois client
+			-->
+			<zipfileset dir="${dist}" includes="whois.jar" prefix="product/dmerce"/>
+		</zip>
+	</target>
+	
+	<!--
+		
+		
+		Windows 32 Bit
+		
+		
+	-->
+    <target name="build-winia32" depends="build-base"
+    	description="Windows distribution">
+    	<!-- Fix cr/lf -->
+    	<fixcrlf srcdir="${src.distrib.win}" eol="crlf"/>
+        <!-- ZIP-File mit allen benötigten Komponenten erzeugen -->
+		<zip destfile="dmerce-distrib.zip" update="true">
+            <!-- dmerce System Resources -->
+            <zipfileset dir="${src.distrib.win.sys}" prefix="product/dmerce/sys">
+            	<exclude name="sql/oracle/templates"/>
+           	</zipfileset>
+			<!-- Readme -->
+            <zipfileset dir="${src.distrib.win}" includes="readme.txt"/>
+			<!-- Windows-spezifische Skripts -->
+            <zipfileset dir="${src.distrib.win.bin}" prefix="bin"/>
+            <zipfileset dir="${src.distrib.win.etc}" prefix="etc"/>
+			<!-- JDK -->
+			<zipfileset src="${j2sdk.winia32.path}" prefix="product/j2sdk"/>
+		</zip>
+  		<move file="dmerce-distrib.zip" tofile="dmerce-winia32.zip"/>
+    </target>
+
+	<!--
+		
+		
+		Solaris SPARC 32 Bit
+		
+		
+	-->
+    <target name="build-solsparc32" depends="build-base"
+    	description="Solaris SPARC 32 Bit distribution">
+    	<!-- Fix cr/lf -->
+    	<fixcrlf srcdir="${src.distrib.unix}" eol="lf"/>
+        <!-- ZIP-File mit allen benötigten Komponenten erzeugen -->
+		<zip destfile="dmerce-distrib.zip" update="true">
+            <!-- dmerce System Resources -->
+            <zipfileset dir="${src.distrib.unix.sys}" prefix="product/dmerce/sys">
+            	<exclude name="sql/oracle/templates"/>
+           	</zipfileset>
+			<!-- Readme -->
+            <zipfileset dir="${src.distrib.unix}" includes="readme.txt"/>
+			<!-- UNIX-spezifische Skripts -->
+            <zipfileset dir="${src.distrib.unix.bin}" prefix="bin"/>
+            <zipfileset dir="${src.distrib.unix.etc}" prefix="etc"/>
+            <zipfileset dir="${src.distrib.solaris.bin}" prefix="bin"/>
+			<!-- JDK -->
+			<zipfileset src="${j2sdk.solsparc32.path}" prefix="product/j2sdk"/>
+		</zip>
+		<move file="dmerce-distrib.zip" tofile="dmerce-solsparc32.zip"/>
+    </target>
+
+ 	<!--
+		
+		
+		Solaris SPARC 64 Bit
+		
+		
+	-->
+    <target name="build-solsparc64" depends="build-base"
+    	description="Solaris SPARC 64 Bit distribution">
+    	<!-- Fix cr/lf -->
+    	<fixcrlf srcdir="${src.distrib.unix}" eol="lf"/>
+        <!-- ZIP-File mit allen benötigten Komponenten erzeugen -->
+		<zip destfile="dmerce-distrib.zip" update="true">
+            <!-- dmerce System Resources -->
+            <zipfileset dir="${src.distrib.unix.sys}" prefix="product/dmerce/sys">
+            	<exclude name="sql/oracle/templates"/>
+           	</zipfileset>
+			<!-- Readme -->
+            <zipfileset dir="${src.distrib.unix}" includes="readme.txt"/>
+			<!-- UNIX-spezifische Skripts -->
+            <zipfileset dir="${src.distrib.unix.bin}" prefix="bin"/>
+            <zipfileset dir="${src.distrib.unix.etc}" prefix="etc"/>
+            <zipfileset dir="${src.distrib.solaris.bin}" prefix="bin"/>
+			<!-- JDK -->
+			<zipfileset src="${j2sdk.solsparc64.path}" prefix="product/j2sdk"/>
+		</zip>
+		<move file="dmerce-distrib.zip" tofile="dmerce-solsparc64.zip"/>
+    </target>
+    
+ 	<!--
+		
+		
+		Solaris x86 32 Bit
+		
+		
+	-->
+    <target name="build-solia32" depends="build-base"
+    	description="Solaris x86 32 Bit distribution">
+    	<!-- Fix cr/lf -->
+    	<fixcrlf srcdir="${src.distrib.unix}" eol="lf"/>
+        <!-- ZIP-File mit allen benötigten Komponenten erzeugen -->
+		<zip destfile="dmerce-distrib.zip" update="true">
+            <!-- dmerce System Resources -->
+            <zipfileset dir="${src.distrib.unix.sys}" prefix="product/dmerce/sys">
+            	<exclude name="sql/oracle/templates"/>
+           	</zipfileset>
+			<!-- Readme -->
+            <zipfileset dir="${src.distrib.unix}" includes="readme.txt"/>
+			<!-- UNIX-spezifische Skripts -->
+            <zipfileset dir="${src.distrib.unix.bin}" prefix="bin"/>
+            <zipfileset dir="${src.distrib.unix.etc}" prefix="etc"/>
+            <zipfileset dir="${src.distrib.solaris.bin}" prefix="bin"/>
+			<!-- JDK -->
+			<zipfileset src="${j2sdk.solia32.path}" prefix="product/j2sdk"/>
+		</zip>
+		<move file="dmerce-distrib.zip" tofile="dmerce-solia32.zip"/>
+    </target>
+
+ 	<!--
+		
+		
+		Linux x86 32 Bit
+		
+		
+	-->
+    <target name="build-linuxia32" depends="build-base"
+    	description="Linux IA32 distribution">
+    	<!-- Fix cr/lf -->
+    	<fixcrlf srcdir="${src.distrib.unix.bin}" eol="lf"/>
+        <!-- ZIP-File mit allen benötigten Komponenten erzeugen -->
+		<zip destfile="dmerce-distrib.zip" update="true">
+            <!-- dmerce System Resources -->
+            <zipfileset dir="${src.distrib.unix.sys}" prefix="product/dmerce/sys">
+            	<exclude name="sql/oracle/templates"/>
+           	</zipfileset>
+			<!-- Readme -->
+            <zipfileset dir="${src.distrib.unix}" includes="readme.txt"/>
+			<!-- UNIX-spezifische Skripts -->
+            <zipfileset dir="${src.distrib.unix.bin}" prefix="bin"/>
+            <zipfileset dir="${src.distrib.unix.etc}" prefix="etc"/>
+			<!-- JDK -->
+			<zipfileset src="${j2sdk.linuxia32.path}" prefix="product/j2sdk"/>
+		</zip>
+		<move file="dmerce-distrib.zip" tofile="dmerce-linuxia32.zip"/>
+    </target>
+    
+ 	<!--
+		
+		
+		World: build all distributions
+		
+		
+	-->
+	<target name="world">
+		<antcall target="build-solsparc64"/>
+		<antcall target="build-solsparc32"/>
+		<antcall target="build-solia32"/>
+		<antcall target="build-linuxia32"/>
+		<antcall target="build-winia32"/>
+	</target>
+	
+</project>
